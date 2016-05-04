@@ -654,15 +654,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/GroupGeneration.swift"
-            timestampString = "484013554.29992"
+            timestampString = "484018408.363397"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
             landmarkName = "pantsGroupGeneratorsAndGuidelines(a:b:c:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -52,7 +52,7 @@ extension CircleViewController {
     }
     
     func setUpPantsGenerators() {
-        var (generators, guidelines) = pantsGroupGeneratorsAndGuidelines(a: 1.3, b: 1.3, c: 1.3)
+        let (generators, guidelines) = pantsGroupGeneratorsAndGuidelines(a: 1, b: 2, c: 3)
         self.guidelines = guidelines
         let dressedGenerators = generators.map() {Action(M: $0)}
         bigGroupCutoff = distanceToAbs(20.0)

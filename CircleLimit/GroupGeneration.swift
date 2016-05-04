@@ -125,7 +125,7 @@ func pqrGeneratorsAndGuidelines(p: Int, q: Int, r: Int) -> ([HyperbolicTransform
     return ([A, B, C], g2)
 }
 
-func sideInRightAngledHexagonWithOpposite(a: Double, andAdj b: Double, andAdj c: Double) -> Double {
+func sideInRightAngledHexagonWithOpposite(c: Double, andAdj a: Double, andAdj b: Double) -> Double {
     let numerator = cosh(a) * cosh(b) + cosh(c)
     let denominator = sinh(a) * sinh(b)
     return acosh(numerator/denominator)
@@ -150,14 +150,22 @@ func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([H
     let cA = bA.following(left).following(HyperbolicTransformation.goForward(A)).following(left)
     let cB = cA.following(HyperbolicTransformation.goForward(c))
     let aB = aC.following(HyperbolicTransformation.goForward(-a))
-    let guidelines = [HyperbolicPolyline([aC.appliedToOrigin, bC.appliedToOrigin]),
-                      HyperbolicPolyline([bA.appliedToOrigin, cA.appliedToOrigin]),
+//    let aB = cB.following(left).following(HyperbolicTransformation.goForward(B)).following(left)
+    let aC2 = aB.following(HyperbolicTransformation.goForward(a))
+    print("This should be the identity: \(aC2)")
+    let guidelines = [HyperbolicPolyline([bA.appliedToOrigin, cA.appliedToOrigin]),
                       HyperbolicPolyline([cB.appliedToOrigin, aB.appliedToOrigin]),
-                      HyperbolicPolyline([bC.appliedToOrigin, bTrans.following(bC).appliedToOrigin]),
+                      HyperbolicPolyline([aC.appliedToOrigin, bC.appliedToOrigin]),
                       HyperbolicPolyline([aC.appliedToOrigin, aTrans.following(aC).appliedToOrigin]),
+                      HyperbolicPolyline([bC.appliedToOrigin, bTrans.following(bC).appliedToOrigin]),
                       HyperbolicPolyline([cA.appliedToOrigin, cTrans.following(cA).appliedToOrigin])
         
     ] as [HDrawable]
+    let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
+                  UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
+    for i in 0..<6 {
+        guidelines[i].lineColor = colors[i]
+    }
     return (generators, guidelines)
 }
 
