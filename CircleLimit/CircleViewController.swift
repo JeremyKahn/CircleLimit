@@ -51,47 +51,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return true
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("CircleViewController loaded")
-        var generators: [HyperbolicTransformation] = []
-        var guidelines: [HDrawable] = []
-        var twistedGenerators: [Action] = []
-        if !trivialGroup {
-            (generators, guidelines) = pqrGeneratorsAndGuidelines(3, q: 3, r: 4)
-            for object in guidelines {
-                object.intrinsicLineWidth = 0.005
-                object.lineColor = UIColor.grayColor()
-                object.useFillColorTable = false
-            }
-            
-            // This will show the fixed points of all the elliptic elements
-//            guidelines.append(HyperbolicDot(center: HPoint()))
-            for g in generators {
-                let fixedPointDot = HyperbolicDot(center: g.fixedPoint!)
-                self.fixedPoints.append(fixedPointDot)
-            }
-            
-            let (A, B, C) = (generators[0], generators[1], generators[2])
-            let a = ColorNumberPermutation(mapping: [1: 2, 2: 3, 3: 1, 4: 4])
-            let b = ColorNumberPermutation(mapping: [1: 1, 2: 3, 3: 4, 4: 2])
-            let c = ColorNumberPermutation(mapping: [1: 2, 2: 1, 3: 4, 4: 3])
-            assert(a.following(b).following(c) == ColorNumberPermutation())
-            twistedGenerators = [Action(M: A, P: a), Action(M: B, P: b), Action(M: C, P: c)]
-        }
-        self.guidelines = guidelines
-        let bigGroup = generatedGroup(twistedGenerators, bigCutoff: bigGroupCutoff)
-        groupForIntegerDistance = Array<[Action]>(count: maxGroupDistance + 1, repeatedValue: [])
-        for i in 0...maxGroupDistance {
-            groupForIntegerDistance[i] = selectElements(bigGroup, cutoff: distanceToAbs(Double(i)))
-        }
-        // Right now this is just a guess
-        let I = ColorNumberPermutation()
-        searchingGroup = groupForIntegerDistance[5].filter() { $0.action == I }
-        
-    }
-    
-    func selectElements(group: [Action], cutoff: Double) -> [Action] {
+     func selectElements(group: [Action], cutoff: Double) -> [Action] {
         let a = group.filter { (M: Action) in M.motion.a.abs < cutoff }
         print("Selected \(a.count) elements with cutoff \(cutoff)")
         return a
@@ -121,23 +81,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var undoneObjects: [HDrawable] = []
     
-     // One group for each integral distance cutoff
-    var groupForIntegerDistance: [[Action]] = []
-    
-    func groupForDistance(distance: Double) -> [Action] {
-        return groupForIntegerDistance[min(maxGroupDistance, Int(distance) + 1)]
-    }
-    
-    var group = [Mode : [Action]]()
-    
-    // Change these values to determine the size of the various groups
-    var cutoff : [Mode : Double] = [.Usual : 0.98, .Moving : 0.8, .Drawing : 0.8]
-    
-    var bigGroupCutoff = 0.995
-    
-    var maxGroupDistance: Int {
-        return Int(absToDistance(bigGroupCutoff)) + 1
-    }
     
     // The translates (by the color fixing subgroup) of a disk around the origin of this radius should cover the boundary of that disk
     // Right now the size is determined by trial and error
@@ -205,6 +148,33 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
 
     // MARK: - Get the group you want
+    // One group for each integral distance cutoff
+    func makeGroupForIntegerDistanceWith(group: [Action]) {
+        groupForIntegerDistance = Array<[Action]>(count: maxGroupDistance + 1, repeatedValue: [])
+        for i in 0...maxGroupDistance {
+            groupForIntegerDistance[i] = selectElements(group, cutoff: distanceToAbs(Double(i)))
+        }
+
+    }
+    
+    var groupForIntegerDistance: [[Action]] = []
+    
+    func groupForDistance(distance: Double) -> [Action] {
+        return groupForIntegerDistance[min(maxGroupDistance, Int(distance) + 1)]
+    }
+    
+    var group = [Mode : [Action]]()
+    
+    // Change these values to determine the size of the various groups
+    var cutoff : [Mode : Double] = [.Usual : 0.98, .Moving : 0.8, .Drawing : 0.8]
+    
+    var bigGroupCutoff = 0.995
+    
+    var maxGroupDistance: Int {
+        return Int(absToDistance(bigGroupCutoff)) + 1
+    }
+
+    
     func groupSystem(mode: Mode, objects: [HDrawable]) -> GroupSystem {
         let zoomAbs = 2.0 / Double(multiplier)
         let cutoffAbs = min(zoomAbs, cutoff[mode]!)
@@ -472,7 +442,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // MARK: Adding a point to a line
     func addPointToArcs(z: HPoint) {
-        let objects = objectsToDraw.filter() { $0 is HyperbolicPolyline }
+        let objects = drawObjects.filter() { $0 is HyperbolicPolyline }
         
         let g = groupSystem(cutoffDistance: touchDistance, center: z, objects: objects)
         

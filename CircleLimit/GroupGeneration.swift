@@ -41,6 +41,11 @@ struct Action: Locatable {
         action = P
     }
     
+    init(M: HyperbolicTransformation) {
+        motion = M
+        action = ColorNumberPermutation()
+    }
+    
 }
 
 
@@ -118,6 +123,42 @@ func pqrGeneratorsAndGuidelines(p: Int, q: Int, r: Int) -> ([HyperbolicTransform
     guidelines.forEach({$0.touchable = false})
     let g2 = guidelines.map {$0 as HDrawable}
     return ([A, B, C], g2)
+}
+
+func sideInRightAngledHexagonWithOpposite(a: Double, andAdj b: Double, andAdj c: Double) -> Double {
+    let numerator = cosh(a) * cosh(b) + cosh(c)
+    let denominator = sinh(a) * sinh(b)
+    return acosh(numerator/denominator)
+}
+
+
+// The a, b, and c are the _half_ lengths of the cuffs
+func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([HyperbolicTransformation], [HDrawable]) {
+    let C = sideInRightAngledHexagonWithOpposite(c, andAdj: a, andAdj: b)
+    let A = sideInRightAngledHexagonWithOpposite(a, andAdj: b, andAdj: c)
+    let B = sideInRightAngledHexagonWithOpposite(b, andAdj: a, andAdj: b)
+    let aTrans = HyperbolicTransformation.goForward(2 * a)
+    let left = HyperbolicTransformation.turnLeft
+    let right = HyperbolicTransformation.turnRight
+    let CForward = HyperbolicTransformation.goForward(C)
+    let bTrans = left.following(CForward).following(left).following(HyperbolicTransformation.goForward(2 * b)).following(left).following(CForward).following(left)
+    let cTrans = (bTrans.following(aTrans)).inverse
+    let generators = [aTrans, bTrans, cTrans]
+     let aC = HyperbolicTransformation()
+    let bC = aC.following(left).following(CForward).following(left)
+    let bA = bC.following(HyperbolicTransformation.goForward(b))
+    let cA = bA.following(left).following(HyperbolicTransformation.goForward(A)).following(left)
+    let cB = cA.following(HyperbolicTransformation.goForward(c))
+    let aB = aC.following(HyperbolicTransformation.goForward(-a))
+    let guidelines = [HyperbolicPolyline([aC.appliedToOrigin, bC.appliedToOrigin]),
+                      HyperbolicPolyline([bA.appliedToOrigin, cA.appliedToOrigin]),
+                      HyperbolicPolyline([cB.appliedToOrigin, aB.appliedToOrigin]),
+                      HyperbolicPolyline([bC.appliedToOrigin, bTrans.following(bC).appliedToOrigin]),
+                      HyperbolicPolyline([aC.appliedToOrigin, aTrans.following(aC).appliedToOrigin]),
+                      HyperbolicPolyline([cA.appliedToOrigin, cTrans.following(cA).appliedToOrigin])
+        
+    ] as [HDrawable]
+    return (generators, guidelines)
 }
 
 typealias ColorTable = Dictionary<ColorNumber, UIColor>

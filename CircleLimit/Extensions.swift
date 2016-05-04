@@ -62,6 +62,12 @@ extension Array {
 
 }
 
+extension Complex {
+    var abs2: T {
+        return re * re + im * im
+    }
+}
+
 extension Complex where T : NicelyPrinting {
     var nice: String {
         let plus = im.isSignMinus ? "" : "+"

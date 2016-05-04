@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */; };
 		1B5979EF1CBB17A400CEAEA7 /* ColorPicker.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B5979DC1CBB17A400CEAEA7 /* ColorPicker.storyboard */; };
 		1B5979F11CBB17A400CEAEA7 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */; };
 		1B5979F21CBB17A400CEAEA7 /* ColorProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleVCConfigurations.swift; path = ../CircleVCConfigurations.swift; sourceTree = "<group>"; };
 		1B5979DD1CBB17A400CEAEA7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ColorPicker.storyboard; sourceTree = "<group>"; };
 		1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorProtocols.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				1BDBD0651B5C21370057B710 /* Main.storyboard */,
 				1BDBD08E1B5C43590057B710 /* PoincareView.swift */,
 				1BDBD0811B5C21BE0057B710 /* CircleViewController.swift */,
+				1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */,
 				1B6EB4761CAD78D900B08F09 /* Geometry */,
 				1B6EB4781CAD798600B08F09 /* Algorithms */,
 				1B6EB4711CAD718A00B08F09 /* HDrawable */,
@@ -331,6 +334,7 @@
 				1BDBD0841B5C22740057B710 /* PoincareDisk.swift in Sources */,
 				1B5979F61CBB17A400CEAEA7 /* GradientColorTriangle.swift in Sources */,
 				1BDBD08A1B5C2BEA0057B710 /* Complex.swift in Sources */,
+				1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */,
 				1B5979FC1CBB17A400CEAEA7 /* TriangleViewController.swift in Sources */,
 				1BDBD0621B5C21370057B710 /* CircleLimit.xcdatamodeld in Sources */,
 			);

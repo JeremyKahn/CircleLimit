@@ -17,6 +17,12 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     // MARK: Initializers
     
+    init(lambda: Complex64) {
+        var l = lambda
+        l.abs = 1.0
+        self.lambda = l
+    }
+    
     init(a: Complex64, lambda: Complex64) {
         var l = lambda
         l.abs = 1.0
@@ -58,6 +64,18 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return absToDistance(abs)
     }
     
+    // MARK: Instructions
+    static func goForward(distance: Double) -> HyperbolicTransformation {
+        return HyperbolicTransformation(a: -distanceToAbs(distance) + 0.i)
+    }
+    
+    static let turnLeft = HyperbolicTransformation(lambda: 1.i)
+    
+    static let turnRight = HyperbolicTransformation(lambda: -1.i)
+    
+    var appliedToOrigin: HPoint {
+        return appliedTo(HPoint())
+    }
     // MARK: Group operations
     static let identity = HyperbolicTransformation()
     
@@ -74,10 +92,11 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     var inverse: HyperbolicTransformation
         { return HyperbolicTransformation(a: -self.a * self.lambda, lambda: self.lambda.conj) }
     
+    // So far this finds the fixed point for an elliptic element
     var fixedPoint: HPoint? {
         guard lambda != 1 + 0.i else {return nil}
         if a == 0  { return HPoint() } // Maybe we should return  -a * lambda * (1 - lambda) for small a
-        let num = 4 * a.abs * a.abs * lambda
+        let num = 4 * a.abs2 * lambda
         let denom = (1 - lambda) * (1 - lambda)
         let thingInside = 1 + num/denom
         // we should have thingInside.im == 0
@@ -85,6 +104,21 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         let mult = (1 - lambda)/(2 * a.conj)
         let fp = mult * (1 - sqrt(thingInside.re))
         return HPoint(fp)
+    }
+    
+    var trace: Double {
+        let sqrtLambda = sqrt(lambda)
+        let num =  2 * sqrtLambda.re
+        let denom = sqrt(1 - a.abs2)
+        return num/denom
+    }
+    
+    /// ETL is e to the translation length
+    var translationLength: Double? {
+        let tr = trace
+        if tr < 2 { return nil }
+        let sqrtETL = (tr + sqrt(tr * tr - 4))/2
+        return 2 * log(sqrtETL)
     }
     
 //    func inverse() -> HyperbolicTransformation {
