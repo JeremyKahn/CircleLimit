@@ -52,13 +52,19 @@ extension CircleViewController {
     }
     
     func setUpPantsGenerators() {
-        let (generators, guidelines) = pantsGroupGeneratorsAndGuidelines(a: 1, b: 2, c: 3)
+        let (generators, guidelines) = pantsGroupGeneratorsAndGuidelines(cuffLengths)
+        cuffGuidelines = []
+        orthoGuidelines = []
+        for i in 0...2 {
+            cuffGuidelines.append(guidelines[i])
+            orthoGuidelines.append(guidelines[i+3])
+        }
         self.guidelines = guidelines
         let dressedGenerators = generators.map() {Action(M: $0)}
-        bigGroupCutoff = distanceToAbs(20.0)
         let pantsGroup = generatedGroup(dressedGenerators, bigCutoff: bigGroupCutoff)
         makeGroupForIntegerDistanceWith(pantsGroup)
         searchingGroup = groupForIntegerDistance[5]
     }
+    
     
 }

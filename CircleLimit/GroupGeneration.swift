@@ -151,8 +151,6 @@ func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([H
     let cB = cA.following(HyperbolicTransformation.goForward(c))
     let aB = aC.following(HyperbolicTransformation.goForward(-a))
 //    let aB = cB.following(left).following(HyperbolicTransformation.goForward(B)).following(left)
-    let aC2 = aB.following(HyperbolicTransformation.goForward(a))
-    print("This should be the identity: \(aC2)")
     let guidelines = [HyperbolicPolyline([bA.appliedToOrigin, cA.appliedToOrigin]),
                       HyperbolicPolyline([cB.appliedToOrigin, aB.appliedToOrigin]),
                       HyperbolicPolyline([aC.appliedToOrigin, bC.appliedToOrigin]),
@@ -165,6 +163,41 @@ func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([H
                   UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
     for i in 0..<6 {
         guidelines[i].lineColor = colors[i]
+    }
+    return (generators, guidelines)
+}
+
+// This is a rewrite to use arrays to make everything more symmetric
+func pantsGroupGeneratorsAndGuidelines(halfLengths: [Double]) -> ([HyperbolicTransformation], [HDrawable]) {
+    guard halfLengths.count == 3 else {return ([], [])}
+    var orthoLengths = Array<Double>(count: 3, repeatedValue: 0.0)
+    for i in 0..<3 {
+        orthoLengths[i] = sideInRightAngledHexagonWithOpposite(halfLengths[i], andAdj: halfLengths[(i+1) % 3], andAdj: halfLengths[(i + 2) % 3])
+    }
+    let identity = HyperbolicTransformation()
+    var tMinus = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
+    var tPlus = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
+    let (left, right) = (HyperbolicTransformation.turnLeft, HyperbolicTransformation.turnRight)
+    for i in 0..<3 {
+        tPlus[i] = tMinus[i].following(HyperbolicTransformation.goForward(halfLengths[i]))
+        tMinus[(i+1)%3] = tPlus[i].following(left).following(HyperbolicTransformation.goForward(orthoLengths[(i+2)%3])).following(left)
+    }
+    print("This should be the identity: \(tMinus[0])")
+    var generators = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
+    for i in 0..<3 {
+        generators[i] = tMinus[i].following(HyperbolicTransformation.goForward(2 * halfLengths[i])).following(tMinus[i].inverse)
+    }
+    var guidelines: [HDrawable] = []
+    for i in 0..<3 {
+        guidelines.append(HyperbolicPolyline([tMinus[i].appliedToOrigin, generators[i].following(tMinus[i]).appliedToOrigin]))
+    }
+    for i in 0..<3 {
+        guidelines.append(HyperbolicPolyline([tPlus[(i+1)%3].appliedToOrigin, tMinus[(i+2)%3].appliedToOrigin]))
+    }
+    let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
+                  UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
+    for i in 0..<6 {
+        guidelines[i].lineColor = UIColor.grayColor()
     }
     return (generators, guidelines)
 }

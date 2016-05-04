@@ -53,7 +53,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
      func selectElements(group: [Action], cutoff: Double) -> [Action] {
         let a = group.filter { (M: Action) in M.motion.a.abs < cutoff }
-        print("Selected \(a.count) elements with cutoff \(cutoff)")
+        print("Selected \(a.count) elements at distance " + absToDistance(cutoff).nice)
         return a
     }
     
@@ -105,6 +105,23 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         let exponent = 0.25
         return baseTouchDistance/pow(m, 1 - exponent)
     }
+    
+    // MARK: Stuff to edit pants
+    var cuffGuidelines: [HDrawable] = []
+    
+    var orthoGuidelines: [HDrawable] = []
+    
+    var canEditPants = true
+    
+    var editingPants = false
+
+    var cuffEditIndex: Int?
+    
+    var cuffLengths = [1.0, 2.0, 3.0]
+    
+    let largeBigGroupCutoff = distanceToAbs(15)
+    
+    let smallBigGroupCutoff = distanceToAbs(10)
     
     // MARK: PoincareViewDataSource
     var objectsToDraw: [HDrawable] {
@@ -168,7 +185,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // Change these values to determine the size of the various groups
     var cutoff : [Mode : Double] = [.Usual : 0.98, .Moving : 0.8, .Drawing : 0.8]
     
-    var bigGroupCutoff = 0.995
+    var bigGroupCutoff = distanceToAbs(20)
     
     var maxGroupDistance: Int {
         return Int(absToDistance(bigGroupCutoff)) + 1
@@ -208,9 +225,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         var result: GroupSystem = []
         for object in objects {
             let objectGroup = filterForTwoPointsAndDistance(group, point1: center, point2: object.centerPoint, distance: distance + object.radius)
-            if objectGroup.count > 0 {
-                result.append((object, objectGroup))
-            }
+            result.append((object, objectGroup))
+
         }
         return result
     }
@@ -596,6 +612,20 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         } else if newCurve != nil {
             stateStack.append(State(completedObjects: nil, newCurve: (newCurve!.copy() as! HyperbolicPolyline)))
             newCurve!.addPoint(z!)
+        } else if canEditPants && !editingPants {
+            let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: cuffGuidelines)
+            for i in 0...2 {
+                let (object, group) = g[i]
+                if let line = object as? HyperbolicPolyline {
+                    for action in group {
+                        if line.sidesNear(z!, withMask: action.motion, withinDistance: touchDistance).count > 0 {
+                            line.lineColor = UIColor.redColor()
+                            cuffEditIndex = i
+                            editingPants = true
+                        }
+                    }
+                }
+            }
         }
         poincareView.setNeedsDisplay()
     }
@@ -677,21 +707,38 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         mask = bestMask
     }
     
+    // Should this be split into two separate functions?
     @IBAction func zoom(gesture: UIPinchGestureRecognizer) {
         //        println("Zooming")
-        switch gesture.state {
+         switch gesture.state {
         case .Began:
-            mode = Mode.Moving
+            mode = .Moving
             drawing = false
             //            newCurve = nil
             cancelEffectOfTouches()
+            if editingPants {
+                bigGroupCutoff = smallBigGroupCutoff
+            }
         case .Changed:
-            let newMultiplier = multiplier * gesture.scale
-            multiplier = newMultiplier >= 1 ? newMultiplier : 1
-            gesture.scale = 1
+            if let index = cuffEditIndex {
+                cuffLengths[index] = cuffLengths[index] * gesture.scale.double
+                gesture.scale = 1
+                setUpPantsGenerators()
+                guidelines[index].lineColor = UIColor.redColor()
+            } else {
+                let newMultiplier = multiplier * gesture.scale
+                multiplier = newMultiplier >= 1 ? newMultiplier : 1
+                gesture.scale = 1
+            }
         case .Ended:
             drawing = true
-            mode = Mode.Usual
+            mode = .Usual
+            if editingPants {
+                bigGroupCutoff = largeBigGroupCutoff
+                setUpPantsGenerators()
+                editingPants = false
+                cuffEditIndex = nil
+            }
         default: break
         }
         poincareView.setNeedsDisplay()
