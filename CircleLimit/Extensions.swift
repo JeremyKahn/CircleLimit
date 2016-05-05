@@ -43,7 +43,19 @@ extension Double: NicelyPrinting {
     
 }
 
-
+extension Dictionary {
+    
+    func valuesForKeys(keys: [Key]) -> [Value] {
+        var result: [Value] = []
+        for key in keys {
+            if let value = self[key] {
+                result.append(value)
+            }
+        }
+        return result
+    }
+    
+}
 
 extension Array {
     

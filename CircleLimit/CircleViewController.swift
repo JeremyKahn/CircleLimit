@@ -119,7 +119,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var cuffLengths = [1.0, 2.0, 3.0]
     
-    let largeBigGroupCutoff = distanceToAbs(15)
+    let largeBigGroupCutoff = distanceToAbs(12)
     
     let smallBigGroupCutoff = distanceToAbs(10)
     

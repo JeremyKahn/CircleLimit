@@ -658,11 +658,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/GroupGeneration.swift"
-            timestampString = "484056728.239904"
+            timestampString = "484102676.196893"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
             landmarkName = "pantsGroupGeneratorsAndGuidelines(a:b:c:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -690,11 +690,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/GroupGeneration.swift"
-            timestampString = "484056996.445663"
+            timestampString = "484102676.196893"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
             landmarkName = "pantsGroupGeneratorsAndGuidelines(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -706,11 +706,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/GroupGeneration.swift"
-            timestampString = "484056997.593068"
+            timestampString = "484102676.196893"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
+            startingLineNumber = "214"
+            endingLineNumber = "214"
             landmarkName = "pantsGroupGeneratorsAndGuidelines(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -722,11 +722,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/GroupGeneration.swift"
-            timestampString = "484056998.909284"
+            timestampString = "484102676.196893"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
+            startingLineNumber = "217"
+            endingLineNumber = "217"
             landmarkName = "pantsGroupGeneratorsAndGuidelines(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -777,6 +777,22 @@
             endingLineNumber = "724"
             landmarkName = "zoom(_:)"
             landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CircleLimit/GroupGeneration.swift"
+            timestampString = "484103111.225486"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "generatedGroup(_:bigCutoff:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

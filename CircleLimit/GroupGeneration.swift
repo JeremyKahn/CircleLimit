@@ -46,46 +46,66 @@ struct Action: Locatable {
         action = ColorNumberPermutation()
     }
     
+    func following(A: Action) -> Action {
+        return Action(motion: motion.following(A.motion), action: action.following(A.action))
+    }
+    
 }
-
 
 
 // right now we're using _semigroup_ generators
 // this generates all elements of the semigroup which can be realized as a path of words in the generators, each meeting the cutoff
+//func generatedGroup(generators: [Action], bigCutoff: Double) -> [Action] {
+//    let startTime = NSDate()
+//    let bigGroup = LocationTable<Action>()
+//    bigGroup.add(Action())
+//    bigGroup.add(generators)
+//    var frontier = generators
+//    while(frontier.count > 0) {
+//        var newFrontier: [Action] = []
+//        for M in frontier {
+//            search: for T in generators {
+//                let X = M.motion.following(T.motion)
+//                let P = M.action.following(T.action)
+//                if X.a.abs > bigCutoff  {
+//                    continue
+//                }
+//                //  Check to see if X is already listed in bigGroup
+//                for U in bigGroup.arrayForNearLocation(X.location) {
+//                    if U.motion.nearTo(X) {
+//                        continue search
+//                    }
+//                }
+//                let A = Action(M: X, P: P)
+//                newFrontier.append(A)
+//                bigGroup.add(A)
+//                //                println("Found group element number \(++n): \(X.a, X.lambda)")
+//            }
+//        }
+//        frontier = newFrontier
+//    }
+//    print("Found \(bigGroup.count) elements in the big group")
+//    let timeTaken = 1000 * NSDate().timeIntervalSinceDate(startTime)
+//    print("Time taken: \(timeTaken) ms")
+//    return bigGroup.arrayForm
+//}
+
 func generatedGroup(generators: [Action], bigCutoff: Double) -> [Action] {
     let startTime = NSDate()
-    let bigGroup = LocationTable<Action>()
-    bigGroup.add(Action())
-    bigGroup.add(generators)
-    var frontier = generators
-    while(frontier.count > 0) {
-        var newFrontier: [Action] = []
-        for M in frontier {
-            search: for T in generators {
-                let X = M.motion.following(T.motion)
-                let P = M.action.following(T.action)
-                if X.a.abs > bigCutoff  {
-                    continue
-                }
-                //              Check to see if X is already listed in bigGroup
-                for U in bigGroup.arrayForNearLocation(X.location) {
-                    if U.motion.nearTo(X) {
-                        continue search
-                    }
-                }
-                let A = Action(M: X, P: P)
-                newFrontier.append(A)
-                bigGroup.add(A)
-                //                println("Found group element number \(++n): \(X.a, X.lambda)")
-            }
-        }
-        frontier = newFrontier
+    let base = [Action()]
+    let rightMultiplyByGenerators = { (A: Action) -> [Action] in
+        let list = generators.map() {A.following($0)}
+        return list.filter() {$0.motion.a.abs < bigCutoff}
     }
+    let nearEnough = { (A:Action, B: Action) -> Bool in
+        return A.motion.nearTo(B.motion)
+    }
+    let bigGroup = leastFixedPoint(base, map: rightMultiplyByGenerators, match: nearEnough)
     print("Found \(bigGroup.count) elements in the big group")
-    let timeTaken = 1000 * NSDate().timeIntervalSinceDate(startTime)
-    print("Time taken: \(timeTaken) ms")
-    return bigGroup.arrayForm
+    print("Time taken: \(timeInMillisecondsSince(startTime)) ms")
+    return bigGroup
 }
+
 
 // the hyperbolic length of c in triangle ABC
 func lengthFromAngles(A: Double, B: Double, C:Double) -> Double {
@@ -187,6 +207,7 @@ func pantsGroupGeneratorsAndGuidelines(halfLengths: [Double]) -> ([HyperbolicTra
     for i in 0..<3 {
         generators[i] = tMinus[i].following(HyperbolicTransformation.goForward(2 * halfLengths[i])).following(tMinus[i].inverse)
     }
+    generators += generators.map() {$0.inverse}
     var guidelines: [HDrawable] = []
     for i in 0..<3 {
         guidelines.append(HyperbolicPolyline([tMinus[i].appliedToOrigin, generators[i].following(tMinus[i]).appliedToOrigin]))
@@ -197,7 +218,7 @@ func pantsGroupGeneratorsAndGuidelines(halfLengths: [Double]) -> ([HyperbolicTra
     let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
                   UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
     for i in 0..<6 {
-        guidelines[i].lineColor = UIColor.grayColor()
+        guidelines[i].lineColor = UIColor.blackColor()
     }
     return (generators, guidelines)
 }
