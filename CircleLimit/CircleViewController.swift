@@ -42,6 +42,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // MARK: Debugging variables
     var tracingGroupMaking = false
     
+    var tracingZoom = true
+    
     var tracingGesturesAndTouches = false
     
     var trivialGroup = false
@@ -51,9 +53,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return true
     }
     
-     func selectElements(group: [Action], cutoff: Double) -> [Action] {
+    func selectElements(group: [Action], cutoff: Double) -> [Action] {
         let a = group.filter { (M: Action) in M.motion.a.abs < cutoff }
-        print("Selected \(a.count) elements at distance " + absToDistance(cutoff).nice)
+        print("Selected \(a.count) elements at distance " + absToDistance(cutoff).nice, when: tracingGroupMaking)
         return a
     }
     
@@ -66,7 +68,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
 
     // MARK: - General properties
     var guidelines : [HDrawable] = []
-    
     var fixedPoints: [HDrawable] = []
     
     var drawGuidelines = true
@@ -107,9 +108,15 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     // MARK: Stuff to edit pants
-    var cuffGuidelines: [HDrawable] = []
+    var pants: Pants!
     
-    var orthoGuidelines: [HDrawable] = []
+    var cuffGuidelines: [HDrawable] {
+        return pants.cuffGuidelines
+    }
+    
+    var orthoGuidelines: [HDrawable] {
+        return pants.orthoGuidelines
+    }
     
     var canEditPants = true
     
@@ -119,9 +126,15 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var cuffLengths = [1.0, 2.0, 3.0]
     
-    let largeBigGroupCutoff = distanceToAbs(12)
+    let largeBigGroupCutoff = 0.95
     
-    let smallBigGroupCutoff = distanceToAbs(10)
+    let smallBigGroupCutoff = 0.8
+    
+    var maxTimeToMakeSmallGroup = 0.2
+    
+    var maxTimeToMakeLargeGroup = 10.0
+    
+    var minLogScaleChange = 0.025
     
     // MARK: PoincareViewDataSource
     var objectsToDraw: [HDrawable] {
@@ -185,10 +198,15 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // Change these values to determine the size of the various groups
     var cutoff : [Mode : Double] = [.Usual : 0.98, .Moving : 0.8, .Drawing : 0.8]
     
-    var bigGroupCutoff = distanceToAbs(20)
+    var bigGroupCutoff = 0.95
+    
+    var bigGroupCutoffDistance: Double {
+        get { return absToDistance(bigGroupCutoff) }
+        set { bigGroupCutoff = distanceToAbs(newValue) }
+    }
     
     var maxGroupDistance: Int {
-        return Int(absToDistance(bigGroupCutoff)) + 1
+        return Int(pants.adjustedCutoffDistance) + 1
     }
 
     
@@ -244,7 +262,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // TODO: Modify the center-and-radius algorithm to find the smallest disk containing a collection of disks, and use it here
     func centerAndRadiusFor(objects: [HDrawable]) -> (HPoint, Double) {
         let centers = objects.map {$0.centerPoint}
-        let (center, radius) = centerPointAndRadius(centers, delta: 0.1)
+        let (center, _) = centerPointAndRadius(centers, delta: 0.1)
         let totalRadius = objects.reduce(0) {max($0, $1.centerPoint.distanceTo(center) + $1.radius ) }
         return (center, totalRadius)
     }
@@ -707,10 +725,12 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         mask = bestMask
     }
     
+    private var oldMask = HTrans()
+    
     // Should this be split into two separate functions?
     @IBAction func zoom(gesture: UIPinchGestureRecognizer) {
         //        println("Zooming")
-         switch gesture.state {
+        switch gesture.state {
         case .Began:
             mode = .Moving
             drawing = false
@@ -718,14 +738,24 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             cancelEffectOfTouches()
             if editingPants {
                 bigGroupCutoff = smallBigGroupCutoff
+                pants.maxTimeToMakeGroup = maxTimeToMakeSmallGroup
+                oldMask = mask
             }
         case .Changed:
             if let index = cuffEditIndex {
+                if abs(log(Double(gesture.scale))) < minLogScaleChange {
+                    break
+                }
+                print("Rescaling cuff by " + gesture.scale.nice, when: tracingZoom)
                 cuffLengths[index] = cuffLengths[index] * gesture.scale.double
                 gesture.scale = 1
-                setUpPantsGenerators()
+                setUpPants()
                 guidelines[index].lineColor = UIColor.redColor()
             } else {
+                // This prevents repeated requests to make long calculations
+//                if pants.timeToMakeGroup > 3 * abs(log(Double(gesture.scale))) {
+//                    break
+//                }
                 let newMultiplier = multiplier * gesture.scale
                 multiplier = newMultiplier >= 1 ? newMultiplier : 1
                 gesture.scale = 1
@@ -735,7 +765,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             mode = .Usual
             if editingPants {
                 bigGroupCutoff = largeBigGroupCutoff
-                setUpPantsGenerators()
+                pants.maxTimeToMakeGroup = maxTimeToMakeLargeGroup
+                setUpPants()
                 editingPants = false
                 cuffEditIndex = nil
             }

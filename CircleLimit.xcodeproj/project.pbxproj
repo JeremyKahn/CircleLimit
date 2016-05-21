@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */; };
 		1B2609F01CDA6B7300B1172F /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609EF1CDA6B7300B1172F /* Assembly.swift */; };
+		1B3643161CF0B0F300F9D6AD /* TimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643151CF0B0F300F9D6AD /* TimeManager.swift */; };
+		1B3643181CF0BE6100F9D6AD /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643171CF0BE6100F9D6AD /* Flags.swift */; };
 		1B5979EF1CBB17A400CEAEA7 /* ColorPicker.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B5979DC1CBB17A400CEAEA7 /* ColorPicker.storyboard */; };
 		1B5979F11CBB17A400CEAEA7 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */; };
 		1B5979F21CBB17A400CEAEA7 /* ColorProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */; };
@@ -51,6 +53,8 @@
 /* Begin PBXFileReference section */
 		1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleVCConfigurations.swift; path = ../CircleVCConfigurations.swift; sourceTree = "<group>"; };
 		1B2609EF1CDA6B7300B1172F /* Assembly.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Assembly.swift; path = ../Assembly.swift; sourceTree = "<group>"; };
+		1B3643151CF0B0F300F9D6AD /* TimeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeManager.swift; sourceTree = "<group>"; };
+		1B3643171CF0BE6100F9D6AD /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
 		1B5979DD1CBB17A400CEAEA7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ColorPicker.storyboard; sourceTree = "<group>"; };
 		1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorProtocols.swift; sourceTree = "<group>"; };
@@ -131,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				1B2609EF1CDA6B7300B1172F /* Assembly.swift */,
+				1B3643151CF0B0F300F9D6AD /* TimeManager.swift */,
 				1BDBD0891B5C2BEA0057B710 /* Complex.swift */,
 				1BDBD0831B5C22740057B710 /* PoincareDisk.swift */,
 				1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */,
@@ -145,6 +150,7 @@
 				1B740F991C06A2FC0082BC4C /* Extensions.swift */,
 				1BC1B2C31C3D71B400FF17C6 /* GroupGeneration.swift */,
 				1BC1B2BF1C3D702D00FF17C6 /* LocationTable.swift */,
+				1B3643171CF0BE6100F9D6AD /* Flags.swift */,
 				1BDD539E1B7162620054445B /* DynamicProgramming.swift */,
 			);
 			name = Algorithms;
@@ -330,6 +336,7 @@
 				1B6EB46E1CAD711D00B08F09 /* HyperbolicDot.swift in Sources */,
 				1BDD539F1B7162620054445B /* DynamicProgramming.swift in Sources */,
 				1BA2D5B31CA1E1C90036ACCD /* CenterPoint.swift in Sources */,
+				1B3643161CF0B0F300F9D6AD /* TimeManager.swift in Sources */,
 				1B5979F91CBB17A400CEAEA7 /* LightnessGradientView.swift in Sources */,
 				1BDBD08F1B5C43590057B710 /* PoincareView.swift in Sources */,
 				1B740F9A1C06A2FC0082BC4C /* Extensions.swift in Sources */,
@@ -339,6 +346,7 @@
 				1B5979F61CBB17A400CEAEA7 /* GradientColorTriangle.swift in Sources */,
 				1BDBD08A1B5C2BEA0057B710 /* Complex.swift in Sources */,
 				1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */,
+				1B3643181CF0BE6100F9D6AD /* Flags.swift in Sources */,
 				1B5979FC1CBB17A400CEAEA7 /* TriangleViewController.swift in Sources */,
 				1BDBD0621B5C21370057B710 /* CircleLimit.xcdatamodeld in Sources */,
 			);

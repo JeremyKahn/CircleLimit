@@ -8,6 +8,8 @@
 
 import Foundation
 
+typealias HTrans = HyperbolicTransformation
+
 // representation is z -> lambda * (z - a)/(1 - a.bar * z)
 struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
@@ -104,6 +106,23 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         let mult = (1 - lambda)/(2 * a.conj)
         let fp = mult * (1 - sqrt(thingInside.re))
         return HPoint(fp)
+    }
+    
+    // This is very close to correct when the axis is far from the origin
+    // We return nil if the transformation is not hyperbolic
+    var approximateDistanceOfTranslationAxisToOrigin: Double? {
+        if a == 0 {return nil}
+        let qq = -(1 - lambda) * (1 - lambda) / (lambda * a.abs2)
+        let q = qq.re
+        assert(q >= 0)
+        if q >= 4 {return nil}
+        return log(2.0) - 0.5 * log(4-q)
+    }
+    
+    func approximateDistanceOfTranslationAxisTo(p: HPoint) -> Double? {
+        let tP = HTrans(a: p)
+        let mP = tP.following(self).following(tP.inverse)
+        return mP.approximateDistanceOfTranslationAxisToOrigin
     }
     
     var trace: Double {

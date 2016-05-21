@@ -164,12 +164,17 @@ public class LocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
     
 }
 
-
 public func leastFixedPoint<T: Locatable>(base: [T], map: T -> [T], match: (T, T) -> Bool) -> [T] {
+    return leastFixedPoint(base, map: map, match: match, maxTime: 1.0)
+}
+
+public func leastFixedPoint<T: Locatable>(base: [T], map: T -> [T], match: (T, T) -> Bool, maxTime: Double) -> [T] {
+    print("LFP time allotted: " + maxTime.nice)
+    let startTime = NSDate()
     let table = LocationTable<T>()
     table.add(base)
     var frontier = base
-    while frontier.count > 0 {
+    while frontier.count > 0 && secondsSince(startTime) < maxTime {
         let potentialNewFrontier: [T] = frontier.reduce([], combine: {$0 + map($1)})
         // frontier is the new frontier
         frontier = []
@@ -183,6 +188,7 @@ public func leastFixedPoint<T: Locatable>(base: [T], map: T -> [T], match: (T, T
         }
         table.add(frontier)
     }
+    print("LFP time taken: " + secondsSince(startTime).nice)
     return table.arrayForm
 }
 

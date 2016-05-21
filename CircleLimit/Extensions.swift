@@ -18,6 +18,9 @@ func timeInMillisecondsSince(date: NSDate) -> Int {
     return (1000 * NSDate().timeIntervalSinceDate(date)).int
 }
 
+func secondsSince(date: NSDate) -> Double {
+    return NSDate().timeIntervalSinceDate(date)
+}
 
 func print(s: String, when condition: Bool) {
     if condition {
@@ -28,6 +31,14 @@ func print(s: String, when condition: Bool) {
 protocol NicelyPrinting {
     
     var nice: String {get}
+    
+}
+
+extension CGFloat: NicelyPrinting {
+
+    var nice: String {
+        return String(format: "%.3f", self)
+    }
     
 }
 

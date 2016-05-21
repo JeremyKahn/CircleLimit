@@ -215,8 +215,8 @@ func pantsGroupGeneratorsAndGuidelines(halfLengths: [Double]) -> ([HyperbolicTra
     for i in 0..<3 {
         guidelines.append(HyperbolicPolyline([tPlus[(i+1)%3].appliedToOrigin, tMinus[(i+2)%3].appliedToOrigin]))
     }
-    let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
-                  UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
+//    let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
+//                  UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
     for i in 0..<6 {
         guidelines[i].lineColor = UIColor.blackColor()
     }
