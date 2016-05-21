@@ -57,6 +57,10 @@ class Pants {
     
     var selectedIndex = 0
     
+    var selectedBasePoint: HTrans {
+        return tMinus[selectedIndex]
+    }
+    
     var keyPoints: [HPoint] {
         let keyPointsWithVectors = tMinus + tPlus
         return keyPointsWithVectors.map() {$0.appliedToOrigin}

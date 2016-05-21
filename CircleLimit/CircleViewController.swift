@@ -120,21 +120,25 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var canEditPants = true
     
-    var editingPants = false
+    var editingPants: Bool {
+        return cuffEditIndex != nil
+    }
 
     var cuffEditIndex: Int?
     
     var cuffLengths = [1.0, 2.0, 3.0]
     
-    let largeBigGroupCutoff = 0.95
+    let largeBigGroupCutoff = 0.98
     
-    let smallBigGroupCutoff = 0.8
+    let smallBigGroupCutoff = 0.95
     
-    var maxTimeToMakeSmallGroup = 0.2
+    var maxTimeToMakeSmallGroup = 0.075
     
     var maxTimeToMakeLargeGroup = 10.0
     
     var minLogScaleChange = 0.025
+    
+    var apparentBasePoint = HTrans()
     
     // MARK: PoincareViewDataSource
     var objectsToDraw: [HDrawable] {
@@ -637,9 +641,10 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 if let line = object as? HyperbolicPolyline {
                     for action in group {
                         if line.sidesNear(z!, withMask: action.motion, withinDistance: touchDistance).count > 0 {
+                            mask = mask.following(action.motion)
                             line.lineColor = UIColor.redColor()
                             cuffEditIndex = i
-                            editingPants = true
+                            pants.selectedIndex = i
                         }
                     }
                 }
@@ -704,8 +709,12 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         }
     }
     
+    var canRecomputeMask: Bool {
+        return !formingPolygon && !editingPants
+    }
+    
     func recomputeMask() {
-        if formingPolygon { return }
+        guard canRecomputeMask else { return }
         var bestA = mask.a.abs
         var bestMask = mask
         //        println("Trying to improve : \(bestA)")
@@ -725,8 +734,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         mask = bestMask
     }
     
-    private var oldMask = HTrans()
-    
     // Should this be split into two separate functions?
     @IBAction func zoom(gesture: UIPinchGestureRecognizer) {
         //        println("Zooming")
@@ -739,7 +746,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             if editingPants {
                 bigGroupCutoff = smallBigGroupCutoff
                 pants.maxTimeToMakeGroup = maxTimeToMakeSmallGroup
-                oldMask = mask
+                apparentBasePoint = mask.following(pants.selectedBasePoint)
             }
         case .Changed:
             if let index = cuffEditIndex {
@@ -749,6 +756,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 print("Rescaling cuff by " + gesture.scale.nice, when: tracingZoom)
                 cuffLengths[index] = cuffLengths[index] * gesture.scale.double
                 gesture.scale = 1
+                mask = apparentBasePoint.following(pants.selectedBasePoint.inverse)
                 setUpPants()
                 guidelines[index].lineColor = UIColor.redColor()
             } else {
@@ -767,7 +775,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 bigGroupCutoff = largeBigGroupCutoff
                 pants.maxTimeToMakeGroup = maxTimeToMakeLargeGroup
                 setUpPants()
-                editingPants = false
                 cuffEditIndex = nil
             }
         default: break

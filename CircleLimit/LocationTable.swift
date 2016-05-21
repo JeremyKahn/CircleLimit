@@ -175,6 +175,7 @@ public func leastFixedPoint<T: Locatable>(base: [T], map: T -> [T], match: (T, T
     table.add(base)
     var frontier = base
     while frontier.count > 0 && secondsSince(startTime) < maxTime {
+        print("LFP new frontier time elapsed: " + secondsSince(startTime).nice)
         let potentialNewFrontier: [T] = frontier.reduce([], combine: {$0 + map($1)})
         // frontier is the new frontier
         frontier = []
