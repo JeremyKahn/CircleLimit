@@ -149,13 +149,70 @@ extension Double {
 }
 
 
+// This fails to distinguish geodesics through the origin
+// But it works quite well for _disjoint_ geodesics
+struct HeuristicGeodesic: Locatable, Matchable {
+    
+    typealias Location = IntArray
+    
+    static let multiplier: Double = 64 * 1024
+    
+    static let tolerance: Double = pow(2, -15)
+    
+    private var sumOfEndpoints: Complex64
+    
+    var endPoints: (Complex64, Complex64)
+    
+    var location: Location {
+        let a = [sumOfEndpoints.re, sumOfEndpoints.im]
+        return IntArray(values: a.map() {Int($0 * HeuristicGeodesic.multiplier)})
+    }
+    
+    static func neighbors(place: Location) -> [Location] {
+        return place.neighbors
+    }
+    
+    init(_ a: Complex64, _ b: Complex64) {
+        sumOfEndpoints = a + b
+        endPoints = (a, b)
+    }
+    
+    init(_ a: HPoint, _ b: HPoint) {
+        let (u, v) = endPointsOfGeodesicThrough(a, b)
+        self.init(u, v)
+    }
+    
+    init(v: HTrans) {
+        let w = v.following(HTrans.goForward(1))
+        self.init(v.appliedToOrigin, w.appliedToOrigin)
+    }
+    
+    func matches(y: HeuristicGeodesic) -> Bool {
+        return (sumOfEndpoints - y.sumOfEndpoints).abs < HeuristicGeodesic.tolerance
+    }
+    
+    func transformedBy(M: HTrans) -> HeuristicGeodesic {
+        let (a, b) = endPoints
+        return HeuristicGeodesic(M.appliedTo(a), M.appliedTo(b))
+    }
+ 
+    var approximateDistanceToOrigin: Double {
+        return 0.5 * log(16/(4 - sumOfEndpoints.abs2))
+    }
+}
 
-func geodesicArcCenterRadiusStartEnd(a: HPoint, b: HPoint) -> (Complex64, Double, Double, Double, Bool) {
+
+func endPointsOfGeodesicThrough(a: HPoint, _ b:HPoint) -> (Complex64, Complex64) {
     let M = HyperbolicTransformation(a: a)
     let M_inverse = M.inverse
     let bPrime = M.appliedTo(b)
     var (u, v) = (-bPrime.z/bPrime.abs, bPrime.z/bPrime.abs)
     (u, v) = (M_inverse.appliedTo(u), M_inverse.appliedTo(v))
+    return (u, v)
+}
+
+func geodesicArcCenterRadiusStartEnd(a: HPoint, b: HPoint) -> (Complex64, Double, Double, Double, Bool) {
+    var (u, v) = endPointsOfGeodesicThrough(a, b)
     var theta = 0.5 * (v/u).arg
     var (aa, bb) = (a, b)
     var swapped = false

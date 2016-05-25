@@ -16,8 +16,59 @@ public protocol Locatable {
     
     var location : Location {get}
     
+    // TODO: Rewrite so that neighbors is a property for Location
     static func neighbors(_: Location) -> [Location]
 }
+
+public protocol MyHashable {
+    
+    var hashValue: Int {get}
+    
+}
+
+public class IntArray: Hashable {
+    
+    static var multiplier = 23905823
+    
+    var values: [Int]
+    
+    public var hashValue: Int {
+        var result = 0
+        for value in values {
+            result = result * IntArray.multiplier + value
+        }
+        return result
+    }
+    
+    init(values: [Int]) {
+        self.values = values
+    }
+    
+    public var neighbors: [IntArray] {
+        var preResult: [[Int]] = [[]]
+        for value in values {
+            var t: [[Int]] = []
+            for list in preResult {
+                let m: [[Int]] = [list + [value - 1], list + [value], list + [value + 1]]
+                t += m
+            }
+            preResult = t
+        }
+        return preResult.map() {IntArray(values: $0)}
+    }
+
+    
+}
+
+public func ==(lhs: IntArray, rhs: IntArray) -> Bool {
+    guard lhs.values.count == rhs.values.count else {return false}
+    var result = true
+    for i in 0..<lhs.values.count {
+        result = result && (lhs.values[i] == rhs.values[i])
+    }
+    return result
+}
+
 
 public protocol Matchable {
  
@@ -126,9 +177,25 @@ public class WeakLocationDictionary<Key: protocol<Locatable, Matchable>, Value> 
 // this requires that a is neighbor of b whenever a.matches(b)
 public class LocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
     
-    var dictionary: Dictionary<Key.Location, Array<(Key, Value)>> = Dictionary()
+    private var dictionary: Dictionary<Key.Location, Array<(Key, Value)>> = Dictionary()
     
-    subscript (key: Key) -> Value? {
+    public var keyValuePairs: [(Key, Value)] {
+        var result: [(Key, Value)] = []
+        for k in dictionary.keys {
+            result += dictionary[k]!
+        }
+        return result
+    }
+    
+    public var values: [Value] {
+        return keyValuePairs.map() {$0.1}
+    }
+    
+    public var keys: [Key] {
+        return keyValuePairs.map() {$0.0}
+    }
+    
+    public subscript (key: Key) -> Value? {
         let neighbors = Key.neighbors(key.location)
         let potentialMatches = dictionary.valuesForKeys(neighbors).flatten()
         for (enteredKey, value) in potentialMatches {
@@ -140,7 +207,7 @@ public class LocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
     }
     
     
-    func updateValue(value: Value, forKey key: Key)  -> Value? {
+    public func updateValue(value: Value, forKey key: Key)  -> Value? {
         let neighbors = Key.neighbors(key.location)
         for neighbor in neighbors {
             if let list = dictionary[neighbor] {

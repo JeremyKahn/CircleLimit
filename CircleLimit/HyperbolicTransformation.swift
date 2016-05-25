@@ -10,6 +10,8 @@ import Foundation
 
 typealias HTrans = HyperbolicTransformation
 
+typealias HUVect = HTrans
+
 // representation is z -> lambda * (z - a)/(1 - a.bar * z)
 struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
@@ -71,13 +73,40 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return HyperbolicTransformation(a: -distanceToAbs(distance) + 0.i)
     }
     
+    static func rotate(angle: Double) -> HTrans {
+        return HTrans(lambda: exp(angle.i))
+    }
+    
     static let turnLeft = HyperbolicTransformation(lambda: 1.i)
     
     static let turnRight = HyperbolicTransformation(lambda: -1.i)
     
+    static let turnAround = HyperbolicTransformation(lambda: -1 + 0.i)
+    
     var appliedToOrigin: HPoint {
         return appliedTo(HPoint())
     }
+    
+    var turnLeft: HTrans {
+        return following(HTrans.turnLeft)
+    }
+    
+    var turnRight: HTrans {
+        return following(HTrans.turnRight)
+    }
+    
+    var turnAround: HTrans {
+        return following(HTrans.turnAround)
+    }
+    
+    func rotate(angle: Double) -> HTrans {
+        return following(HTrans.rotate(angle))
+    }
+    
+    func goForward(distance: Double) -> HTrans {
+        return following(HTrans.goForward(distance))
+    }
+    
     // MARK: Group operations
     static let identity = HyperbolicTransformation()
     
@@ -89,6 +118,14 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     func appliedTo(z: HPoint) -> HPoint {
         return HPoint(appliedTo(z.z))
+    }
+    
+    func appliedTo(g: HeuristicGeodesic) -> HeuristicGeodesic {
+        return g.transformedBy(self)
+    }
+    
+    func appliedTo(M: HUVect) -> HUVect {
+        return following(M)
     }
     
     var inverse: HyperbolicTransformation

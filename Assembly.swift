@@ -6,7 +6,20 @@
 //  Copyright © 2016 Jeremy Kahn. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+struct MatchingVector {
+    var P: Pants
+    var v: HTrans
+    var i: Int
+    
+    var match: MatchingVector? {
+        let temp = P.adjacenciesAndTwists[i]
+        guard let (Q, j, twist) = temp else {return nil}
+        let w = v.following(HTrans.goForward(twist)).following(HTrans.turnAround)
+        return MatchingVector(P: Q, v: w, i: j)
+    }
+}
 
 class Pants {
     
@@ -15,17 +28,36 @@ class Pants {
     let left = HyperbolicTransformation.turnLeft
     let right = HyperbolicTransformation.turnRight
     
+    func updateEverything() {
+        updateGenerators()
+        updateGroupoidGenerators()
+//        generateGroup()
+        let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
+                      UIColor.cyanColor(),UIColor.magentaColor(),UIColor.orangeColor()]
+        for i in 0..<6 {
+            guidelines[i].lineColor = colors[i]
+        }
+        
+    }
+    
+    init(halfLengths: [Double]) {
+        assert(halfLengths.count == 3)
+        self.halfLengths = halfLengths
+        updateEverything()
+    }
+    
+    // MARK: Parameters and values
     // The half-lengths of the cuffs, which are generally given as the input
     var halfLengths = Array(count: 3, repeatedValue: acosh(2.0)) {
         didSet {
-            updateGenerators()
-            generateGroup()
+            updateEverything()
         }
     }
     
     // The lengths of the "short orthogeodesics" between pairs of cuffs
     var orthoLengths = Array(count: 3, repeatedValue: acosh(2.0))
     
+    // MARK: Marked vectors and generators
     // The unit vectors for the start vectors along the cuffs for the central hexagon
     var tMinus = Array(count: 3, repeatedValue: Pants.identity)
     
@@ -35,6 +67,8 @@ class Pants {
     // The three generators for the pants group
     var generators = Array(count: 3, repeatedValue: Pants.identity)
     
+    var groupoidGenerators = [GroupoidElement]()
+    
     var generatorsAndInverses: [HTrans] {
         return generators + generators.map({$0.inverse})
     }
@@ -43,68 +77,6 @@ class Pants {
         return generators.map() {Action(M: $0)}
     }
     
-    // The guidelines for the cuffs and short orthogeodesics
-    var cuffGuidelines: [HDrawable] = []
-    var orthoGuidelines: [HDrawable] = []
-    
-    var guidelines: [HDrawable] {
-        return cuffGuidelines + orthoGuidelines
-    }
-    
-    // This stores how we're adjacent to the other pants.
-    // We should have, for (p, i, s) = adjacencies[j], that p.adjacencies[i] = (self, j, s).
-    var adjacenciesAndTwists = Array<(Pants, Int, Double)?>(count: 3, repeatedValue: nil)
-    
-    var selectedIndex = 0
-    
-    var selectedBasePoint: HTrans {
-        return tMinus[selectedIndex]
-    }
-    
-    var keyPoints: [HPoint] {
-        let keyPointsWithVectors = tMinus + tPlus
-        return keyPointsWithVectors.map() {$0.appliedToOrigin}
-    }
-    
-    var theCenterPointAndRadius: (HPoint, Double) {
-        return centerPointAndRadius(keyPoints, delta: 0.1)
-    }
-    
-    var cutoffDistance: Double = absToDistance(0.8)
-    
-    var radius: Double {
-        return theCenterPointAndRadius.1
-    }
-    
-    var adjustedCutoffDistance: Double {
-        return cutoffDistance + 3 * radius
-    }
-    
-    var timeToMakeGroup = 0.0
-    
-    var maxTimeToMakeGroup = 3.0
-    
-    var group: [HTrans] = []
-    
-    private var baseGroup = [HTrans()]
-    
-    var dressedGroup: [Action] {
-        return group.map() {Action(M: $0)}
-    }
-    
-    init(halfLengths: [Double]) {
-        assert(halfLengths.count == 3)
-        self.halfLengths = halfLengths
-        updateGenerators()
-        generateGroup()
-    }
-
-//    func setCuffAtIndex(i: Int, to newLength: Double) {
-//        halfLengths[i] = newLength
-//        updateGenerators()
-//        generateGroup()
-//    }
-    
     func updateGenerators() {
         for i in 0..<3 {
             orthoLengths[i] = sideInRightAngledHexagonWithOpposite(halfLengths[i], andAdj: halfLengths[(i+1) % 3], andAdj: halfLengths[(i + 2) % 3])
@@ -112,7 +84,7 @@ class Pants {
         for i in 0..<3 {
             tPlus[i] = tMinus[i].following(HyperbolicTransformation.goForward(halfLengths[i]))
             tMinus[(i+1)%3] = tPlus[i].following(left).following(HyperbolicTransformation.goForward(orthoLengths[(i+2)%3])).following(left)
-
+            
         }
         for i in 0..<3 {
             generators[i] = tMinus[i].following(HyperbolicTransformation.goForward(2 * halfLengths[i])).following(tMinus[i].inverse)
@@ -127,14 +99,105 @@ class Pants {
         }
     }
     
+    func updateGroupoidGenerators() {
+        groupoidGenerators = generatorsAndInverses.map() {GroupoidElement(M: $0, start: self, end: self)}
+        for i in 0..<3 {
+            let home = MatchingVector(P: self, v: tMinus[i], i: i)
+            if let visitor = home.match {
+                let R = visitor.v.following(visitor.P.tMinus[visitor.i].inverse)
+                groupoidGenerators.append(GroupoidElement(M: R, start: self, end: visitor.P))
+            }
+        }
+    }
+
+    
+    // MARK: Guidelines
+    // The guidelines for the cuffs and short orthogeodesics
+    var cuffGuidelines: [HDrawable] = []
+    var orthoGuidelines: [HDrawable] = []
+    
+    var guidelines: [HDrawable] {
+        return cuffGuidelines + orthoGuidelines
+    }
+    
+    // MARK: Connections to other pants
+    // This stores how we're adjacent to the other pants.
+    // We should have, for (p, i, s) = adjacencies[j], that p.adjacencies[i] = (self, j, s).
+    var adjacenciesAndTwists = Array<(Pants, Int, Double)?>(count: 3, repeatedValue: nil)
+    
+    static var matchingTolerance = 0.000001
+    
+    static func match(pants0: Pants, index0: Int, pants1: Pants, index1: Int, twist: Double) {
+        assert((pants0.halfLengths[index0] - pants1.halfLengths[index1]).abs < matchingTolerance)
+        // YOU SHOULD PROBABLY MAKE THE CUFFS EXACTLY EQUAL IF THEY ARE NOT ALREADY
+        pants0.adjacenciesAndTwists[index0] = (pants1, index1, twist)
+        pants1.adjacenciesAndTwists[index1] = (pants0, index0, twist)
+    }
+    
+//    var baseRepresentatives = [HTrans](count: 3, repeatedValue: HTrans())
+    
+    
+    // MARK: Selected Base Point
+    var selectedIndex = 0
+    
+    var selectedBasePoint: HTrans {
+        return tMinus[selectedIndex]
+    }
+    
+    // MARK: Making the group
+    var keyPoints: [HPoint] {
+        let keyPointsWithVectors = tMinus + tPlus
+        return keyPointsWithVectors.map() {$0.appliedToOrigin}
+    }
+    
+    var theCenterPointAndRadius: (HPoint, Double) {
+        return centerPointAndRadius(keyPoints, delta: 0.1)
+    }
+    
+    var radius: Double {
+        return theCenterPointAndRadius.1
+    }
+    var cutoffDistance: Double = absToDistance(0.8)
+    
+    
+    var adjustedCutoffDistance: Double {
+        return cutoffDistance + 3 * radius
+    }
+    var timeToMakeGroup = 0.0
+    
+    var maxTimeToMakeGroup = 3.0
+    
+    var group: [HTrans] = []
+    
+    private var baseGroup = [HTrans()]
+    
+    var dressedGroup: [Action] {
+        return group.map() {Action(M: $0)}
+    }
+    
+
+//    func setCuffAtIndex(i: Int, to newLength: Double) {
+//        halfLengths[i] = newLength
+//        updateGenerators()
+//        generateGroup()
+//    }
+    
+    var withinRange: HTrans -> Bool {
+        return {
+            [theCenterPointAndRadius, cutoffDistance]
+            (g: HTrans) -> Bool in
+            let (basePointForGeneration, radius) = theCenterPointAndRadius
+            return g.appliedTo(basePointForGeneration).distanceTo(basePointForGeneration) < cutoffDistance + 3 * radius
+        }
+    }
+    
     func generateGroupFromBaseGroup() {
         let startTime = NSDate()
-        let (basePointForGeneration, radius) = theCenterPointAndRadius
         let rightMultiplyByGenerators = {
-            [basePointForGeneration, radius, cutoffDistance, generatorsAndInverses]
+            [withinRange, generatorsAndInverses]
             (M: HTrans) -> [HTrans] in
             let list = generatorsAndInverses.map() {M.following($0)}
-            return list.filter() {$0.appliedTo(basePointForGeneration).distanceTo(basePointForGeneration) < cutoffDistance + 3 * radius}
+            return list.filter(withinRange)
         }
         let nearEnough = { (M0: HTrans, M1: HTrans) -> Bool in M0.nearTo(M1) }
         group = leastFixedPoint(baseGroup, map: rightMultiplyByGenerators, match: nearEnough, maxTime: maxTimeToMakeGroup)
@@ -149,6 +212,51 @@ class Pants {
     func expandGroup() {
         baseGroup = group
         generateGroupFromBaseGroup()
+    }
+    
+    struct GroupoidElement : Locatable {
+        
+        var M: HTrans
+        var start: Pants
+        var end: Pants
+        
+        func sameAs(t: GroupoidElement) -> Bool {
+            return start === t.start && end === t.end && M.nearTo(t.M)
+        }
+        
+        func canFollow(t: GroupoidElement) -> Bool {
+            return end === t.start
+        }
+        
+        func following(t: GroupoidElement) -> GroupoidElement {
+            assert(canFollow(t))
+            return GroupoidElement(M: M.following(t.M), start: start, end: t.end)
+        }
+        
+        var location: Int {
+            return M.location
+        }
+        
+        static func neighbors(t: Int) -> [Int] {
+            return [t-1, t, t+1]
+        }
+    }
+    
+    var groupoidCutoffDistance = 12.0
+    
+    func generatedGroupFromGroupoid(generators: [GroupoidElement]) -> [HTrans] {
+        let rightMultiplyByGenerators = {
+            [groupoidCutoffDistance]
+            (t: GroupoidElement) -> [GroupoidElement] in
+            let allowed = generators.filter({t.canFollow($0)})
+            let list = allowed.map() {t.following($0)}
+            return list.filter() {$0.M.distance < groupoidCutoffDistance}
+        }
+        let nearEnoughAndMatching = { (t0: GroupoidElement, t1: GroupoidElement) -> Bool in t0.sameAs(t1)}
+        let base = [GroupoidElement(M: HTrans(), start: self, end: self)]
+        let generatedGroupoid = leastFixedPoint(base, map: rightMultiplyByGenerators, match: nearEnoughAndMatching, maxTime: maxTimeToMakeGroup)
+        let result = generatedGroupoid.filter({$0.start === self && $0.end === self}).map({$0.M})
+        return result
     }
     
 }

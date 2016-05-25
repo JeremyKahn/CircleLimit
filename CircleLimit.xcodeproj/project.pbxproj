@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B21D0E11CF35BE9001FF636 /* Queue.swift */; };
 		1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */; };
-		1B2609F01CDA6B7300B1172F /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609EF1CDA6B7300B1172F /* Assembly.swift */; };
 		1B3643161CF0B0F300F9D6AD /* TimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643151CF0B0F300F9D6AD /* TimeManager.swift */; };
 		1B3643181CF0BE6100F9D6AD /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643171CF0BE6100F9D6AD /* Flags.swift */; };
+		1B4CA0A71CF4A64D0022C41B /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
+		1B4CA0A91CF4B1990022C41B /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
+		1B4CA0AB1CF4B3340022C41B /* Groupoid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */; };
 		1B5979EF1CBB17A400CEAEA7 /* ColorPicker.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B5979DC1CBB17A400CEAEA7 /* ColorPicker.storyboard */; };
 		1B5979F11CBB17A400CEAEA7 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */; };
 		1B5979F21CBB17A400CEAEA7 /* ColorProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */; };
@@ -51,10 +54,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1B21D0E11CF35BE9001FF636 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleVCConfigurations.swift; path = ../CircleVCConfigurations.swift; sourceTree = "<group>"; };
-		1B2609EF1CDA6B7300B1172F /* Assembly.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Assembly.swift; path = ../Assembly.swift; sourceTree = "<group>"; };
 		1B3643151CF0B0F300F9D6AD /* TimeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeManager.swift; sourceTree = "<group>"; };
 		1B3643171CF0BE6100F9D6AD /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
+		1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hexagon.swift; sourceTree = "<group>"; };
+		1B4CA0A81CF4B1990022C41B /* Pants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pants.swift; sourceTree = "<group>"; };
+		1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Groupoid.swift; sourceTree = "<group>"; };
 		1B5979DD1CBB17A400CEAEA7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ColorPicker.storyboard; sourceTree = "<group>"; };
 		1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorProtocols.swift; sourceTree = "<group>"; };
@@ -134,7 +140,8 @@
 		1B6EB4761CAD78D900B08F09 /* Geometry */ = {
 			isa = PBXGroup;
 			children = (
-				1B2609EF1CDA6B7300B1172F /* Assembly.swift */,
+				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
+				1B4CA0A81CF4B1990022C41B /* Pants.swift */,
 				1B3643151CF0B0F300F9D6AD /* TimeManager.swift */,
 				1BDBD0891B5C2BEA0057B710 /* Complex.swift */,
 				1BDBD0831B5C22740057B710 /* PoincareDisk.swift */,
@@ -146,6 +153,8 @@
 		1B6EB4781CAD798600B08F09 /* Algorithms */ = {
 			isa = PBXGroup;
 			children = (
+				1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */,
+				1B21D0E11CF35BE9001FF636 /* Queue.swift */,
 				1BA2D5B21CA1E1C90036ACCD /* CenterPoint.swift */,
 				1B740F991C06A2FC0082BC4C /* Extensions.swift */,
 				1BC1B2C31C3D71B400FF17C6 /* GroupGeneration.swift */,
@@ -324,22 +333,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BDBD05F1B5C21370057B710 /* AppDelegate.swift in Sources */,
-				1B2609F01CDA6B7300B1172F /* Assembly.swift in Sources */,
 				1B5979F21CBB17A400CEAEA7 /* ColorProtocols.swift in Sources */,
 				1B6EB4731CAD724900B08F09 /* HyperbolicPolygon.swift in Sources */,
 				1BC1B2C41C3D71B400FF17C6 /* GroupGeneration.swift in Sources */,
 				1BC1B2C21C3D713300FF17C6 /* HyperbolicTransformation.swift in Sources */,
 				1B5979FB1CBB17A400CEAEA7 /* TriangleView.swift in Sources */,
 				1B6EB4751CAD727700B08F09 /* HDrawable.swift in Sources */,
+				1B4CA0AB1CF4B3340022C41B /* Groupoid.swift in Sources */,
 				1B5979F11CBB17A400CEAEA7 /* ColorExtensions.swift in Sources */,
 				1BC1B2C01C3D702D00FF17C6 /* LocationTable.swift in Sources */,
+				1B4CA0A91CF4B1990022C41B /* Pants.swift in Sources */,
 				1B6EB46E1CAD711D00B08F09 /* HyperbolicDot.swift in Sources */,
 				1BDD539F1B7162620054445B /* DynamicProgramming.swift in Sources */,
 				1BA2D5B31CA1E1C90036ACCD /* CenterPoint.swift in Sources */,
 				1B3643161CF0B0F300F9D6AD /* TimeManager.swift in Sources */,
 				1B5979F91CBB17A400CEAEA7 /* LightnessGradientView.swift in Sources */,
 				1BDBD08F1B5C43590057B710 /* PoincareView.swift in Sources */,
+				1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */,
 				1B740F9A1C06A2FC0082BC4C /* Extensions.swift in Sources */,
+				1B4CA0A71CF4A64D0022C41B /* Hexagon.swift in Sources */,
 				1BDBD0821B5C21BE0057B710 /* CircleViewController.swift in Sources */,
 				1B6EB4701CAD716D00B08F09 /* HyperbolicPolyline.swift in Sources */,
 				1BDBD0841B5C22740057B710 /* PoincareDisk.swift in Sources */,

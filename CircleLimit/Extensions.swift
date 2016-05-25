@@ -8,6 +8,33 @@
 
 import UIKit
 
+// MARK: Arithmetic and mathematical functions
+infix operator %% {associativity left precedence 150}
+
+func %%(left: Int, right: Int) -> Int {
+    if (right == 0) {return 0}
+    if (right < 0) {return left %% (-right) }
+    if (left >= 0) {return left % right}
+    return left % right + right
+}
+
+func %%(left: Double, right: Double) -> Double {
+    if (right == 0) {return 0}
+    if (right < 0) {return left %% (-right) }
+    if (left >= 0) {return left % right}
+    return left % right + right
+}
+
+func coth(x: Double) -> Double {
+    return 1/tanh(x)
+}
+
+func acoth(y: Double) -> Double {
+    return atanh(1/y)
+}
+
+
+// MARK: Timing
 extension NSTimer {
     
 
@@ -22,6 +49,7 @@ func secondsSince(date: NSDate) -> Double {
     return NSDate().timeIntervalSinceDate(date)
 }
 
+// MARK: Printing
 func print(s: String, when condition: Bool) {
     if condition {
         print(s)
@@ -54,6 +82,15 @@ extension Double: NicelyPrinting {
     
 }
 
+extension Complex where T : NicelyPrinting {
+    var nice: String {
+        let plus = im.isSignMinus ? "" : "+"
+        return "(\(re.nice)\(plus)\(im.nice).i)"
+    }
+}
+
+// MARK: Collection Extensions
+
 extension Dictionary {
     
     func valuesForKeys(keys: [Key]) -> [Value] {
@@ -85,15 +122,11 @@ extension Array {
 
 }
 
+// MARK: Geometry
+
 extension Complex {
     var abs2: T {
         return re * re + im * im
     }
 }
 
-extension Complex where T : NicelyPrinting {
-    var nice: String {
-        let plus = im.isSignMinus ? "" : "+"
-        return "(\(re.nice)\(plus)\(im.nice).i)"
-    }
-}

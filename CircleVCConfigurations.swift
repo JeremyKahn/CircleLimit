@@ -13,8 +13,8 @@ extension CircleViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("CircleViewController loaded")
-        pants = Pants(halfLengths: cuffLengths)
-        setUpPants()
+        makeInitialPants()
+        setUpBothPants()
     }
     
     func setUpThreeThreeFourGroup() {
@@ -51,14 +51,40 @@ extension CircleViewController {
         searchingGroup = groupForIntegerDistance[5].filter() { $0.action == I }
     }
     
-    
-    func setUpPants() {
-        pants.halfLengths = cuffLengths
-        //        pants.basePointForGeneration = mask.inverse.appliedToOrigin
-        pants.cutoffDistance = bigGroupCutoffDistance
-        guidelines = pants.guidelines
-        let pantsGroup = pants.dressedGroup
-        makeGroupForIntegerDistanceWith(pantsGroup)
-        searchingGroup = groupForIntegerDistance[min(7, maxGroupDistance)]
+    // We're going to work first with two pants with the i'th cuffs joined
+    func makeInitialPants() {
+        let pants0 = Pants(cuffHalfLengths: cuffLengths)
+        let pants1 = Pants(cuffHalfLengths: cuffLengths)
+        for i in 0...2 {
+            Pants.match(pants0, index0: i, pants1: pants1, index1: i, twist: 0.5)
+        }
+        pantsArray = [pants0, pants1]
+        for p in pantsArray {
+            p.setUpGroupoidElementsToAdjacentPants()
+        }
     }
+        
+    // We're assuming here that the pants have already had their cuffHalfLengths set
+    // And now we're computing the groupoid, the group, and the guidelines, and then setting up all the group segments
+    func setUpBothPants() {
+        pants = pantsArray[0]
+        let baseHexagon = pants.hexagons[0]
+        let groupoidGenerators = pantsArray.reduce([], combine: {$0 + $1.groupoidGenerators})
+        let base = [GroupoidElement(M: HTrans(), start: baseHexagon, end: baseHexagon)]
+        let groupoid = generatedGroupoid(base, generators: groupoidGenerators, withinBounds: {$0.M.distance < 12.0}, maxTime: 10.0)
+        let group = groupFromGroupoid(groupoid, startingAndEndingAt: baseHexagon)
+        guidelines = []
+        for Q in pantsArray {
+            for i in 0...1 {
+                let hexagon = Q.hexagons[i]
+                let motion = leastElementOfGroupoid(groupoid, toGoFrom: baseHexagon, to: hexagon)!.M
+                let hexagonGuidelines = hexagon.guidelines.map({$0.transformedBy(motion)})
+                guidelines += hexagonGuidelines
+            }
+        }
+        let dressedGroup = group.map() {Action(M: $0)}
+        makeGroupForIntegerDistanceWith(dressedGroup)
+        searchingGroup = groupForIntegerDistance[min(7, maxGroupDistance)]        
+    }
+    
 }

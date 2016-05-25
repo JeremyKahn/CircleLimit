@@ -110,13 +110,15 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // MARK: Stuff to edit pants
     var pants: Pants!
     
-    var cuffGuidelines: [HDrawable] {
-        return pants.cuffGuidelines
-    }
+    var pantsArray: [Pants] = []
     
-    var orthoGuidelines: [HDrawable] {
-        return pants.orthoGuidelines
-    }
+//    var cuffGuidelines: [HDrawable] {
+//        return pants.cuffGuidelines
+//    }
+//    
+//    var orthoGuidelines: [HDrawable] {
+//        return pants.orthoGuidelines
+//    }
     
     var canEditPants = true
     
@@ -210,7 +212,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     var maxGroupDistance: Int {
-        return Int(pants.adjustedCutoffDistance) + 1
+//        return Int(pants.adjustedCutoffDistance) + 1
+        return 13
     }
 
     
@@ -635,20 +638,20 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             stateStack.append(State(completedObjects: nil, newCurve: (newCurve!.copy() as! HyperbolicPolyline)))
             newCurve!.addPoint(z!)
         } else if canEditPants && !editingPants {
-            let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: cuffGuidelines)
-            for i in 0...2 {
-                let (object, group) = g[i]
-                if let line = object as? HyperbolicPolyline {
-                    for action in group {
-                        if line.sidesNear(z!, withMask: action.motion, withinDistance: touchDistance).count > 0 {
-                            mask = mask.following(action.motion)
-                            line.lineColor = UIColor.redColor()
-                            cuffEditIndex = i
-                            pants.selectedIndex = i
-                        }
-                    }
-                }
-            }
+//            let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: cuffGuidelines)
+//            for i in 0...2 {
+//                let (object, group) = g[i]
+//                if let line = object as? HyperbolicPolyline {
+//                    for action in group {
+//                        if line.sidesNear(z!, withMask: action.motion, withinDistance: touchDistance).count > 0 {
+//                            mask = mask.following(action.motion)
+//                            line.lineColor = UIColor.redColor()
+//                            cuffEditIndex = i
+//                            pants.selectedIndex = i
+//                        }
+//                    }
+//                }
+//            }
         }
         poincareView.setNeedsDisplay()
     }
@@ -744,21 +747,21 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             //            newCurve = nil
             cancelEffectOfTouches()
             if editingPants {
-                bigGroupCutoff = smallBigGroupCutoff
-                pants.maxTimeToMakeGroup = maxTimeToMakeSmallGroup
-                apparentBasePoint = mask.following(pants.selectedBasePoint)
+//                bigGroupCutoff = smallBigGroupCutoff
+//                pants.maxTimeToMakeGroup = maxTimeToMakeSmallGroup
+//                apparentBasePoint = mask.following(pants.selectedBasePoint)
             }
         case .Changed:
             if let index = cuffEditIndex {
-                if abs(log(Double(gesture.scale))) < minLogScaleChange {
-                    break
-                }
-                print("Rescaling cuff by " + gesture.scale.nice, when: tracingZoom)
-                cuffLengths[index] = cuffLengths[index] * gesture.scale.double
-                gesture.scale = 1
-                mask = apparentBasePoint.following(pants.selectedBasePoint.inverse)
-                setUpPants()
-                guidelines[index].lineColor = UIColor.redColor()
+//                if abs(log(Double(gesture.scale))) < minLogScaleChange {
+//                    break
+//                }
+//                print("Rescaling cuff by " + gesture.scale.nice, when: tracingZoom)
+//                cuffLengths[index] = cuffLengths[index] * gesture.scale.double
+//                gesture.scale = 1
+//                mask = apparentBasePoint.following(pants.selectedBasePoint.inverse)
+//                setUpPants()
+//                guidelines[index].lineColor = UIColor.redColor()
             } else {
                 // This prevents repeated requests to make long calculations
 //                if pants.timeToMakeGroup > 3 * abs(log(Double(gesture.scale))) {
@@ -772,10 +775,10 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             drawing = true
             mode = .Usual
             if editingPants {
-                bigGroupCutoff = largeBigGroupCutoff
-                pants.maxTimeToMakeGroup = maxTimeToMakeLargeGroup
-                setUpPants()
-                cuffEditIndex = nil
+//                bigGroupCutoff = largeBigGroupCutoff
+//                pants.maxTimeToMakeGroup = maxTimeToMakeLargeGroup
+//                setUpPants()
+//                cuffEditIndex = nil
             }
         default: break
         }
