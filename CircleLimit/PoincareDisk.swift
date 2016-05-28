@@ -13,6 +13,7 @@ class HPoint : Equatable, CustomStringConvertible {
     init() { self.z = 0.i }
     
     init(_ z: Complex64) {
+        assert(z.abs2 < 1)
         self.z = z
     }
     
@@ -82,15 +83,25 @@ class HPoint : Equatable, CustomStringConvertible {
         } else if b.angleBetween(self, a).abs > Double.PI / 2 {
             return distanceTo(b)
         }
-            return distanceToLineThrough(a, b)
-        }
+        return distanceToLineThrough(a, b)
+    }
     
     func angleBetween(a: HPoint, _ b: HPoint) -> Double {
         let newA = moveSelfToOrigin.appliedTo(a)
         let newB = moveSelfToOrigin.appliedTo(b)
         return angleAtOriginBetween(newA, newB)
     }
-
+    
+    static func randomInstance() -> HPoint {
+        var (x, y) = (0.0, 0.0)
+        var z = 0 + 0.i
+        repeat {
+            x = randomDouble()
+            y = randomDouble()
+            z = x + y.i
+        } while (z.abs2 >= 1)
+        return HPoint(z)
+    }
 }
 
 func ==(lhs: HPoint, rhs: HPoint) -> Bool {
@@ -195,7 +206,7 @@ struct HeuristicGeodesic: Locatable, Matchable {
         let (a, b) = endPoints
         return HeuristicGeodesic(M.appliedTo(a), M.appliedTo(b))
     }
- 
+    
     var approximateDistanceToOrigin: Double {
         return 0.5 * log(16/(4 - sumOfEndpoints.abs2))
     }

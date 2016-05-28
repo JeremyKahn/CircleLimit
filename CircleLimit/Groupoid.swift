@@ -12,8 +12,8 @@ import Foundation
 struct GroupoidElement : Locatable {
     
     var M: HTrans
-    var start: AnyObject
-    var end: AnyObject
+    unowned var start: AnyObject
+    unowned var end: AnyObject
     
     func sameAs(t: GroupoidElement) -> Bool {
         return start === t.start && end === t.end && M.nearTo(t.M)
@@ -34,6 +34,10 @@ struct GroupoidElement : Locatable {
     
     static func neighbors(t: Int) -> [Int] {
         return [t-1, t, t+1]
+    }
+    
+    static func identity(home: AnyObject) -> GroupoidElement {
+        return GroupoidElement(M: HTrans.identity, start: home, end: home)
     }
     
 }

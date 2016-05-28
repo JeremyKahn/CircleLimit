@@ -10,6 +10,8 @@ import Foundation
 
 class Hexagon {
     
+    var baseMask = HTrans()
+    
     var sideLengths: [Double] = Array<Double>(count: 6, repeatedValue: acosh(2.0))
     
     var firstParts: [Double] = Array<Double>(count: 6, repeatedValue: 0.0)

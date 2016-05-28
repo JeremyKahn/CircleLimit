@@ -15,53 +15,69 @@ typealias HUVect = HTrans
 // representation is z -> lambda * (z - a)/(1 - a.bar * z)
 struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
-    var a: Complex64 = Complex64()
+    var a: Complex64 {
+        return -v/u
+    }
     
-    var lambda: Complex64 = Complex64(1.0, 0.0)
+    var lambda: Complex64 {
+        return u/u.conj
+    }
+    
+    var u: Complex64 = Complex64(1.0, 0.0)
+    
+    var v: Complex64 = Complex64()
     
     // MARK: Initializers
+    
+    // Does not check that the input is valid
+    init(u: Complex64, v: Complex64) {
+        self.u = u
+        self.v = v
+    }
     
     init(lambda: Complex64) {
         var l = lambda
         l.abs = 1.0
-        self.lambda = l
+        u = sqrt(l)
     }
     
     init(a: Complex64, lambda: Complex64) {
         var l = lambda
         l.abs = 1.0
-        self.a = a
-        self.lambda = l
+        u = sqrt(l/(1 - a.abs2))
+        v = -u * a
     }
     
     init(a: Complex64) {
-        self.a = a
+        u = sqrt(1 + 0.i/(1 - a.abs2))
+        v = -u * a
     }
     
     init(a: HPoint) {
-        self.a = a.z
+        self.init(a: a.z)
     }
     
     init() {
-        
     }
     
     init(rotationInTurns: Double) {
         let x = rotationInTurns * Double.PI * 2
-        lambda = exp(x.i)
+        self.init(rotationInRadians: x)
     }
     
     init(rotationInRadians: Double) {
-        lambda = exp(rotationInRadians.i)
+        u = exp(rotationInRadians.i/2)
     }
     
     init(hyperbolicTranslation: Double) {
-        a = -sinh(hyperbolicTranslation/2)/cosh(hyperbolicTranslation/2) + 0.i
+        let t = hyperbolicTranslation/2
+        u = cosh(t) + 0.i
+        v = sinh(t) + 0.i
     }
     
     // MARK: Computed Properties
     var abs: Double {
-        return a.abs
+        return v.abs/u.abs
     }
     
     var distance: Double {
@@ -70,11 +86,11 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     // MARK: Instructions
     static func goForward(distance: Double) -> HyperbolicTransformation {
-        return HyperbolicTransformation(a: -distanceToAbs(distance) + 0.i)
+        return HyperbolicTransformation(hyperbolicTranslation: distance)
     }
     
     static func rotate(angle: Double) -> HTrans {
-        return HTrans(lambda: exp(angle.i))
+        return HTrans(rotationInRadians: angle)
     }
     
     static let turnLeft = HyperbolicTransformation(lambda: 1.i)
@@ -111,8 +127,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     static let identity = HyperbolicTransformation()
     
     func appliedTo(z: Complex64) -> Complex64 {
-        var w = (z - a) / (1 - a.conj * z)
-        w *= lambda
+        let w = (u * z + v) / (v.conj * z + u.conj)
         return w
     }
     
@@ -129,31 +144,30 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     var inverse: HyperbolicTransformation
-        { return HyperbolicTransformation(a: -self.a * self.lambda, lambda: self.lambda.conj) }
+    { return HyperbolicTransformation(u: u.conj, v: -v) }
     
     // So far this finds the fixed point for an elliptic element
     var fixedPoint: HPoint? {
-        guard lambda != 1 + 0.i else {return nil}
-        if a == 0  { return HPoint() } // Maybe we should return  -a * lambda * (1 - lambda) for small a
-        let num = 4 * a.abs2 * lambda
-        let denom = (1 - lambda) * (1 - lambda)
-        let thingInside = 1 + num/denom
-        // we should have thingInside.im == 0
-        guard thingInside.re > 0 else {return nil}
-        let mult = (1 - lambda)/(2 * a.conj)
-        let fp = mult * (1 - sqrt(thingInside.re))
-        return HPoint(fp)
+        if v == 0 {
+            if u * u == 1 { return nil }
+            else { return HPoint() }
+        }
+        let thingInside = 1 - u.re * u.re
+        guard thingInside > 0 else {return nil}
+        var im = (u.im.abs - sqrt(thingInside))
+        im = u.im > 0 ? im : -im
+        let z = im.i/v.conj
+        return HPoint(z)
     }
     
     // This is very close to correct when the axis is far from the origin
     // We return nil if the transformation is not hyperbolic
     var approximateDistanceOfTranslationAxisToOrigin: Double? {
-        if a == 0 {return nil}
-        let qq = -(1 - lambda) * (1 - lambda) / (lambda * a.abs2)
-        let q = qq.re
-        assert(q >= 0)
-        if q >= 4 {return nil}
-        return log(2.0) - 0.5 * log(4-q)
+        if v == 0 { return nil }
+        let thingInside = u.re * u.re - 1
+        guard thingInside > 0 else {return nil}
+        let y = sqrt(thingInside)/v.abs
+        return log(2.0) - log(y)
     }
     
     func approximateDistanceOfTranslationAxisTo(p: HPoint) -> Double? {
@@ -163,18 +177,13 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     var trace: Double {
-        let sqrtLambda = sqrt(lambda)
-        let num =  2 * sqrtLambda.re
-        let denom = sqrt(1 - a.abs2)
-        return num/denom
+        return 2 * u.re
     }
     
     /// ETL is e to the translation length
     var translationLength: Double? {
-        let tr = trace
-        if tr < 2 { return nil }
-        let sqrtETL = (tr + sqrt(tr * tr - 4))/2
-        return 2 * log(sqrtETL)
+        guard u.re >= 1 else {return nil}
+        return 2 * acosh(u.re)
     }
     
 //    func inverse() -> HyperbolicTransformation {
@@ -182,12 +191,10 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
 //    }
     
     func following(B: HyperbolicTransformation) -> HyperbolicTransformation {
-        let tZ = B.inverse.appliedTo(a)
-        var u = Complex64(1.0, 0.0) + a.conj * B.a * B.lambda
-        u = u.conj / u
-        u *= lambda * B.lambda
-        return  HyperbolicTransformation(a: tZ, lambda: u)
-    }
+        let r = u * B.u + v * B.v.conj
+        let s = u * B.v + v * B.u.conj
+        return HyperbolicTransformation(u: r, v: s)
+     }
     
     func toThe(n: Int) -> HyperbolicTransformation {
         assert(n >= 0)
@@ -200,14 +207,14 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     
     // MARK: Location, comparison, and description
-    typealias Location = Int
+    public typealias Location = Int
     
-    // Doesn't really matter how it converts the Double to an Int
-    var location: Location {
-        return Int(1/(1-a.abs)) // should always be at least 1
+    // right now location just based on absolute value
+    public var location: Location {
+        return Int(10 * u.abs2)
     }
     
-    static func neighbors(l: Location) -> [Location] {
+    public static func neighbors(l: Location) -> [Location] {
         return [l-1, l, l+1]
     }
     
@@ -217,8 +224,9 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return closeToIdentity(HyperbolicTransformation.tolerance)
     }
     
+    // This guarantees that v is about 0 and u is about plus or minus 1
     func closeToIdentity(tolerance: Double) -> Bool {
-        return a.abs < tolerance && (lambda - 1).abs < tolerance
+        return v.abs < tolerance && u.im.abs < tolerance
     }
     
     func nearTo(B:HyperbolicTransformation) -> Bool {
@@ -230,18 +238,12 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return E.closeToIdentity(tolerance)
     }
     
-    var description : String {
+    public var description : String {
         return "a: " + a.nice + " lambda: " + lambda.nice
     }
     
     // MARK: Random generation
-    
-    static func randomDouble() -> Double {
-        let n = 1000000
-        return Double(random() % n) / Double(n)
-    }
-    
-    static func randomHyperbolicTransformation() -> HyperbolicTransformation {
+    public static func randomInstance() -> HyperbolicTransformation {
         let a = (randomDouble() + randomDouble().i)/sqrt(2)
         let lambda = exp((randomDouble() * Double.PI * 2).i)
         return HyperbolicTransformation(a: a, lambda: lambda)

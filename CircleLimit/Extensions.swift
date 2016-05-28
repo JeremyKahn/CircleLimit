@@ -70,6 +70,12 @@ extension CGFloat: NicelyPrinting {
     
 }
 
+func randomDouble() -> Double {
+    let n = 1000000
+    return Double(random() % n) / Double(n)
+}
+
+
 extension Double: NicelyPrinting {
     
     var nice: String {
@@ -79,6 +85,8 @@ extension Double: NicelyPrinting {
     var int: Int {
         return Int(self)
     }
+    
+
     
 }
 

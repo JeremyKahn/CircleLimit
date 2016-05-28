@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B1754691CF5E2BC00959DA3 /* Cuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1754681CF5E2BC00959DA3 /* Cuff.swift */; };
 		1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B21D0E11CF35BE9001FF636 /* Queue.swift */; };
 		1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */; };
 		1B3643161CF0B0F300F9D6AD /* TimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643151CF0B0F300F9D6AD /* TimeManager.swift */; };
@@ -14,6 +15,7 @@
 		1B4CA0A71CF4A64D0022C41B /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
 		1B4CA0A91CF4B1990022C41B /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
 		1B4CA0AB1CF4B3340022C41B /* Groupoid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */; };
+		1B594D091CF9B423001BFD65 /* HTransTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B594D081CF9B423001BFD65 /* HTransTests.swift */; };
 		1B5979EF1CBB17A400CEAEA7 /* ColorPicker.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B5979DC1CBB17A400CEAEA7 /* ColorPicker.storyboard */; };
 		1B5979F11CBB17A400CEAEA7 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */; };
 		1B5979F21CBB17A400CEAEA7 /* ColorProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */; };
@@ -30,6 +32,28 @@
 		1BC1B2C01C3D702D00FF17C6 /* LocationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2BF1C3D702D00FF17C6 /* LocationTable.swift */; };
 		1BC1B2C21C3D713300FF17C6 /* HyperbolicTransformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */; };
 		1BC1B2C41C3D71B400FF17C6 /* GroupGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2C31C3D71B400FF17C6 /* GroupGeneration.swift */; };
+		1BD7A7CA1CF9C0560010F45E /* Cuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1754681CF5E2BC00959DA3 /* Cuff.swift */; };
+		1BD7A7CB1CF9C0560010F45E /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
+		1BD7A7CC1CF9C0560010F45E /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
+		1BD7A7CD1CF9C0560010F45E /* TimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643151CF0B0F300F9D6AD /* TimeManager.swift */; };
+		1BD7A7CE1CF9C0560010F45E /* Complex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD0891B5C2BEA0057B710 /* Complex.swift */; };
+		1BD7A7CF1CF9C0560010F45E /* PoincareDisk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD0831B5C22740057B710 /* PoincareDisk.swift */; };
+		1BD7A7D01CF9C0560010F45E /* HyperbolicTransformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */; };
+		1BD7A7D11CF9C0680010F45E /* Groupoid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */; };
+		1BD7A7D21CF9C0680010F45E /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B21D0E11CF35BE9001FF636 /* Queue.swift */; };
+		1BD7A7D31CF9C0680010F45E /* CenterPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2D5B21CA1E1C90036ACCD /* CenterPoint.swift */; };
+		1BD7A7D41CF9C0680010F45E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B740F991C06A2FC0082BC4C /* Extensions.swift */; };
+		1BD7A7D51CF9C0680010F45E /* GroupGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2C31C3D71B400FF17C6 /* GroupGeneration.swift */; };
+		1BD7A7D61CF9C0680010F45E /* LocationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2BF1C3D702D00FF17C6 /* LocationTable.swift */; };
+		1BD7A7D71CF9C0680010F45E /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643171CF0BE6100F9D6AD /* Flags.swift */; };
+		1BD7A7D81CF9C0680010F45E /* DynamicProgramming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDD539E1B7162620054445B /* DynamicProgramming.swift */; };
+		1BD7A7D91CF9C0A80010F45E /* HDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6EB4741CAD727700B08F09 /* HDrawable.swift */; };
+		1BD7A7DA1CF9C0A80010F45E /* HyperbolicPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6EB46F1CAD716D00B08F09 /* HyperbolicPolyline.swift */; };
+		1BD7A7DB1CF9C0A80010F45E /* HyperbolicPolygon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6EB4721CAD724900B08F09 /* HyperbolicPolygon.swift */; };
+		1BD7A7DC1CF9C0A80010F45E /* HyperbolicDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6EB46D1CAD711D00B08F09 /* HyperbolicDot.swift */; };
+		1BD7A7DD1CF9C0DB0010F45E /* PoincareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD08E1B5C43590057B710 /* PoincareView.swift */; };
+		1BD7A7DF1CF9DAF20010F45E /* PantsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD7A7DE1CF9DAF20010F45E /* PantsTest.swift */; };
+		1BD7A7E11CF9E7800010F45E /* ViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD7A7E01CF9E7800010F45E /* ViewTests.swift */; };
 		1BDBD05F1B5C21370057B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD05E1B5C21370057B710 /* AppDelegate.swift */; };
 		1BDBD0621B5C21370057B710 /* CircleLimit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD0601B5C21370057B710 /* CircleLimit.xcdatamodeld */; };
 		1BDBD0671B5C21370057B710 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BDBD0651B5C21370057B710 /* Main.storyboard */; };
@@ -54,13 +78,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1B1754681CF5E2BC00959DA3 /* Cuff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cuff.swift; sourceTree = "<group>"; };
 		1B21D0E11CF35BE9001FF636 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
-		1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleVCConfigurations.swift; path = ../CircleVCConfigurations.swift; sourceTree = "<group>"; };
+		1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CircleVCConfigurations.swift; path = ../CircleVCConfigurations.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1B3643151CF0B0F300F9D6AD /* TimeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeManager.swift; sourceTree = "<group>"; };
 		1B3643171CF0BE6100F9D6AD /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
 		1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hexagon.swift; sourceTree = "<group>"; };
 		1B4CA0A81CF4B1990022C41B /* Pants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pants.swift; sourceTree = "<group>"; };
 		1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Groupoid.swift; sourceTree = "<group>"; };
+		1B594D081CF9B423001BFD65 /* HTransTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = HTransTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1B5979DD1CBB17A400CEAEA7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ColorPicker.storyboard; sourceTree = "<group>"; };
 		1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorProtocols.swift; sourceTree = "<group>"; };
@@ -75,8 +101,10 @@
 		1B740F991C06A2FC0082BC4C /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Extensions.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1BA2D5B21CA1E1C90036ACCD /* CenterPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CenterPoint.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1BC1B2BF1C3D702D00FF17C6 /* LocationTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTable.swift; sourceTree = "<group>"; };
-		1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HyperbolicTransformation.swift; sourceTree = "<group>"; };
+		1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = HyperbolicTransformation.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1BC1B2C31C3D71B400FF17C6 /* GroupGeneration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupGeneration.swift; sourceTree = "<group>"; };
+		1BD7A7DE1CF9DAF20010F45E /* PantsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PantsTest.swift; sourceTree = "<group>"; };
+		1BD7A7E01CF9E7800010F45E /* ViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewTests.swift; sourceTree = "<group>"; };
 		1BDBD0591B5C21370057B710 /* CircleLimit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CircleLimit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BDBD05D1B5C21370057B710 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1BDBD05E1B5C21370057B710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -140,6 +168,7 @@
 		1B6EB4761CAD78D900B08F09 /* Geometry */ = {
 			isa = PBXGroup;
 			children = (
+				1B1754681CF5E2BC00959DA3 /* Cuff.swift */,
 				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
 				1B4CA0A81CF4B1990022C41B /* Pants.swift */,
 				1B3643151CF0B0F300F9D6AD /* TimeManager.swift */,
@@ -214,7 +243,10 @@
 		1BDBD0741B5C21370057B710 /* CircleLimitTests */ = {
 			isa = PBXGroup;
 			children = (
+				1BD7A7E01CF9E7800010F45E /* ViewTests.swift */,
+				1BD7A7DE1CF9DAF20010F45E /* PantsTest.swift */,
 				1BDBD0771B5C21370057B710 /* CircleLimitTests.swift */,
+				1B594D081CF9B423001BFD65 /* HTransTests.swift */,
 				1BDBD0751B5C21370057B710 /* Supporting Files */,
 			);
 			path = CircleLimitTests;
@@ -357,6 +389,7 @@
 				1BDBD0841B5C22740057B710 /* PoincareDisk.swift in Sources */,
 				1B5979F61CBB17A400CEAEA7 /* GradientColorTriangle.swift in Sources */,
 				1BDBD08A1B5C2BEA0057B710 /* Complex.swift in Sources */,
+				1B1754691CF5E2BC00959DA3 /* Cuff.swift in Sources */,
 				1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */,
 				1B3643181CF0BE6100F9D6AD /* Flags.swift in Sources */,
 				1B5979FC1CBB17A400CEAEA7 /* TriangleViewController.swift in Sources */,
@@ -368,7 +401,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BD7A7DD1CF9C0DB0010F45E /* PoincareView.swift in Sources */,
+				1BD7A7D91CF9C0A80010F45E /* HDrawable.swift in Sources */,
+				1BD7A7DA1CF9C0A80010F45E /* HyperbolicPolyline.swift in Sources */,
+				1BD7A7DB1CF9C0A80010F45E /* HyperbolicPolygon.swift in Sources */,
+				1BD7A7DC1CF9C0A80010F45E /* HyperbolicDot.swift in Sources */,
+				1BD7A7D11CF9C0680010F45E /* Groupoid.swift in Sources */,
+				1BD7A7D21CF9C0680010F45E /* Queue.swift in Sources */,
+				1BD7A7D31CF9C0680010F45E /* CenterPoint.swift in Sources */,
+				1BD7A7E11CF9E7800010F45E /* ViewTests.swift in Sources */,
+				1BD7A7D41CF9C0680010F45E /* Extensions.swift in Sources */,
+				1BD7A7D51CF9C0680010F45E /* GroupGeneration.swift in Sources */,
+				1BD7A7D61CF9C0680010F45E /* LocationTable.swift in Sources */,
+				1BD7A7D71CF9C0680010F45E /* Flags.swift in Sources */,
+				1BD7A7D81CF9C0680010F45E /* DynamicProgramming.swift in Sources */,
+				1BD7A7CA1CF9C0560010F45E /* Cuff.swift in Sources */,
+				1BD7A7CB1CF9C0560010F45E /* Hexagon.swift in Sources */,
+				1BD7A7CC1CF9C0560010F45E /* Pants.swift in Sources */,
+				1BD7A7CD1CF9C0560010F45E /* TimeManager.swift in Sources */,
+				1BD7A7CE1CF9C0560010F45E /* Complex.swift in Sources */,
+				1BD7A7CF1CF9C0560010F45E /* PoincareDisk.swift in Sources */,
+				1BD7A7D01CF9C0560010F45E /* HyperbolicTransformation.swift in Sources */,
 				1BDBD0781B5C21370057B710 /* CircleLimitTests.swift in Sources */,
+				1B594D091CF9B423001BFD65 /* HTransTests.swift in Sources */,
+				1BD7A7DF1CF9DAF20010F45E /* PantsTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,7 +503,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -485,7 +541,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -528,30 +584,27 @@
 		1BDBD07F1B5C21370057B710 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = CircleLimitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.cuny.gc.jkahn.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CircleLimit.app/CircleLimit";
+				"TEST_HOST[sdk=iphoneos9.3]" = "";
 			};
 			name = Debug;
 		};
 		1BDBD0801B5C21370057B710 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = CircleLimitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.cuny.gc.jkahn.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CircleLimit.app/CircleLimit";
 			};
 			name = Release;
 		};
