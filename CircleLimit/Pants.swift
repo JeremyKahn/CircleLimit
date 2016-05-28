@@ -102,11 +102,19 @@ class Pants {
     
     func setUpLocalGroupoid() {
         for i in 0...1 {
+            let start = hexagons[i]
+            let end = hexagons[1-i]
             for j in 1.stride(through: 5, by: 2) {
                 let k = (10 - j) % 6
-                let instruction = hexagons[i].start[j].turnAround.following((hexagons[1-i].end[k]).inverse)
-                let g = GroupoidElement(M: instruction, start: hexagons[i], end: hexagons[1 - i])
+                let instruction = start.start[j].turnAround.following((end.end[k]).inverse)
+                
+                // This is the old and deprecated way of setting up
+                let g = GroupoidElement(M: instruction, start: start, end: end)
                 localGroupoidGenerators.append(g)
+                
+                // This is the new one
+                let e = HexagonEntry(entryIndex: k, motion: instruction, hexagon: end)
+                start.neighbor[j] = e
             }
         }
     }
@@ -123,19 +131,30 @@ class Pants {
         }
     }
     
+    // Right now we'll do it the simple way rather than the cool wa
     func setUpGroupoidElementToAdjacentPantsForIndex(k: Int) {
         guard let (adjPants, neighborCuffIndex, twist) = adjacenciesAndTwists[k] else {return}
-        let cuffLength = 2 * cuffHalfLengths[k]
-        var reducedTwist = twist %% (cuffLength)
-        reducedTwist = reducedTwist > cuffLength ? reducedTwist - 2 * cuffLength : reducedTwist
+        let halfLength = cuffHalfLengths[k]
+        let wholeLength = 2 * halfLength
+        var reducedTwist = twist %% (wholeLength)
+        reducedTwist = reducedTwist > halfLength ? reducedTwist - wholeLength : reducedTwist
         for i in 0...1 {
+            let selfHexagon = hexagons[i]
             let selfIndex = sideIndexForCuffIndex(k, AndHexagonIndex: i)
-            let selfVector = hexagons[i].start[selfIndex]
+            let selfVector = selfHexagon.start[selfIndex]
+            
+            let neighborHexagon = adjPants.hexagons[i]
             let neighborSideIndex = sideIndexForCuffIndex(neighborCuffIndex, AndHexagonIndex: i)
             let neighborVector = adjPants.hexagons[i].end[neighborSideIndex]
             let instruction = selfVector.goForward(twist).turnAround.following(neighborVector.inverse)
-            let g = GroupoidElement(M: instruction, start: hexagons[i], end: adjPants.hexagons[i])
+            
+            // The old and deprecated way
+            let g = GroupoidElement(M: instruction, start: selfHexagon, end: neighborHexagon)
             groupoidEltsToAdjacentPants[k] = g
+            
+            // The new and cooler way
+            let e = HexagonEntry(entryIndex: neighborSideIndex, motion: instruction, hexagon: neighborHexagon)
+            selfHexagon.neighbor[selfIndex] = e
         }
     }
     

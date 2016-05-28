@@ -67,19 +67,26 @@ extension CircleViewController {
     func setUpGroupAndGuidelinesForPants() {
         pants = pantsArray[0]
         let baseHexagon = pants.hexagons[0]
-        let groupoidGenerators = pantsArray.reduce([], combine: {$0 + $1.groupoidGenerators})
-        let base = [GroupoidElement(M: HTrans(), start: baseHexagon, end: baseHexagon)]
-        let groupoid = generatedGroupoid(base, generators: groupoidGenerators,
-                                         withinBounds: {
-                                            [groupGenerationCutoffDistance]
-                                            (g: GroupoidElement) -> Bool in
-                                            g.M.distance < groupGenerationCutoffDistance },
-                                         maxTime: maxTimeToMakeGroup)
-        let group = groupFromGroupoid(groupoid, startingAndEndingAt: baseHexagon)
+        
+//        let groupoidGenerators = pantsArray.reduce([], combine: {$0 + $1.groupoidGenerators})
+//        let base = [GroupoidElement(M: HTrans(), start: baseHexagon, end: baseHexagon)]
+//        let groupoid = generatedGroupoid(base, generators: groupoidGenerators,
+//                                         withinBounds: {
+//                                            [groupGenerationCutoffDistance]
+//                                            (g: GroupoidElement) -> Bool in
+//                                            g.M.distance < groupGenerationCutoffDistance },
+//                                         maxTime: maxTimeToMakeGroup)
+//        let group = groupFromGroupoid(groupoid, startingAndEndingAt: baseHexagon)
+        
+        print("Generating group for distance \(groupGenerationCutoffDistance)")
+        let endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
+        let group = groupFromEndStates(endStates, for: baseHexagon)
+        
         for Q in pantsArray {
             for i in 0...1 {
                 let hexagon = Q.hexagons[i]
-                let motion = leastElementOfGroupoid(groupoid, toGoFrom: baseHexagon, to: hexagon)!.M
+                let morphismsToHexagon = endStates.filter({$0.hexagon === hexagon})
+                let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance})
                 hexagon.baseMask = motion
             }
         }

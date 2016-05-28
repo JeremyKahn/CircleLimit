@@ -41,6 +41,14 @@ extension NSTimer {
     
 }
 
+extension NSDate {
+    
+    var millisecondsToPresent: Int {
+        return timeInMillisecondsSince(self)
+    }
+    
+}
+
 func timeInMillisecondsSince(date: NSDate) -> Int {
     return (1000 * NSDate().timeIntervalSinceDate(date)).int
 }
@@ -126,6 +134,18 @@ extension Array {
     mutating func insertAfterIndices(instructions: [(Int, Element)]) {
         let incremented = instructions.map { ($0.0 + 1, $0.1) }
         insertAtIndices(incremented)
+    }
+
+    func at(indices: [Int]) -> [Element] {
+        return indices.map({self[$0]})
+    }
+    
+    func leastElementFor<U: Comparable>(f: Element -> U) -> Element {
+        return minElement({f($0) < f($1)})!
+    }
+    
+    func sortByFunction<U: Comparable>(f: Element -> U) -> [Element] {
+        return sort({f($0) < f($1)})
     }
 
 }

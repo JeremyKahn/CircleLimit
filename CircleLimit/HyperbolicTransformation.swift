@@ -186,15 +186,15 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return 2 * acosh(u.re)
     }
     
-//    func inverse() -> HyperbolicTransformation {
-//        return HyperbolicTransformation(a: -a * lambda, lambda: lambda.conj)
-//    }
+    //    func inverse() -> HyperbolicTransformation {
+    //        return HyperbolicTransformation(a: -a * lambda, lambda: lambda.conj)
+    //    }
     
     func following(B: HyperbolicTransformation) -> HyperbolicTransformation {
         let r = u * B.u + v * B.v.conj
         let s = u * B.v + v * B.u.conj
         return HyperbolicTransformation(u: r, v: s)
-     }
+    }
     
     func toThe(n: Int) -> HyperbolicTransformation {
         assert(n >= 0)
@@ -207,14 +207,14 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     
     // MARK: Location, comparison, and description
-    public typealias Location = Int
+    typealias Location = Int
     
     // right now location just based on absolute value
-    public var location: Location {
+    var location: Location {
         return Int(10 * u.abs2)
     }
     
-    public static func neighbors(l: Location) -> [Location] {
+    static func neighbors(l: Location) -> [Location] {
         return [l-1, l, l+1]
     }
     
@@ -238,12 +238,12 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return E.closeToIdentity(tolerance)
     }
     
-    public var description : String {
+    var description : String {
         return "a: " + a.nice + " lambda: " + lambda.nice
     }
     
     // MARK: Random generation
-    public static func randomInstance() -> HyperbolicTransformation {
+    static func randomInstance() -> HyperbolicTransformation {
         let a = (randomDouble() + randomDouble().i)/sqrt(2)
         let lambda = exp((randomDouble() * Double.PI * 2).i)
         return HyperbolicTransformation(a: a, lambda: lambda)

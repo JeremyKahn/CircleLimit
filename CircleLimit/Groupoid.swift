@@ -71,4 +71,20 @@ func leastElementOfGroupoid(groupoid: [GroupoidElement], toGoFrom start: AnyObje
     }
     return bestCandidate
 }
+
+// Grows the list without checking for repetition
+func fastLeastFixedPoint<T, U>(base: [T], expand: T -> [T], good: T -> Bool, project: T -> U) -> [U] {
+    let startTime = NSDate()
+    var result = base
+    var frontier = base
+    while frontier.count > 0 {
+        frontier = frontier.map(expand).flatten().filter(good)
+        result += frontier
+        print("Fast least fixed point time elapsed: \(startTime.millisecondsToPresent)")
+    }
+    let answer = result.map(project)
+    print("Fast least fixed point total time: \(startTime.millisecondsToPresent)")
+    print("\(answer.count) elements generated.")
+    return answer
+}
  

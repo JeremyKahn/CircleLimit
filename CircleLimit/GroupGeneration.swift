@@ -156,10 +156,10 @@ func sideInRightAngledHexagonWithOpposite(c: Double, andAdj a: Double, andAdj b:
 func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([HyperbolicTransformation], [HDrawable]) {
     let C = sideInRightAngledHexagonWithOpposite(c, andAdj: a, andAdj: b)
     let A = sideInRightAngledHexagonWithOpposite(a, andAdj: b, andAdj: c)
-    let B = sideInRightAngledHexagonWithOpposite(b, andAdj: a, andAdj: b)
+//    let B = sideInRightAngledHexagonWithOpposite(b, andAdj: a, andAdj: b)
     let aTrans = HyperbolicTransformation.goForward(2 * a)
     let left = HyperbolicTransformation.turnLeft
-    let right = HyperbolicTransformation.turnRight
+//    let right = HyperbolicTransformation.turnRight
     let CForward = HyperbolicTransformation.goForward(C)
     let bTrans = left.following(CForward).following(left).following(HyperbolicTransformation.goForward(2 * b)).following(left).following(CForward).following(left)
     let cTrans = (bTrans.following(aTrans)).inverse
@@ -197,7 +197,7 @@ func pantsGroupGeneratorsAndGuidelines(halfLengths: [Double]) -> ([HyperbolicTra
     let identity = HyperbolicTransformation()
     var tMinus = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
     var tPlus = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
-    let (left, right) = (HyperbolicTransformation.turnLeft, HyperbolicTransformation.turnRight)
+    let (left, _) = (HyperbolicTransformation.turnLeft, HyperbolicTransformation.turnRight)
     for i in 0..<3 {
         tPlus[i] = tMinus[i].following(HyperbolicTransformation.goForward(halfLengths[i]))
         tMinus[(i+1)%3] = tPlus[i].following(left).following(HyperbolicTransformation.goForward(orthoLengths[(i+2)%3])).following(left)

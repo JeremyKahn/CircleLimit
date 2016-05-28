@@ -131,9 +131,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var cuffLengths = [1.0, 2.0, 3.0]
     
-    let largeGenerationDistance = 8.0
+    let largeGenerationDistance = 10.0
     
-    let smallGenerationDistance = 5.0
+    let smallGenerationDistance = 7.5
     
     var maxTimeToMakeGroup = 10.0
     
@@ -195,9 +195,14 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // One group for each integral distance cutoff
     func makeGroupForIntegerDistanceWith(group: [Action]) {
+        let startTime = NSDate()
+        var myGroup = group
         groupForIntegerDistance = Array<[Action]>(count: maxGroupDistance + 1, repeatedValue: [])
-        for i in 0...maxGroupDistance {
-            groupForIntegerDistance[i] = selectElements(group, cutoff: distanceToAbs(Double(i)))
+        // We have to go backwards so that we can progressively select
+        for i in maxGroupDistance.stride(through: 0, by: -1) {
+            myGroup = selectElements(myGroup, cutoff: distanceToAbs(Double(i)))
+            groupForIntegerDistance[i] = myGroup
+            print("Selected \(myGroup.count) elements at distance \(i): \(startTime.millisecondsToPresent)")
         }
 
     }
@@ -221,9 +226,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     var maxGroupDistance: Int {
-//        return Int(pants.adjustedCutoffDistance) + 1
-        return 13
-    }
+        return Int(groupGenerationCutoffDistance) +  1   }
 
     
     func groupSystem(mode: Mode, objects: [HDrawable]) -> GroupSystem {
