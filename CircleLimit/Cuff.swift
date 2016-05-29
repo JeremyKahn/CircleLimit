@@ -23,7 +23,10 @@ class Cuff {
     
     // This gives up the point at the middle of the selected cuff segment
     var baseMask: HTrans {
-        return pantsCuffs[0].pants.baseMask
+        let pants = pantsCuffs[0].pants
+        let index = pantsCuffs[0].index
+        let sideIndex = pants.sideIndexForCuffIndex(index, AndHexagonIndex: 0)
+        return pants.baseMask.following(pants.hexagons[0].end[sideIndex])
     }
     
     var guidelineCenterpoint: HTrans {
@@ -64,7 +67,7 @@ class Cuff {
     }
     
     var transformedGuideline: HDrawable {
-        return guideline.transformedBy(baseMask)
+        return guideline.transformedBy(pantsCuffs[0].pants.baseMask)
     }
     
     
