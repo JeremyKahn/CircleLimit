@@ -60,7 +60,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var suppressTouches: Bool {
         return !drawing || changingColor || formingPolygon
     }
-
+    
     // MARK: - General properties
     var guidelines: [HDrawable] {
         return cuffGuidelines + generalGuidelines
@@ -78,7 +78,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var oldDrawObjects: [HDrawable] = [] {
         didSet {
-//            print("There are now \(oldDrawObjects.count) old draw objects")
+            //            print("There are now \(oldDrawObjects.count) old draw objects")
         }
     }
     
@@ -92,7 +92,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         case Usual
         case Drawing
         case Moving
-     }
+    }
     
     var formingPolygon: Bool {
         return newCurve != nil
@@ -116,20 +116,20 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // cuffArray and cuffGuidelines are _parallel arrays_ for better or for worse
     var cuffArray: [Cuff] = []
     
-//    var cuffGuidelines: [HDrawable] {
-//        return pants.cuffGuidelines
-//    }
-//    
-//    var orthoGuidelines: [HDrawable] {
-//        return pants.orthoGuidelines
-//    }
+    //    var cuffGuidelines: [HDrawable] {
+    //        return pants.cuffGuidelines
+    //    }
+    //
+    //    var orthoGuidelines: [HDrawable] {
+    //        return pants.orthoGuidelines
+    //    }
     
     var canEditPants = true
     
     var editingPants: Bool {
         return cuffToEdit != nil
     }
-
+    
     // We need this in order to maintain the parallel arrays of cuffGuidelines and cuffArray
     var cuffEditIndex: Int? {
         didSet {
@@ -205,7 +205,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var scale: CGFloat {
         return poincareView.scale
     }
-
+    
     // MARK: - Get the group you want
     func selectElements(group: [Action], cutoff: Double) -> [Action] {
         let a = group.filter { (M: Action) in M.motion.a.abs < cutoff }
@@ -224,7 +224,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             groupForIntegerDistance[i] = myGroup
             print("Selected \(myGroup.count) elements at distance \(i): \(startTime.millisecondsToPresent)")
         }
-
+        
     }
     
     var groupForIntegerDistance: [[Action]] = []
@@ -237,7 +237,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // Change these values to determine the size of the various groups
     var cutoff : [Mode : Double] = [.Usual : 0.98, .Moving : 0.8, .Drawing : 0.8]
-
+    
     lazy var groupGenerationCutoffDistance: Double = { return self.largeGenerationDistance }()
     
     var bigGroupCutoff: Double {
@@ -247,7 +247,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var maxGroupDistance: Int {
         return Int(groupGenerationCutoffDistance) +  1   }
-
+    
     
     func groupSystem(mode: Mode, objects: [HDrawable]) -> GroupSystem {
         let zoomAbs = 2.0 / Double(multiplier)
@@ -255,7 +255,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         let distance = absToDistance(cutoffAbs)
         return groupSystem(cutoffDistance: distance, objects: objects)
     }
-
+    
     
     func groupSystem(cutoffDistance distance: Double, objects: [HDrawable]) -> GroupSystem {
         return groupSystem(cutoffDistance: distance, center: HPoint(), objects: objects, useMask: true)
@@ -271,7 +271,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         let maskDistance = useMask ? mask.distance : 0.0
         let totalDistance = objectsRadius + distance + center.distanceToOrigin + objectsCenter.distanceToOrigin + maskDistance
         var group = groupForDistance(totalDistance)
-    
+        
         if useMask {
             group = group.map { Action(M: mask.following($0.motion), P: $0.action) }
         }
@@ -283,7 +283,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         for object in objects {
             let objectGroup = filterForTwoPointsAndDistance(group, point1: center, point2: object.centerPoint, distance: distance + object.radius)
             result.append((object, objectGroup))
-
+            
         }
         return result
     }
@@ -342,7 +342,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         poincareView.setNeedsDisplay()
     }
     
- 
+    
     func clearPicture() {
         print("In clearPicture with \(guidelines.count) guidelines")
         drawObjects = []
@@ -501,7 +501,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 for m in nearbyPointsToEndpoint {
                     m.moveTo(z)
                 }
-              }
+            }
         }
         for m in matchedPoints {
             m.cleanUp()
@@ -632,7 +632,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             return false
         }
     }
-
+    
     
     
     @IBAction func simplePan(gesture: UIPanGestureRecognizer) {
@@ -642,22 +642,35 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             //            newCurve = nil
             mode = mode == .Drawing ? .Drawing :  .Moving
             cancelEffectOfTouches()
+            if let cuff = cuffToEdit {
+                prepareCuffForChanges(cuff)
+            }
         case .Changed:
             let translation = gesture.translationInView(poincareView)
-            //            println("Raw translation: \(translation.x, translation.y)")
+            if translation == CGPointZero { return }
             gesture.setTranslation(CGPointZero, inView: poincareView)
-            var a = Complex64(Double(translation.x/scale), Double(translation.y/scale))
-            a = a/(a.abs+1) // This prevents bad transformations
-            let M = HyperbolicTransformation(a: -a)
-            //            println("Moebius translation: \(M)")
-            mask = M.following(mask)
-            recomputeMask()
+           //            println("Raw translation: \(translation.x, translation.y)")
+            if let cuff = cuffToEdit {
+                let d = Double(translation.y/scale)
+                cuff.twist += d
+                recordChangesForCuff(cuff)
+            } else {
+                var a = Complex64(Double(translation.x/scale), Double(translation.y/scale))
+                a = a/(a.abs+1) // This prevents bad transformations
+                let M = HyperbolicTransformation(a: -a)
+                //            println("Moebius translation: \(M)")
+                mask = M.following(mask)
+                recomputeMask()
+            }
             poincareView.setNeedsDisplay()
         case .Ended:
             mode = mode == .Drawing ? .Drawing : .Usual
             recomputeMask()
-            poincareView.setNeedsDisplay()
             drawing = true
+            if cuffToEdit != nil {
+                turnOffChangingForCuff()
+            }
+            poincareView.setNeedsDisplay()
         default: break
         }
     }
@@ -725,7 +738,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 drawObjects.append(HyperbolicDot(center: point, radius: touchDistance))
             }
             cancelEffectOfTouches()
-//            addPointToArcs(point)
+            //            addPointToArcs(point)
             let polylines = drawObjects.filter({$0 is HyperbolicPolyline})
             let g = groupSystem(cutoffDistance: touchDistance, center: point, objects: polylines).reverse()
             // As constructed this just sets the color of the first polygon that matches
@@ -776,6 +789,24 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         mask = bestMask
     }
     
+    func prepareCuffForChanges(cuff: Cuff) {
+        groupGenerationCutoffDistance = smallGenerationDistance
+        maxTimeToMakeGroup = maxTimeToMakeSmallGroup
+        apparentBasePoint = mask.following(cuff.baseMask)
+    }
+    
+    func recordChangesForCuff(cuff: Cuff) {
+        setUpGroupAndGuidelinesForPants()
+        mask = apparentBasePoint.following(cuff.baseMask.inverse)
+    }
+    
+    func turnOffChangingForCuff() {
+        groupGenerationCutoffDistance = largeGenerationDistance
+        maxTimeToMakeGroup = maxTimeToMakeLargeGroup
+        setUpGroupAndGuidelinesForPants()
+        cuffEditIndex = nil
+    }
+    
     // Should this be split into two separate functions?
     @IBAction func zoom(gesture: UIPinchGestureRecognizer) {
         //        println("Zooming")
@@ -786,9 +817,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             //            newCurve = nil
             cancelEffectOfTouches()
             if let cuff = cuffToEdit {
-                groupGenerationCutoffDistance = smallGenerationDistance
-                maxTimeToMakeGroup = maxTimeToMakeSmallGroup
-                apparentBasePoint = mask.following(cuff.baseMask)
+                prepareCuffForChanges(cuff)
             }
         case .Changed:
             if let cuff = cuffToEdit {
@@ -802,11 +831,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 print("Rescaling cuff by " + gesture.scale.nice, when: tracingZoom)
                 // This changes everything
                 cuff.length = cuff.length * gesture.scale.double
-                setUpGroupAndGuidelinesForPants()
                 gesture.scale = 1
-                cuff.guideline.lineColor = UIColor.redColor()
-                // This should keep things properly centered
-                mask = apparentBasePoint.following(cuff.baseMask.inverse)
+                recordChangesForCuff(cuff)
             } else {
                 let newMultiplier = multiplier * gesture.scale
                 multiplier = newMultiplier >= 1 ? newMultiplier : 1
@@ -816,10 +842,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             drawing = true
             mode = .Usual
             if editingPants {
-                groupGenerationCutoffDistance = largeGenerationDistance
-                maxTimeToMakeGroup = maxTimeToMakeLargeGroup
-                setUpGroupAndGuidelinesForPants()
-                cuffEditIndex = nil
+                turnOffChangingForCuff()
             }
         default: break
         }
@@ -843,9 +866,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         }
     }
     
- 
-//      MARK: - Navigation
-     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    
+    //      MARK: - Navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         switch segue.identifier! {
         case "chooseColor":
             changingColor = true
@@ -854,7 +877,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         default:
             break
         }
-     }
-
+    }
+    
     
 }
