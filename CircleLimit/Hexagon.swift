@@ -11,11 +11,19 @@ import Foundation
 
 struct HexagonEntry {
     
-    var entryIndex: Int
-    var motion: HyperbolicTransformation
-    weak var hexagon: Hexagon?
+    var entryIndex: Int = 0
+    var motion: HyperbolicTransformation = HTrans.identity
+    var hexagon: Hexagon? = nil
     
-    static var placeholder = HexagonEntry(entryIndex: 0, motion: HTrans.identity, hexagon: nil)
+    init() {}
+    
+    init(entryIndex: Int, motion: HTrans, hexagon: Hexagon) {
+        self.entryIndex = entryIndex
+        self.motion = motion
+        self.hexagon = hexagon
+    }
+    
+    static var placeholder = HexagonEntry()
 }
 
 enum HexState {
@@ -67,6 +75,10 @@ func groupFromEndStates(endStates: [EndState], for baseHexagon: Hexagon) -> [HTr
 
 class Hexagon {
     
+    static var nextId = 0
+    
+    var id: Int
+    
     var baseMask = HTrans()
     
     var sideLengths: [Double] = Array<Double>(count: 6, repeatedValue: acosh(2.0))
@@ -110,6 +122,13 @@ class Hexagon {
     }
 
     init(alternatingSideLengths: [Double]) {
+        id = Hexagon.nextId
+        Hexagon.nextId += 1
+        setAlternatingSideLengths(alternatingSideLengths)
+        
+     }
+    
+    func setAlternatingSideLengths(alternatingSideLengths: [Double]) {
         for i in 0..<3 {
             sideLengths[2 * i] = alternatingSideLengths[i]
         }
@@ -168,5 +187,4 @@ class Hexagon {
             altitudeGuidelines.append(line)
         }
     }
-    
 }

@@ -8,6 +8,8 @@
 
 import UIKit
 
+typealias GroupSystem = [(HDrawable, [Action])]
+
 protocol PoincareViewDataSource : class {
     var groupSystemToDraw: GroupSystem {get}
     var multiplier : CGFloat {get}
@@ -23,7 +25,7 @@ func circlePath(center: CGPoint, radius: CGFloat) -> UIBezierPath {
 @IBDesignable
 class PoincareView: UIView {
     
-    
+    static var testing = false
     
     @IBInspectable
     var circleColor = UIColor.blueColor()
@@ -90,8 +92,14 @@ class PoincareView: UIView {
  
         let gcontext = UIGraphicsGetCurrentContext()
         CGContextConcatCTM(gcontext, tf)
- 
 
+        circleColor.set()
+        let boundaryCircle = circlePath(CGPointZero, radius: CGFloat(1.0))
+        boundaryCircle.lineWidth = lineWidth
+        boundaryCircle.stroke()
+   
+        if PoincareView.testing {return}
+        
         for (object, group) in groupSystem {
             
             print("Drawing an object with a group of size \(group.count)", when: tracingDrawRect)
@@ -99,11 +107,6 @@ class PoincareView: UIView {
                      object.drawWithMaskAndAction(action)
             }
         }
-
-        circleColor.set()
-        let boundaryCircle = circlePath(CGPointZero, radius: CGFloat(1.0))
-        boundaryCircle.lineWidth = lineWidth
-        boundaryCircle.stroke()
         
         if showRedCircle {
             // Added to test the new cutoff system

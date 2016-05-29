@@ -62,11 +62,13 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
 
     // MARK: - General properties
-    var guidelines: [HDrawable] = []
-    
-    var cuffGuidelines: [HDrawable]  {
-        return cuffArray.map({$0.transformedGuideline})
+    var guidelines: [HDrawable] {
+        return cuffGuidelines + generalGuidelines
     }
+    
+    var generalGuidelines: [HDrawable] = []
+    
+    var cuffGuidelines: [HDrawable] = []
     
     var fixedPoints: [HDrawable] = []
     
@@ -111,6 +113,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var pantsArray: [Pants] = []
     
+    // cuffArray and cuffGuidelines are _parallel arrays_ for better or for worse
     var cuffArray: [Cuff] = []
     
 //    var cuffGuidelines: [HDrawable] {
@@ -565,6 +568,10 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // MARK: - Gesture recognition
     
+    @IBOutlet var singleTapRecognizer: UITapGestureRecognizer!
+    
+    @IBOutlet var doubleTapRecognizer: UITapGestureRecognizer!
+    
     @IBOutlet var panRecognizer: UIPanGestureRecognizer!
     
     @IBOutlet var pinchRecognizer: UIPinchGestureRecognizer!
@@ -637,10 +644,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         default: break
         }
     }
-    
-    @IBOutlet var singleTapRecognizer: UITapGestureRecognizer!
-    
-    @IBOutlet var doubleTapRecognizer: UITapGestureRecognizer!
     
     @IBAction func singleTap(sender: UITapGestureRecognizer) {
         //        print("tapped")
@@ -767,7 +770,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             //            newCurve = nil
             cancelEffectOfTouches()
             if let cuff = cuffToEdit {
-                bigGroupCutoff = smallGenerationDistance
+                groupGenerationCutoffDistance = smallGenerationDistance
                 maxTimeToMakeGroup = maxTimeToMakeSmallGroup
                 apparentBasePoint = mask.following(cuff.baseMask)
             }
@@ -797,7 +800,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             drawing = true
             mode = .Usual
             if editingPants {
-                bigGroupCutoff = largeGenerationDistance
+                groupGenerationCutoffDistance = largeGenerationDistance
                 maxTimeToMakeGroup = maxTimeToMakeLargeGroup
                 setUpGroupAndGuidelinesForPants()
                 cuffToEdit = nil

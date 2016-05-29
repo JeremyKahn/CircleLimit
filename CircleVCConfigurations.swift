@@ -44,7 +44,7 @@ extension CircleViewController {
             assert(a.following(b).following(c) == ColorNumberPermutation())
             twistedGenerators = [Action(M: A, P: a), Action(M: B, P: b), Action(M: C, P: c)]
         }
-        self.guidelines = guidelines
+        self.generalGuidelines = guidelines
         let bigGroup = generatedGroup(twistedGenerators, bigCutoff: bigGroupCutoff)
         makeGroupForIntegerDistanceWith(bigGroup)
         // Right now this is just a guess
@@ -67,10 +67,15 @@ extension CircleViewController {
     func setUpGroupAndGuidelinesForPants() {
         pants = pantsArray[0]
         let baseHexagon = pants.hexagons[0]
-                
+        
         print("Generating group for distance \(groupGenerationCutoffDistance)")
         let endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
         let group = groupFromEndStates(endStates, for: baseHexagon)
+        
+        cuffGuidelines = []
+        for cuff in cuffArray {
+            cuffGuidelines.append(cuff.transformedGuideline)
+        }
         
         for Q in pantsArray {
             for i in 0...1 {
@@ -80,14 +85,15 @@ extension CircleViewController {
                 hexagon.baseMask = motion
             }
         }
-        guidelines = cuffGuidelines
+        
+        generalGuidelines = []
         for Q in pantsArray {
-            guidelines += Q.transformedGuidelines
-            for i in 0...1 {
-                let hexagon = Q.hexagons[i]
-                let altitudeGuidelines = hexagon.altitudeGuidelines.map({$0.transformedBy(hexagon.baseMask)})
-                guidelines += altitudeGuidelines
-            }
+            generalGuidelines += Q.transformedGuidelines
+            //            for i in 0...1 {
+            //                let hexagon = Q.hexagons[i]
+            //                let altitudeGuidelines = hexagon.altitudeGuidelines.map({$0.transformedBy(hexagon.baseMask)})
+            //                generalGuidelines += altitudeGuidelines
+            //            }
         }
         let dressedGroup = group.map() {Action(M: $0)}
         makeGroupForIntegerDistanceWith(dressedGroup)

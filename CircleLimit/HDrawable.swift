@@ -47,9 +47,20 @@ protocol HDrawable: class, Disked {
     
     var radius: Double {get}
     
+//    var id: Int {get}
+    
 }
 
-
+class HDrawableCounter {
+    
+    private static var _nextId = 0
+    
+    static var nextId: Int {
+        defer { _nextId += 1 }
+        return _nextId
+    }
+    
+}
 
 extension HDrawable {
     

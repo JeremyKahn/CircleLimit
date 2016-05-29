@@ -16,7 +16,9 @@ class Pants {
     
     var cuffHalfLengths: [Double] {
         didSet {
-            setUpEverything()
+            hexagons[0].setAlternatingSideLengths(cuffHalfLengths)
+            hexagons[1].setAlternatingSideLengths(cuffHalfLengths.reverse())
+            updateSelfAndNeighbors()
         }
     }
     
@@ -63,26 +65,14 @@ class Pants {
     static var nextId = 0
     
     init(cuffHalfLengths: [Double]) {
-        id = Pants.nextId++
+        id = Pants.nextId
+        Pants.nextId += 1
         self.cuffHalfLengths = cuffHalfLengths
         hexagons = [Hexagon(alternatingSideLengths: cuffHalfLengths),
-                    Hexagon(alternatingSideLengths: [Double](cuffHalfLengths.reverse()))]
+                    Hexagon(alternatingSideLengths: cuffHalfLengths.reverse())]
         setUpGuidelines()
         setUpLocalGroupoid()
     }
-    
-    func setUpEverything() {
-        setUpHexagons()
-        setUpLocalGroupoid()
-        setUpGroupoidElementsToAdjacentPants()
-        setUpGuidelines()
-    }
-    
-    func setUpHexagons() {
-        hexagons = [Hexagon(alternatingSideLengths: cuffHalfLengths),
-                    Hexagon(alternatingSideLengths: [Double](cuffHalfLengths.reverse()))]
-    }
-    
     
     func setUpGuidelines() {
         cuffGuidelines = []
@@ -127,12 +117,19 @@ class Pants {
     // TODO: Reduce the twist further by switching hexagon, if need be
     func setUpGroupoidElementsToAdjacentPants() {
         for k in 0...2 {
-            setUpGroupoidElementToAdjacentPantsForIndex(k)
+            setUpGroupoidElementToAdjacentPantsForIndex(k, updateNeighbor: false)
+        }
+    }
+    
+    func updateSelfAndNeighbors() {
+        setUpLocalGroupoid()
+        for k in 0...2 {
+            setUpGroupoidElementToAdjacentPantsForIndex(k, updateNeighbor: true)
         }
     }
     
     // Right now we'll do it the simple way rather than the cool wa
-    func setUpGroupoidElementToAdjacentPantsForIndex(k: Int) {
+    func setUpGroupoidElementToAdjacentPantsForIndex(k: Int, updateNeighbor: Bool) {
         guard let (adjPants, neighborCuffIndex, twist) = adjacenciesAndTwists[k] else {return}
         let halfLength = cuffHalfLengths[k]
         let wholeLength = 2 * halfLength
@@ -140,12 +137,13 @@ class Pants {
         reducedTwist = reducedTwist > halfLength ? reducedTwist - wholeLength : reducedTwist
         for i in 0...1 {
             let selfHexagon = hexagons[i]
-            let selfIndex = sideIndexForCuffIndex(k, AndHexagonIndex: i)
-            let selfVector = selfHexagon.start[selfIndex]
+            let selfSideIndex = sideIndexForCuffIndex(k, AndHexagonIndex: i)
+            let selfVector = selfHexagon.start[selfSideIndex]
             
             let neighborHexagon = adjPants.hexagons[i]
             let neighborSideIndex = sideIndexForCuffIndex(neighborCuffIndex, AndHexagonIndex: i)
             let neighborVector = adjPants.hexagons[i].end[neighborSideIndex]
+            
             let instruction = selfVector.goForward(twist).turnAround.following(neighborVector.inverse)
             
             // The old and deprecated way
@@ -154,7 +152,12 @@ class Pants {
             
             // The new and cooler way
             let e = HexagonEntry(entryIndex: neighborSideIndex, motion: instruction, hexagon: neighborHexagon)
-            selfHexagon.neighbor[selfIndex] = e
+            selfHexagon.neighbor[selfSideIndex] = e
+            
+            if updateNeighbor {
+                let eN = HexagonEntry(entryIndex: selfSideIndex, motion: instruction.inverse, hexagon: selfHexagon)
+                neighborHexagon.neighbor[neighborSideIndex] = eN
+            }
         }
     }
     
