@@ -206,6 +206,7 @@ class HyperbolicPolyline : HDrawable {
         for i in 0...(points.count-1) {
             points[i] = M.appliedTo(points[i])
             assert(points[i].abs <= 1)
+            updateAndComplete()
         }
     }
     

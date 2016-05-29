@@ -24,6 +24,7 @@
                             <outletCollection property="gestureRecognizers" destination="HoZ-7h-xGw" appends="YES" id="s05-IJ-8UN"/>
                             <outletCollection property="gestureRecognizers" destination="hu9-Fi-Roa" appends="YES" id="a9e-jV-RWX"/>
                             <outletCollection property="gestureRecognizers" destination="gF1-Pd-QVY" appends="YES" id="guv-kw-ib4"/>
+                            <outletCollection property="gestureRecognizers" destination="HAX-7P-ZRj" appends="YES" id="3Dk-B1-CtI"/>
                         </connections>
                     </view>
                     <connections>
@@ -33,6 +34,7 @@
                         <outlet property="pinchRecognizer" destination="tDE-AL-ekJ" id="ayW-em-yko"/>
                         <outlet property="poincareView" destination="IBq-aQ-8NE" id="eiR-RU-w03"/>
                         <outlet property="singleTapRecognizer" destination="HoZ-7h-xGw" id="fdr-5g-8uE"/>
+                        <outlet property="twoTouchLongPress" destination="HAX-7P-ZRj" id="aNQ-F4-SoR"/>
                         <segue destination="Ljh-JV-o78" kind="presentation" identifier="chooseColor" id="0j0-eS-miu"/>
                     </connections>
                 </viewController>
@@ -65,6 +67,12 @@
                     <connections>
                         <action selector="longPress:" destination="vXZ-lx-hvc" id="tFg-Pd-ctm"/>
                         <outlet property="delegate" destination="vXZ-lx-hvc" id="1YQ-om-OeB"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" numberOfTouchesRequired="2" id="HAX-7P-ZRj">
+                    <connections>
+                        <action selector="twoTouchLongPress:" destination="vXZ-lx-hvc" id="bH6-nv-Ibh"/>
+                        <outlet property="delegate" destination="vXZ-lx-hvc" id="8DE-Kg-NsW"/>
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>

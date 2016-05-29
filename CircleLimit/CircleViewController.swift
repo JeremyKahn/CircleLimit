@@ -571,6 +571,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     @IBOutlet var longPressRecognizer: UILongPressGestureRecognizer!
     
+    @IBOutlet var twoTouchLongPress: UILongPressGestureRecognizer!
+    
+    
     //    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOfGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
     //        return otherGestureRecognizer === swipeRecognizer
     //    }
@@ -688,6 +691,12 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             returnToUsualMode()
             poincareView.setNeedsDisplay()
         }
+    }
+    
+    
+    @IBAction func twoTouchLongPress(sender: UILongPressGestureRecognizer) {
+        print("Two touch long press")
+        print("Enjoy your day!")
     }
     
     @IBAction func longPress(sender: UILongPressGestureRecognizer) {

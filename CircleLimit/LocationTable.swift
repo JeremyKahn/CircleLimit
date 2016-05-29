@@ -87,6 +87,10 @@ public class LocationTable<T: Locatable> {
     
     public init() {}
     
+    public init(entries: [T], match: (T, T) -> Bool) {
+        addNonMatchingEntries(entries, match: match)
+    }
+    
     public func add(entries: [T]) {
         for E in entries {
             add(E)

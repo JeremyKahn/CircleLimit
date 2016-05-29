@@ -67,17 +67,7 @@ extension CircleViewController {
     func setUpGroupAndGuidelinesForPants() {
         pants = pantsArray[0]
         let baseHexagon = pants.hexagons[0]
-        
-//        let groupoidGenerators = pantsArray.reduce([], combine: {$0 + $1.groupoidGenerators})
-//        let base = [GroupoidElement(M: HTrans(), start: baseHexagon, end: baseHexagon)]
-//        let groupoid = generatedGroupoid(base, generators: groupoidGenerators,
-//                                         withinBounds: {
-//                                            [groupGenerationCutoffDistance]
-//                                            (g: GroupoidElement) -> Bool in
-//                                            g.M.distance < groupGenerationCutoffDistance },
-//                                         maxTime: maxTimeToMakeGroup)
-//        let group = groupFromGroupoid(groupoid, startingAndEndingAt: baseHexagon)
-        
+                
         print("Generating group for distance \(groupGenerationCutoffDistance)")
         let endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
         let group = groupFromEndStates(endStates, for: baseHexagon)
