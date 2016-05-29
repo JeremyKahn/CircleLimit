@@ -76,6 +76,9 @@ extension CircleViewController {
         for cuff in cuffArray {
             cuffGuidelines.append(cuff.transformedGuideline)
         }
+        if let i = cuffEditIndex {
+            cuffGuidelines[i].lineColor = UIColor.redColor()
+        }
         
         for Q in pantsArray {
             for i in 0...1 {

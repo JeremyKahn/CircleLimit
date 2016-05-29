@@ -122,6 +122,7 @@ class Pants {
     }
     
     func updateSelfAndNeighbors() {
+        setUpGuidelines()
         setUpLocalGroupoid()
         for k in 0...2 {
             setUpGroupoidElementToAdjacentPantsForIndex(k, updateNeighbor: true)

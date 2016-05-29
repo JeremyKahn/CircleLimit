@@ -130,7 +130,24 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return cuffToEdit != nil
     }
 
-    var cuffToEdit: Cuff?
+    // We need this in order to maintain the parallel arrays of cuffGuidelines and cuffArray
+    var cuffEditIndex: Int? {
+        didSet {
+            if let i = cuffEditIndex {
+                cuffGuidelines[i].lineColor = UIColor.redColor()
+            } else  if let i = oldValue {
+                cuffGuidelines[i].lineColor = UIColor.blackColor()
+            }
+        }
+    }
+    
+    var cuffToEdit: Cuff? {
+        if let i = cuffEditIndex {
+            return cuffArray[i]
+        } else {
+            return nil
+        }
+    }
     
     var cuffLengths = [1.0, 2.0, 3.0]
     
@@ -663,8 +680,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                     for action in group {
                         if line.sidesNear(z!, withMask: action.motion, withinDistance: touchDistance).count > 0 {
                             mask = mask.following(action.motion)
-                            line.lineColor = UIColor.redColor()
-                            cuffToEdit = cuffArray[i]
+                            cuffEditIndex = i
                         }
                     }
                 }
@@ -803,7 +819,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 groupGenerationCutoffDistance = largeGenerationDistance
                 maxTimeToMakeGroup = maxTimeToMakeLargeGroup
                 setUpGroupAndGuidelinesForPants()
-                cuffToEdit = nil
+                cuffEditIndex = nil
             }
         default: break
         }
