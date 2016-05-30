@@ -113,6 +113,22 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var pantsArray: [Pants] = []
     
+    var hexagons: [Hexagon] {
+        return [Hexagon](pantsArray.map({$0.hexagons}).flatten())
+    }
+    
+    var hexagonEntrys: [[(Int, HTrans, Int)]] {
+        var result: [[(Int, HTrans, Int)]] = []
+        for h in hexagons {
+            let list = h.neighbor.map() {
+                (e: HexagonEntry) -> (Int, HTrans, Int) in
+                (e.entryIndex, e.motion, e.hexagon!.id)
+            }
+            result.append(list)
+        }
+        return result
+    }
+    
     // cuffArray and cuffGuidelines are _parallel arrays_ for better or for worse
     var cuffArray: [Cuff] = []
     
@@ -770,17 +786,17 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     func recomputeMask() {
         guard canRecomputeMask else { return }
-        var bestA = mask.a.abs
+        var bestA = mask.abs
         var bestMask = mask
         //        println("Trying to improve : \(bestA)")
         var foundBetter = false
         repeat {
             foundBetter = false
             for E in searchingGroup  {
-                let newMask = mask.following(E.motion.inverse)  // Let's try it
-                if  newMask.a.abs < bestA {
+                let newMask = mask.following(E.motion)  // Let's try it
+                if  newMask.abs < bestA {
                     foundBetter = true
-                    bestA = newMask.a.abs
+                    bestA = newMask.abs
                     bestMask = newMask
                     //                    println("Found \(bestA)")
                 }

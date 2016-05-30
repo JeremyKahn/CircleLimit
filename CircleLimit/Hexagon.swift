@@ -24,6 +24,10 @@ struct HexagonEntry {
     }
     
     static var placeholder = HexagonEntry()
+    
+    var readable: (Int, HTrans, Int) {
+        return (entryIndex, motion, hexagon!.id)
+    }
 }
 
 enum HexState {

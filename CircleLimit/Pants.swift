@@ -129,13 +129,13 @@ class Pants {
         }
     }
     
-    // Right now we'll do it the simple way rather than the cool wa
     func setUpGroupoidElementToAdjacentPantsForIndex(k: Int, updateNeighbor: Bool) {
         guard let (adjPants, neighborCuffIndex, twist) = adjacenciesAndTwists[k] else {return}
         let halfLength = cuffHalfLengths[k]
         let wholeLength = 2 * halfLength
         var reducedTwist = twist %% (wholeLength)
         reducedTwist = reducedTwist > halfLength ? reducedTwist - wholeLength : reducedTwist
+        assert(reducedTwist.abs <= halfLength)
         for i in 0...1 {
             let selfHexagon = hexagons[i]
             let selfSideIndex = sideIndexForCuffIndex(k, AndHexagonIndex: i)
@@ -145,7 +145,7 @@ class Pants {
             let neighborSideIndex = sideIndexForCuffIndex(neighborCuffIndex, AndHexagonIndex: i)
             let neighborVector = adjPants.hexagons[i].end[neighborSideIndex]
             
-            let instruction = selfVector.goForward(twist).turnAround.following(neighborVector.inverse)
+            let instruction = selfVector.goForward(reducedTwist).turnAround.following(neighborVector.inverse)
             
             // The old and deprecated way
             let g = GroupoidElement(M: instruction, start: selfHexagon, end: neighborHexagon)
