@@ -140,7 +140,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     //        return pants.orthoGuidelines
     //    }
     
-    var canEditPants = true
+    var canEditPants: Bool {
+        return drawGuidelines
+    }
     
     var editingPants: Bool {
         return cuffToEdit != nil
