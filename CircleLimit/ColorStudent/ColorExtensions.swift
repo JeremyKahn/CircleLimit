@@ -98,6 +98,11 @@ extension UIColor {
         return (r, g, b, a)
     }
     
+    func asIfWithAlpha(alpha: CGFloat) -> UIColor {
+        let (r, g, b, _) = rgba
+        return UIColor(red: r * alpha, green: g * alpha, blue: b * alpha, alpha: 1)
+    }
+    
     func withAlpha(alpha: CGFloat) -> UIColor {
         let (r, g, b, _) = rgba
         return UIColor(red: r, green: g, blue: b, alpha: alpha)
@@ -109,26 +114,6 @@ extension UIColor {
     }
 }
 
-
-func weightedColor(weights: [CGFloat], colors: [UIColor]) -> UIColor {
-    let n = min(weights.count, colors.count)
-    var red: CGFloat = 0
-    var blue: CGFloat = 0
-    var green: CGFloat = 0
-    var alpha: CGFloat = 1
-    var red2: CGFloat = 0
-    var blue2: CGFloat = 0
-    var green2: CGFloat = 0
-    
-    for i in 0..<n {
-        colors[i].getRed(&red, green: &green, blue: &blue, alpha:&alpha)
-        let w = weights[i]
-        red2 += w * red
-        green2 += w * green
-        blue2 += w * blue
-    }
-    return UIColor(red: red2, green: green2, blue: blue2, alpha: alpha)
-}
 
 // MARK: CGPoint arithmetic
 

@@ -88,7 +88,7 @@
 		1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Groupoid.swift; sourceTree = "<group>"; };
 		1B594D081CF9B423001BFD65 /* HTransTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = HTransTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1B5979DD1CBB17A400CEAEA7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ColorPicker.storyboard; sourceTree = "<group>"; };
-		1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
+		1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ColorExtensions.swift; path = ColorStudent/ColorExtensions.swift; sourceTree = "<group>"; };
 		1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorProtocols.swift; sourceTree = "<group>"; };
 		1B5979E61CBB17A400CEAEA7 /* GradientColorTriangle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientColorTriangle.swift; sourceTree = "<group>"; };
 		1B5979E91CBB17A400CEAEA7 /* LightnessGradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LightnessGradientView.swift; sourceTree = "<group>"; };
@@ -148,7 +148,6 @@
 				1B5979EB1CBB17A400CEAEA7 /* TriangleView.swift */,
 				1B5979E91CBB17A400CEAEA7 /* LightnessGradientView.swift */,
 				1B5979E61CBB17A400CEAEA7 /* GradientColorTriangle.swift */,
-				1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */,
 				1B5979E11CBB17A400CEAEA7 /* ColorProtocols.swift */,
 			);
 			path = ColorStudent;
@@ -168,6 +167,7 @@
 		1B6EB4761CAD78D900B08F09 /* Geometry */ = {
 			isa = PBXGroup;
 			children = (
+				1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */,
 				1B1754681CF5E2BC00959DA3 /* Cuff.swift */,
 				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
 				1B4CA0A81CF4B1990022C41B /* Pants.swift */,
@@ -555,12 +555,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Blown-up-crosses";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = CircleLimit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.cuny.gc.jkahn.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -571,12 +573,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Blown-up-crosses";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = CircleLimit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.cuny.gc.jkahn.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

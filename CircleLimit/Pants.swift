@@ -8,6 +8,28 @@
 
 import UIKit
 
+
+func weightedColor(weights: [CGFloat], colors: [UIColor]) -> UIColor {
+    let n = min(weights.count, colors.count)
+    var red: CGFloat = 0
+    var blue: CGFloat = 0
+    var green: CGFloat = 0
+    var alpha: CGFloat = 1
+    var red2: CGFloat = 0
+    var blue2: CGFloat = 0
+    var green2: CGFloat = 0
+    
+    for i in 0..<n {
+        colors[i].getRed(&red, green: &green, blue: &blue, alpha:&alpha)
+        let w = weights[i]
+        red2 += w * red
+        green2 += w * green
+        blue2 += w * blue
+    }
+    return UIColor(red: red2, green: green2, blue: blue2, alpha: alpha)
+}
+
+
 class Pants {
     
     var baseMask: HTrans {
@@ -60,14 +82,15 @@ class Pants {
     
     var hexagonGuidelines: [HDrawable] {
 //        return [HDrawable](hexagons.map({$0.altitudeGuidelines}).flatten())
-        return [hexagons[0].hexagonGuideline]
+        return hexagons.map({$0.hexagonGuideline.transformedBy(baseMask.following($0.baseMask))})
     }
     
     func setColor(color: UIColor) {
         self.color = color
+        hexagons[0].color = color
+        hexagons[1].color = weightedColor([0.6, 0.4], colors: [color, UIColor.grayColor()])
         for h in hexagons {
-            h.color = color
-            h.hexagonGuideline.fillColor = color
+            h.hexagonGuideline.fillColor = h.color
         }
     }
     
