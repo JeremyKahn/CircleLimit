@@ -69,6 +69,7 @@ class HyperbolicPolyline : HDrawable {
         self.fillColorTable = a.fillColorTable
         self.fillColorBaseNumber = a.fillColorBaseNumber
         self.useFillColorTable = a.useFillColorTable
+        self.fillColor = a.fillColor
         update()
         complete()
     }
@@ -197,8 +198,8 @@ class HyperbolicPolyline : HDrawable {
     }
     
     func transformedBy(M: HyperbolicTransformation) -> HDrawable {
-        let new = HyperbolicPolyline(self)
-        new.transformBy(M)
+        let new = self.copy()
+        (new as! HyperbolicPolyline).transformBy(M)
         return new
     }
     

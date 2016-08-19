@@ -25,11 +25,9 @@ class HyperbolicPolygon: HyperbolicPolyline {
     override init(_ pp: [HPoint]) {
         super.init(pp)
     }
-    
-    
+        
     var polygonAndCurves: (UIBezierPath, [UIBezierPath]) {
         let points = maskedPointsToDraw
-        //        print("Fill color: \(color)")
         let totalPath = UIBezierPath()
         totalPath.moveToPoint(points[0].cgPoint)
         var borderPaths: [UIBezierPath] = []

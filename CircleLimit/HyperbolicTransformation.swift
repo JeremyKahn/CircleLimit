@@ -99,10 +99,6 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     static let turnAround = HyperbolicTransformation(lambda: -1 + 0.i)
     
-    var appliedToOrigin: HPoint {
-        return appliedTo(HPoint())
-    }
-    
     var turnLeft: HTrans {
         return following(HTrans.turnLeft)
     }
@@ -123,8 +119,16 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return following(HTrans.goForward(distance))
     }
     
-    // MARK: Group operations
+    // MARK: Group operations and actions
     static let identity = HyperbolicTransformation()
+    
+    var appliedToOrigin: HPoint {
+        return appliedTo(HPoint())
+    }
+    
+    var basePoint: HPoint {
+        return appliedToOrigin
+    }
     
     func appliedTo(z: Complex64) -> Complex64 {
         let w = (u * z + v) / (v.conj * z + u.conj)
@@ -146,6 +150,32 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     var inverse: HyperbolicTransformation
     { return HyperbolicTransformation(u: u.conj, v: -v) }
     
+    func following(B: HyperbolicTransformation) -> HyperbolicTransformation {
+        let r = u * B.u + v * B.v.conj
+        let s = u * B.v + v * B.u.conj
+        return HyperbolicTransformation(u: r, v: s)
+    }
+    
+    func toThe(n: Int) -> HyperbolicTransformation {
+        assert(n >= 0)
+        var M = HyperbolicTransformation()
+        for _ in 0..<n {
+            M = M.following(self)
+        }
+        return M
+    }
+    
+    // MARK: Conjugacy invariants and equivariants
+    // This is very close to correct when the axis is far from the origin
+    // We return nil if the transformation is not hyperbolic
+    var approximateDistanceOfTranslationAxisToOrigin: Double? {
+        if v == 0 { return nil }
+        let thingInside = u.re * u.re - 1
+        guard thingInside > 0 else {return nil}
+        let y = sqrt(thingInside)/v.abs
+        return log(2.0) - log(y)
+    }
+    
     // So far this finds the fixed point for an elliptic element
     var fixedPoint: HPoint? {
         if v == 0 {
@@ -158,16 +188,6 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         im = u.im > 0 ? im : -im
         let z = im.i/v.conj
         return HPoint(z)
-    }
-    
-    // This is very close to correct when the axis is far from the origin
-    // We return nil if the transformation is not hyperbolic
-    var approximateDistanceOfTranslationAxisToOrigin: Double? {
-        if v == 0 { return nil }
-        let thingInside = u.re * u.re - 1
-        guard thingInside > 0 else {return nil}
-        let y = sqrt(thingInside)/v.abs
-        return log(2.0) - log(y)
     }
     
     func approximateDistanceOfTranslationAxisTo(p: HPoint) -> Double? {
@@ -189,22 +209,6 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     //    func inverse() -> HyperbolicTransformation {
     //        return HyperbolicTransformation(a: -a * lambda, lambda: lambda.conj)
     //    }
-    
-    func following(B: HyperbolicTransformation) -> HyperbolicTransformation {
-        let r = u * B.u + v * B.v.conj
-        let s = u * B.v + v * B.u.conj
-        return HyperbolicTransformation(u: r, v: s)
-    }
-    
-    func toThe(n: Int) -> HyperbolicTransformation {
-        assert(n >= 0)
-        var M = HyperbolicTransformation()
-        for _ in 0..<n {
-            M = M.following(self)
-        }
-        return M
-    }
-    
     
     // MARK: Location, comparison, and description
     typealias Location = Int

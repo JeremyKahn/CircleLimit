@@ -24,6 +24,8 @@ class Pants {
     
     var hexagons: [Hexagon]
     
+    var color = UIColor.clearColor()
+    
     var localGroupoidGenerators: [GroupoidElement] = []
     
     var groupoidEltsToAdjacentPants: [GroupoidElement?] = [GroupoidElement?](count: 3, repeatedValue: nil)
@@ -51,11 +53,22 @@ class Pants {
     }
     
     var guidelines: [HDrawable] {
-        return orthoGuidelines
+        return hexagonGuidelines
+//        return orthoGuidelines
+        
     }
     
     var hexagonGuidelines: [HDrawable] {
-        return [HDrawable](hexagons.map({$0.altitudeGuidelines}).flatten())
+//        return [HDrawable](hexagons.map({$0.altitudeGuidelines}).flatten())
+        return [hexagons[0].hexagonGuideline]
+    }
+    
+    func setColor(color: UIColor) {
+        self.color = color
+        for h in hexagons {
+            h.color = color
+            h.hexagonGuideline.fillColor = color
+        }
     }
     
     var cuffGuidelines: [HDrawable] = []

@@ -55,7 +55,9 @@ extension CircleViewController {
     // We're going to work first with two pants with the i'th cuffs joined
     func makeInitialPants() {
         let pants0 = Pants(cuffHalfLengths: cuffLengths)
+        pants0.setColor(UIColor.blueColor())
         let pants1 = Pants(cuffHalfLengths: cuffLengths)
+        pants1.setColor(UIColor.greenColor())
         for i in 0...2 {
             cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.5))
         }

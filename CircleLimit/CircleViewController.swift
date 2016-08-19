@@ -63,12 +63,14 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // MARK: - General properties
     var guidelines: [HDrawable] {
-        return cuffGuidelines + generalGuidelines
+        return generalGuidelines + cuffGuidelines
     }
     
     var generalGuidelines: [HDrawable] = []
     
     var cuffGuidelines: [HDrawable] = []
+    
+    var hexagonGuidelines: [HDrawable] = []
     
     var fixedPoints: [HDrawable] = []
     

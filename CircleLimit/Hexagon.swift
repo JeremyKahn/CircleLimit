@@ -6,7 +6,7 @@
 //  Copyright © 2016 Jeremy Kahn. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 
 struct HexagonEntry {
@@ -85,6 +85,8 @@ class Hexagon {
     
     var baseMask = HTrans()
     
+    var color = UIColor.purpleColor()
+    
     var sideLengths: [Double] = Array<Double>(count: 6, repeatedValue: acosh(2.0))
     
     var firstParts: [Double] = Array<Double>(count: 6, repeatedValue: 0.0)
@@ -104,13 +106,22 @@ class Hexagon {
     var middle: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
     
     var end: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
-
+    
     var sideGuidelines: [HDrawable] = []
     
     var altitudeGuidelines: [HDrawable] = []
     
+    var hexagonGuideline: HDrawable!
+    
+    static var hotPants = true
+    
     var guidelines: [HDrawable] {
-        return sideGuidelines + altitudeGuidelines
+        if Hexagon.hotPants {
+            return [hexagonGuideline]
+        }
+        else {
+            return sideGuidelines + altitudeGuidelines
+        }
     }
     
     var neighbor: [HexagonEntry] = Array<HexagonEntry>(count: 6, repeatedValue: HexagonEntry.placeholder)
@@ -124,13 +135,12 @@ class Hexagon {
                 state: i % 2 == 0 ? .five : .three)
         }
     }
-
+    
     init(alternatingSideLengths: [Double]) {
         id = Hexagon.nextId
         Hexagon.nextId += 1
         setAlternatingSideLengths(alternatingSideLengths)
-        
-     }
+    }
     
     func setAlternatingSideLengths(alternatingSideLengths: [Double]) {
         for i in 0..<3 {
@@ -157,7 +167,9 @@ class Hexagon {
     
     func copy() -> Hexagon {
         let alternatingSideLengths = [sideLengths[0], sideLengths[2], sideLengths[4]]
-        return Hexagon(alternatingSideLengths: alternatingSideLengths)
+        let h = Hexagon(alternatingSideLengths: alternatingSideLengths)
+        h.color = color
+        return h
     }
     
     func setUpEverything() {
@@ -190,5 +202,11 @@ class Hexagon {
             let line = HyperbolicPolyline([HPoint(), foot[i].appliedToOrigin])
             altitudeGuidelines.append(line)
         }
+        
+        let vertices = [0, 1, 2, 3, 4, 5, 0].map({start[$0].basePoint})
+        let h = HyperbolicPolygon(vertices)
+        h.useFillColorTable = false
+        h.fillColor = color
+        hexagonGuideline = h
     }
 }
