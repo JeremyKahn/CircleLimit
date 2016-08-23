@@ -37,37 +37,38 @@ struct HexagonEntry {
     }
 }
 
-/// The possible states we can be in upon entering a hexagon
-enum HexState {
-    /// We've entered from within a pants, and can only go to the opposite side and its neighbors
-    case three
-    /// We've entered from another pants, and can exit by any other side
-    case five
-
-    /**
-     - returns: An array of (side, state) tuples that are the possible exit sides and states
-     - parameter entrance: The index of the side where we are entering
-     */
-    func exitStates(entrance i: Int) -> [(i: Int, state: HexState)] {
-        let fiveArray = [1, 2, 3, 4, 5]
-        // three five three five three
-        let fiveStuff = fiveArray.map({($0, $0 % 2 == 0 ? HexState.five : HexState.three)})
-        switch self {
-        case three:
-            return [((i+2) % 6, three), ((i+3) % 6, five), ((i+4) % 6, three)]
-        case five:
-            return fiveStuff.map() {
-                (($0.0 + i) % 6, $0.1)
-            }
+struct RotationState {
+    
+    var left: Int
+    var right: Int
+    
+    static var none: RotationState {
+        return RotationState(left: 0, right: 0)
+    }
+    
+    func exitStates(entrance i: Int, hexagon h: Hexagon) -> [(Int, RotationState)] {
+        let possibleSides = [i + 1, i + 2, i + 3, i + 4, i + 5].map({$0 % 6})
+        let resultsQ = possibleSides.map() { (j: Int) -> (Int, RotationState?) in
+            return (j, h.newRotationState(self, entrance: i, exit: j))
         }
+        let results = resultsQ.filter({$0.1 != nil}).map() {
+            (j: Int, s: RotationState?) -> (Int, RotationState) in
+            return (j, s!)
+        }
+        return results
     }
 }
+
+
+
+
+
 
 /// The entry to the new hexagon, the motion to the new hexagon, and the state in the new hexagon
 struct ForwardState {
     var entry: HexagonEntry
     var newMotion: HTrans
-    var state: HexState
+    var state: RotationState
 }
 
 struct EndState {
@@ -80,10 +81,10 @@ struct EndState {
  */
 func nextForwardStates(s: ForwardState) -> [ForwardState] {
     guard let hexagon = s.entry.hexagon else {return []}
-    let exitStates = s.state.exitStates(entrance: s.entry.entryIndex)
+    let exitStates = s.state.exitStates(entrance: s.entry.entryIndex, hexagon: hexagon)
     return exitStates.map() {
-        let entry = hexagon.neighbor[$0.i]
-        return ForwardState(entry: entry, newMotion: s.newMotion.following(entry.motion), state: $0.state)
+        let entry = hexagon.neighbor[$0.0]
+        return ForwardState(entry: entry, newMotion: s.newMotion.following(entry.motion), state: $0.1)
     }
 }
 
@@ -111,6 +112,53 @@ class Hexagon {
     
     /// the lengths fo the sides
     var sideLengths: [Double] = Array<Double>(count: 6, repeatedValue: acosh(2.0))
+    
+    /// the rotation numbers, padded with zeroes for cuffs
+    var rotationArray: [Int] {
+        return [0, 0, 0]
+    }
+    
+    func isCuffIndex(i: Int) -> Bool {
+        return rotationArray[i / 2] == 0
+    }
+    
+    func rotationNumberForIndex(i: Int) -> Int {
+        return rotationArray[i / 2]
+    }
+    
+    /**
+     - parameters:
+        - old: The old rotationState
+        - side: The side by which we are exiting
+     - returns: The rotation state in the new hexagon, or nil if this exit is forbidden *for any reason*
+     - remark: We assume that the hexagon sides are numbered ***clockwise*** for the purposes of RotationState.left and .right
+     */
+    func newRotationState(old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
+        if exit % 2 == 0 {
+            if abs(exit - entrance) == 1 {
+                return nil
+            }
+            return isCuffIndex(exit) ? RotationState.none : nil
+        }
+        let exitPlusOne = (exit + 1) % 6
+        let exitMinusOne = (exit + 5) % 6
+        var left = isCuffIndex(exitMinusOne) ? 0 : 1
+        var right = isCuffIndex(exitPlusOne) ? 0 : 1
+        if (exit - entrance + 6) % 6 == 2 && !isCuffIndex(exitPlusOne) {
+            left = old.left + 1
+            if left > rotationNumberForIndex(exitPlusOne) {
+                return nil
+            }
+        }
+        if (exit - entrance + 6) % 6 == 4 && !isCuffIndex(exitMinusOne) {
+            right = old.right + 1
+            if right > rotationNumberForIndex(exitMinusOne) {
+                return nil
+            }
+        }
+        return RotationState(left: left, right: right)
+    }
+    
     
     /// the lengths of the parts from the start to the foot of the altitude
     var firstParts: [Double] = Array<Double>(count: 6, repeatedValue: 0.0)
@@ -165,12 +213,19 @@ class Hexagon {
     
     /// The six forward states that we can arrive at from the given hexagon
     var forwardStates: [ForwardState] {
-        let sixArray = [0, 1, 2, 3, 4, 5]
+        var sixArray = [0, 1, 2, 3, 4, 5]
+        sixArray = sixArray.filter({$0 % 2 == 1 || isCuffIndex($0)})
         return sixArray.map() { (i: Int) -> ForwardState in
             let entry = neighbor[i]
+            var left = 0
+            var right = 0
+            if i % 2 == 1 {
+                left = isCuffIndex((i + 5) % 6) ? 0 : 1
+                right = isCuffIndex((i + 1) % 6) ? 0 : 1
+            }
             return ForwardState(entry: entry,
                 newMotion: entry.motion,
-                state: i % 2 == 0 ? .five : .three)
+                state: RotationState(left: left, right: right))
         }
     }
     
