@@ -152,7 +152,7 @@ class Hexagon {
         }
         if (exit - entrance + 6) % 6 == 4 && !isCuffIndex(exitMinusOne) {
             right = old.right + 1
-            if right > rotationNumberForIndex(exitMinusOne) {
+            if right >= rotationNumberForIndex(exitMinusOne) {
                 return nil
             }
         }
