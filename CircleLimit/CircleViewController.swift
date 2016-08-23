@@ -15,16 +15,23 @@ enum TouchType {
     case Ended
 }
 
-// The mask is being applied to the point on the polygon
+/// Holds the data for a point matched (clicked on) in a polyline
 struct MatchedPoint {
+    
+    /// The index of the point in the array of points in the polyline
     var index: Int
+    
     var polyline: HyperbolicPolyline
+    
+    /// The mask *being applied* to the point in the polygon
     var mask: HyperbolicTransformation
     
+    /// Moves the point *as it appears* to the point z
     func moveTo(z: HPoint) {
         polyline.movePointAtIndex(index, to: mask.inverse.appliedTo(z))
     }
     
+    /// The matching point **as it appears**
     var matchingPoint: HPoint {
         return mask.appliedTo(polyline.points[index])
     }

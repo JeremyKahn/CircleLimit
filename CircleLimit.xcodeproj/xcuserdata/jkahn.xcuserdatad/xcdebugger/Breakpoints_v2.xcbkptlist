@@ -15,8 +15,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "432"
             endingLineNumber = "432"
-            landmarkName = "returnToUsualMode()"
-            landmarkType = "5">
+            landmarkName = "CircleViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -159,7 +159,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
             endingLineNumber = "447"
-            landmarkName = "nearbyPointsTo(_:withinDistance:)"
+            landmarkName = "returnToUsualMode()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -269,8 +269,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "435"
             endingLineNumber = "435"
-            landmarkName = "returnToUsualMode()"
-            landmarkType = "5">
+            landmarkName = "CircleViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -317,8 +317,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "570"
             endingLineNumber = "570"
-            landmarkName = "ColorChangeInformation"
-            landmarkType = "3">
+            landmarkName = "addPointToArcs(_:)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -381,7 +381,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "820"
             endingLineNumber = "820"
-            landmarkName = "recordChangesForCuff(_:)"
+            landmarkName = "prepareCuffForChanges(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -445,8 +445,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "629"
             endingLineNumber = "629"
-            landmarkName = "gestureRecognizerShouldBegin(_:)"
-            landmarkType = "5">
+            landmarkName = "CircleViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -493,8 +493,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "569"
             endingLineNumber = "569"
-            landmarkName = "CircleViewController"
-            landmarkType = "3">
+            landmarkName = "addPointToArcs(_:)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -525,7 +525,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "751"
             endingLineNumber = "751"
-            landmarkName = "twoTouchLongPress(_:)"
+            landmarkName = "doubleTap(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -557,8 +557,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "664"
             endingLineNumber = "664"
-            landmarkName = "simplePan(_:)"
-            landmarkType = "5">
+            landmarkName = "CircleViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -645,8 +645,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "430"
             endingLineNumber = "430"
-            landmarkName = "returnToUsualMode()"
-            landmarkType = "5">
+            landmarkName = "CircleViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -709,8 +709,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "788"
             endingLineNumber = "788"
-            landmarkName = "CircleViewController"
-            landmarkType = "3">
+            landmarkName = "longPress(_:)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -971,7 +971,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "115"
             endingLineNumber = "115"
-            landmarkName = "setUpLocalGroupoid()"
+            landmarkName = "setUpGuidelines()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1058,31 +1058,46 @@
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "CircleLimit.Pants.transformedGuidelines.getter : Swift.Array&lt;CircleLimit.HDrawable&gt;"
+                  symbolName = "CircleLimit.Pants.init (cuffHalfLengths : Swift.Array&lt;Swift.Double&gt;) -&gt; CircleLimit.Pants"
                   moduleName = "CircleLimit"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jkahn/Dropbox/iPhone%20apps/CircleLimit/CircleLimit/Pants.swift"
-                  timestampString = "493333549.034403"
+                  timestampString = "493659015.775278"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "32">
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "160">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "CircleLimit.Pants.(transformedGuidelines.getter : Swift.Array&lt;CircleLimit.HDrawable&gt;).(closure #1)"
+                  symbolName = "CircleLimit.Pants.groupoidEltsToAdjacentPants.getter : Swift.Array&lt;Swift.Optional&lt;CircleLimit.GroupoidElement&gt;&gt;"
                   moduleName = "CircleLimit"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jkahn/Dropbox/iPhone%20apps/CircleLimit/CircleLimit/Pants.swift"
-                  timestampString = "493333549.034567"
+                  timestampString = "493659015.775457"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "24">
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "28">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CircleLimit.Pants.groupoidEltsToAdjacentPants.setter : Swift.Array&lt;Swift.Optional&lt;CircleLimit.GroupoidElement&gt;&gt;"
+                  moduleName = "CircleLimit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jkahn/Dropbox/iPhone%20apps/CircleLimit/CircleLimit/Pants.swift"
+                  timestampString = "493659015.775544"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "60">
                </Location>
             </Locations>
          </BreakpointContent>
