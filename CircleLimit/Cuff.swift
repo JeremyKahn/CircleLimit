@@ -14,7 +14,7 @@ struct PantsCuff {
     var index: Int
     
     func setLength(newLength: Double) {
-        pants.cuffHalfLengths[index] = newLength
+        pants.cuffHalfLengths[index] = newLength + 0.i
     }
     
 }
@@ -73,7 +73,7 @@ class Cuff {
     
     init(pants0: Pants, index0: Int, pants1: Pants, index1: Int, twist: Double) {
         self.twist = twist
-        self.length = pants0.cuffHalfLengths[index0]
+        self.length = pants0.cuffHalfLengths[index0].re
         pantsCuffs[0] = PantsCuff(pants: pants0, index: index0)
         pantsCuffs[1] = PantsCuff(pants: pants1, index: index1)
         //        assert((length - pants1.cuffHalfLengths[index1]).abs < Cuff.matchingTolerance)

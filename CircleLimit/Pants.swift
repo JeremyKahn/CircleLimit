@@ -36,7 +36,7 @@ class Pants {
         return hexagons[0].baseMask
     }
     
-    var cuffHalfLengths: [Double] {
+    var cuffHalfLengths: [Complex64] {
         didSet {
             hexagons[0].setAlternatingSideLengths(cuffHalfLengths)
             hexagons[1].setAlternatingSideLengths(cuffHalfLengths.reverse())
@@ -100,7 +100,7 @@ class Pants {
     
     static var nextId = 0
     
-    init(cuffHalfLengths: [Double]) {
+    init(cuffHalfLengths: [Complex64]) {
         id = Pants.nextId
         Pants.nextId += 1
         self.cuffHalfLengths = cuffHalfLengths
@@ -110,20 +110,29 @@ class Pants {
         setUpLocalGroupoid()
     }
     
+    convenience init(cuffHalfLengths: [Double]) {
+        self.init(cuffHalfLengths: cuffHalfLengths.map({$0 + 0.i}))
+    }
+    
+    convenience init(cuffHalfLengths: [CuffRotation]) {
+        self.init(cuffHalfLengths: cuffHalfLengths.map({$0.complexLength}))
+    }
+    
     func setUpGuidelines() {
         cuffGuidelines = []
         orthoGuidelines = []
-        for i in 0...2 {
-            let sideIndex = sideIndexForCuffIndex(i, AndHexagonIndex: 0)
-            let walker = hexagons[0].start[sideIndex]
-            let firstPoint = walker.appliedToOrigin
-            let secondPoint = walker.goForward(cuffHalfLengths[i] * 2).appliedToOrigin
-            cuffGuidelines.append(HyperbolicPolyline([firstPoint, secondPoint]))
-            let oppositePoint = hexagons[0].start[(sideIndex - 1) %% 6].appliedToOrigin
-            let orthoGuideline = HyperbolicPolyline([firstPoint, oppositePoint])
-            orthoGuideline.lineColor = UIColor.blueColor()
-            orthoGuidelines.append(orthoGuideline)
-        }
+        // We're going to have to get back to this
+//        for i in 0...2 {
+//            let sideIndex = sideIndexForCuffIndex(i, AndHexagonIndex: 0)
+//            let walker = hexagons[0].start[sideIndex]
+//            let firstPoint = walker.appliedToOrigin
+//            let secondPoint = walker.goForward(cuffHalfLengths[i] * 2).appliedToOrigin
+//            cuffGuidelines.append(HyperbolicPolyline([firstPoint, secondPoint]))
+//            let oppositePoint = hexagons[0].start[(sideIndex - 1) %% 6].appliedToOrigin
+//            let orthoGuideline = HyperbolicPolyline([firstPoint, oppositePoint])
+//            orthoGuideline.lineColor = UIColor.blueColor()
+//            orthoGuidelines.append(orthoGuideline)
+//        }
     }
     
     func setUpLocalGroupoid() {
@@ -165,9 +174,10 @@ class Pants {
         }
     }
     
+    // Here we're assuming that cuffHalfLength[k] is real
     func setUpGroupoidElementToAdjacentPantsForIndex(k: Int, updateNeighbor: Bool) {
         guard let (adjPants, neighborCuffIndex, twist) = adjacenciesAndTwists[k] else {return}
-        let halfLength = cuffHalfLengths[k]
+        let halfLength = cuffHalfLengths[k].re
         let wholeLength = 2 * halfLength
         var reducedTwist = twist %% (wholeLength)
         reducedTwist = reducedTwist > halfLength ? reducedTwist - wholeLength : reducedTwist

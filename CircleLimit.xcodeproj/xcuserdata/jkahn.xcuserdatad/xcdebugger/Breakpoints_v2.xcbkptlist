@@ -186,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/Extensions.swift"
-            timestampString = "486156585.946983"
+            timestampString = "493743163.12825"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71">
+            startingLineNumber = "89"
+            endingLineNumber = "89">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -200,11 +200,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/Extensions.swift"
-            timestampString = "486156585.946983"
+            timestampString = "493743163.12825"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
             landmarkName = "CGFloat"
             landmarkType = "3">
          </BreakpointContent>
@@ -966,11 +966,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/Pants.swift"
-            timestampString = "493333361.423435"
+            timestampString = "493743163.12825"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
             landmarkName = "setUpGuidelines()"
             landmarkType = "5">
          </BreakpointContent>
@@ -1042,7 +1042,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/Pants.swift"
@@ -1055,51 +1055,52 @@
             landmarkType = "3">
             <Locations>
                <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "CircleLimit.Pants.init (cuffHalfLengths : Swift.Array&lt;Swift.Double&gt;) -&gt; CircleLimit.Pants"
-                  moduleName = "CircleLimit"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jkahn/Dropbox/iPhone%20apps/CircleLimit/CircleLimit/Pants.swift"
-                  timestampString = "493659015.775278"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "53"
-                  endingLineNumber = "53"
-                  offsetFromSymbolStart = "160">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "CircleLimit.Pants.groupoidEltsToAdjacentPants.getter : Swift.Array&lt;Swift.Optional&lt;CircleLimit.GroupoidElement&gt;&gt;"
                   moduleName = "CircleLimit"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jkahn/Dropbox/iPhone%20apps/CircleLimit/CircleLimit/Pants.swift"
-                  timestampString = "493659015.775457"
+                  timestampString = "493743166.967997"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "53"
                   endingLineNumber = "53"
-                  offsetFromSymbolStart = "28">
+                  offsetFromSymbolStart = "25">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "CircleLimit.Pants.groupoidEltsToAdjacentPants.setter : Swift.Array&lt;Swift.Optional&lt;CircleLimit.GroupoidElement&gt;&gt;"
                   moduleName = "CircleLimit"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jkahn/Dropbox/iPhone%20apps/CircleLimit/CircleLimit/Pants.swift"
-                  timestampString = "493659015.775544"
+                  timestampString = "493743166.968103"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "53"
                   endingLineNumber = "53"
-                  offsetFromSymbolStart = "60">
+                  offsetFromSymbolStart = "54">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CircleVCConfigurations.swift"
+            timestampString = "493743289.91934"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "setUpGroupAndGuidelinesForPants()"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

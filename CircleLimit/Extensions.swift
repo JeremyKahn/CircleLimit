@@ -11,6 +11,10 @@ import UIKit
 // MARK: Arithmetic and mathematical functions
 infix operator %% {associativity left precedence 150}
 
+/**
+ - returns: lhs reduced modulo the absolute value of rhs
+ - remark: Always returns a number between 0 (inclusive) and |rhs| (exclusive)
+ */
 func %%(left: Int, right: Int) -> Int {
     if (right == 0) {return 0}
     if (right < 0) {return left %% (-right) }
@@ -33,6 +37,20 @@ func acoth(y: Double) -> Double {
     return atanh(1/y)
 }
 
+func coth<T>(z: Complex<T>) -> Complex<T> {
+    return tanh(z).inverse
+}
+
+func acoth<T>(z: Complex<T>) -> Complex<T> {
+    return atanh(z.inverse)
+}
+
+extension Complex {
+    var inverse: Complex<T> {
+        let aa = abs2
+        return Complex<T>(re/aa, -im/aa)
+    }
+}
 
 // MARK: Timing
 extension NSTimer {

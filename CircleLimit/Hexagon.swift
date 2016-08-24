@@ -96,6 +96,24 @@ func groupFromEndStates(endStates: [EndState], for baseHexagon: Hexagon) -> [HTr
     return endStates.filter({$0.hexagon === baseHexagon}).map({$0.motion})
 }
 
+/// Represents either a cuff or a rotation
+enum CuffRotation {
+    /// A cuff, with a given length
+    case cuff(Double)
+    
+    /// An corner with angle pi/q
+    case rotation(Int)
+    
+    var complexLength: Complex64 {
+        switch self {
+        case cuff(let length):
+            return length + 0.i
+        case rotation(let p):
+            return (Double.PI/Double(p)).i
+        }
+    }
+    
+}
 
 /// A right angled hexagon in the hyperbolic plane
 class Hexagon {
@@ -110,8 +128,8 @@ class Hexagon {
     /// The color to be used to draw the hexagon, as a guideline
     var color = UIColor.purpleColor()
     
-    /// the lengths fo the sides
-    var sideLengths: [Double] = Array<Double>(count: 6, repeatedValue: acosh(2.0))
+    /// the lengths of the sides
+    var sideLengths = Array<Complex64>(count: 6, repeatedValue: acosh(2.0 + 0.i))
     
     /// the rotation numbers, padded with zeroes for cuffs
     var rotationArray: [Int] {
@@ -229,14 +247,18 @@ class Hexagon {
         }
     }
     
-    init(alternatingSideLengths: [Double]) {
+    init(alternatingSideLengths: [Complex64]) {
         id = Hexagon.nextId
         Hexagon.nextId += 1
         setAlternatingSideLengths(alternatingSideLengths)
     }
     
+    convenience init(alternatingSideLengths: [CuffRotation]) {
+        self.init(alternatingSideLengths: alternatingSideLengths.map({$0.complexLength}))
+    }
+    
     /// (Re)compute the geometry from the alternating side lengths
-    func setAlternatingSideLengths(alternatingSideLengths: [Double]) {
+    func setAlternatingSideLengths(alternatingSideLengths: [Complex64]) {
         for i in 0..<3 {
             sideLengths[2 * i] = alternatingSideLengths[i]
         }
@@ -272,8 +294,8 @@ class Hexagon {
     /// Compute all parameters and measurements from the side lengths
     func setUpEverything() {
         for i in 0..<6 {
-            firstParts[i] = acoth(cosh(sideLengths[(i - 1) %% 6]) / coth(sideLengths[(i - 2) %% 6]))
-            secondParts[i] = acoth(cosh(sideLengths[(i + 1) %% 6]) / coth(sideLengths[(i + 2) %% 6]))
+            firstParts[i] = acoth(cosh(sideLengths[(i - 1) %% 6]) / coth(sideLengths[(i - 2) %% 6])).re
+            secondParts[i] = acoth(cosh(sideLengths[(i + 1) %% 6]) / coth(sideLengths[(i + 2) %% 6])).re
         }
         for i in 0..<6 {
             altitudeParts[i] = atanh(cosh(firstParts[i]) * tanh(secondParts[(i - 1) %% 6]))

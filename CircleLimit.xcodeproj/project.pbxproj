@@ -10,7 +10,6 @@
 		1B1754691CF5E2BC00959DA3 /* Cuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1754681CF5E2BC00959DA3 /* Cuff.swift */; };
 		1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B21D0E11CF35BE9001FF636 /* Queue.swift */; };
 		1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */; };
-		1B3643161CF0B0F300F9D6AD /* TimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643151CF0B0F300F9D6AD /* TimeManager.swift */; };
 		1B3643181CF0BE6100F9D6AD /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643171CF0BE6100F9D6AD /* Flags.swift */; };
 		1B4CA0A71CF4A64D0022C41B /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
 		1B4CA0A91CF4B1990022C41B /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
@@ -35,7 +34,6 @@
 		1BD7A7CA1CF9C0560010F45E /* Cuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1754681CF5E2BC00959DA3 /* Cuff.swift */; };
 		1BD7A7CB1CF9C0560010F45E /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
 		1BD7A7CC1CF9C0560010F45E /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
-		1BD7A7CD1CF9C0560010F45E /* TimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643151CF0B0F300F9D6AD /* TimeManager.swift */; };
 		1BD7A7CE1CF9C0560010F45E /* Complex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD0891B5C2BEA0057B710 /* Complex.swift */; };
 		1BD7A7CF1CF9C0560010F45E /* PoincareDisk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD0831B5C22740057B710 /* PoincareDisk.swift */; };
 		1BD7A7D01CF9C0560010F45E /* HyperbolicTransformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */; };
@@ -81,7 +79,6 @@
 		1B1754681CF5E2BC00959DA3 /* Cuff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cuff.swift; sourceTree = "<group>"; };
 		1B21D0E11CF35BE9001FF636 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CircleVCConfigurations.swift; path = ../CircleVCConfigurations.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		1B3643151CF0B0F300F9D6AD /* TimeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeManager.swift; sourceTree = "<group>"; };
 		1B3643171CF0BE6100F9D6AD /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
 		1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hexagon.swift; sourceTree = "<group>"; };
 		1B4CA0A81CF4B1990022C41B /* Pants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pants.swift; sourceTree = "<group>"; };
@@ -171,7 +168,6 @@
 				1B1754681CF5E2BC00959DA3 /* Cuff.swift */,
 				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
 				1B4CA0A81CF4B1990022C41B /* Pants.swift */,
-				1B3643151CF0B0F300F9D6AD /* TimeManager.swift */,
 				1BDBD0891B5C2BEA0057B710 /* Complex.swift */,
 				1BDBD0831B5C22740057B710 /* PoincareDisk.swift */,
 				1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */,
@@ -378,7 +374,6 @@
 				1B6EB46E1CAD711D00B08F09 /* HyperbolicDot.swift in Sources */,
 				1BDD539F1B7162620054445B /* DynamicProgramming.swift in Sources */,
 				1BA2D5B31CA1E1C90036ACCD /* CenterPoint.swift in Sources */,
-				1B3643161CF0B0F300F9D6AD /* TimeManager.swift in Sources */,
 				1B5979F91CBB17A400CEAEA7 /* LightnessGradientView.swift in Sources */,
 				1BDBD08F1B5C43590057B710 /* PoincareView.swift in Sources */,
 				1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */,
@@ -418,7 +413,6 @@
 				1BD7A7CA1CF9C0560010F45E /* Cuff.swift in Sources */,
 				1BD7A7CB1CF9C0560010F45E /* Hexagon.swift in Sources */,
 				1BD7A7CC1CF9C0560010F45E /* Pants.swift in Sources */,
-				1BD7A7CD1CF9C0560010F45E /* TimeManager.swift in Sources */,
 				1BD7A7CE1CF9C0560010F45E /* Complex.swift in Sources */,
 				1BD7A7CF1CF9C0560010F45E /* PoincareDisk.swift in Sources */,
 				1BD7A7D01CF9C0560010F45E /* HyperbolicTransformation.swift in Sources */,

@@ -52,6 +52,8 @@ extension CircleViewController {
         searchingGroup = groupForIntegerDistance[5].filter() { $0.action == I }
     }
     
+    
+    
     // We're going to work first with two pants with the i'th cuffs joined
     func makeInitialPants() {
         let pants0 = Pants(cuffHalfLengths: cuffLengths)
