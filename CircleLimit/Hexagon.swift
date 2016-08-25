@@ -32,8 +32,9 @@ struct HexagonEntry {
     
     static var placeholder = HexagonEntry()
     
-    var readable: (Int, HTrans, Int) {
-        return (entryIndex, motion, hexagon!.id)
+    /// (entryIndex, motion, hexagon?.id)
+    var nice: (Int, (String, String), Int?) {
+        return (entryIndex, (motion.u.nice, motion.v.nice), hexagon?.id)
     }
 }
 
@@ -57,6 +58,7 @@ struct RotationState {
         }
         return results
     }
+    
 }
 
 
@@ -69,6 +71,17 @@ struct ForwardState {
     var entry: HexagonEntry
     var newMotion: HTrans
     var state: RotationState
+    
+    var nice:  (Int, Int?, (String, String), RotationState) {
+        return (entry.entryIndex, entry.hexagon?.id, (newMotion.u.nice, newMotion.v.nice), state)
+    }
+    
+    init(entry: HexagonEntry, newMotion: HTrans, state: RotationState) {
+        self.entry = entry
+        self.newMotion = newMotion
+        self.state = state
+//        print("Hexagon: \(newMotion)")
+    }
 }
 
 struct EndState {
@@ -147,13 +160,14 @@ class Hexagon {
     /**
      - parameters:
         - old: The old rotationState
-        - side: The side by which we are exiting
+        - entrance: The index of the side by which we are entering, in 0..<6
+        - exit: The index of the side by which we are exiting, in 0..<6
      - returns: The rotation state in the new hexagon, or nil if this exit is forbidden *for any reason*
      - remark: We assume that the hexagon sides are numbered ***clockwise*** for the purposes of RotationState.left and .right
      */
     func newRotationState(old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
         if exit % 2 == 0 {
-            if abs(exit - entrance) == 1 {
+            if abs(exit - entrance) == 1 || (exit == 0 && entrance == 5) {
                 return nil
             }
             return isCuffIndex(exit) ? RotationState.none : nil

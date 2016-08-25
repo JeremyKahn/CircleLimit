@@ -376,11 +376,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/CircleViewController.swift"
-            timestampString = "493329281.71759"
+            timestampString = "493765733.071851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "820"
-            endingLineNumber = "820"
+            startingLineNumber = "821"
+            endingLineNumber = "821"
             landmarkName = "prepareCuffForChanges(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -456,11 +456,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/CircleViewController.swift"
-            timestampString = "493329281.71759"
+            timestampString = "493765733.071851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "773"
-            endingLineNumber = "773"
+            startingLineNumber = "774"
+            endingLineNumber = "774"
             landmarkName = "longPress(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -704,11 +704,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/CircleViewController.swift"
-            timestampString = "493329281.71759"
+            timestampString = "493765733.071851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "788"
-            endingLineNumber = "788"
+            startingLineNumber = "789"
+            endingLineNumber = "789"
             landmarkName = "longPress(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -1090,16 +1090,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CircleLimit/Groupoid.swift"
+            timestampString = "493745816.862636"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
+            landmarkName = "fastLeastFixedPoint(_:expand:good:project:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CircleVCConfigurations.swift"
-            timestampString = "493743289.91934"
+            filePath = "CircleLimit/CircleViewController.swift"
+            timestampString = "493765733.071851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
-            landmarkName = "setUpGroupAndGuidelinesForPants()"
+            startingLineNumber = "760"
+            endingLineNumber = "760"
+            landmarkName = "twoTouchLongPress(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

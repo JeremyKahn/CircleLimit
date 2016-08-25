@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>CircleLimitIOS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -18,6 +23,11 @@
 			<true/>
 		</dict>
 		<key>1BDBD0701B5C21370057B710</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1BE3B6281D6DF2D700213F23</key>
 		<dict>
 			<key>primary</key>
 			<true/>

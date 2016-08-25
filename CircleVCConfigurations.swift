@@ -61,7 +61,7 @@ extension CircleViewController {
         let pants1 = Pants(cuffHalfLengths: cuffLengths)
         pants1.setColor(UIColor.greenColor())
         for i in 0...2 {
-            cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.5))
+            cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.0))
         }
         pantsArray = [pants0, pants1]
     }
@@ -74,6 +74,11 @@ extension CircleViewController {
         
         print("Generating group for distance \(groupGenerationCutoffDistance)")
         let endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
+         //        var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
+        //        for _ in 0...5 {
+        //            steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
+        //        }
+        //        let endStates = steppedStates.flatten().map(project)
         let group = groupFromEndStates(endStates, for: baseHexagon)
         
         cuffGuidelines = []

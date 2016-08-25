@@ -176,7 +176,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         }
     }
     
-    var cuffLengths = [1.0, 2.0, 3.0]
+    var cuffLengths = Array<Double>(count: 3, repeatedValue: acosh(2.0))
     
     let largeGenerationDistance = 10.0
     
@@ -756,6 +756,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     @IBAction func twoTouchLongPress(sender: UILongPressGestureRecognizer) {
         print("Two touch long press")
         print("Enjoy your day!")
+        let x = [1, 2, 3]
     }
     
     @IBAction func longPress(sender: UILongPressGestureRecognizer) {

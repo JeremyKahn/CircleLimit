@@ -121,18 +121,19 @@ class Pants {
     func setUpGuidelines() {
         cuffGuidelines = []
         orthoGuidelines = []
-        // We're going to have to get back to this
-//        for i in 0...2 {
-//            let sideIndex = sideIndexForCuffIndex(i, AndHexagonIndex: 0)
-//            let walker = hexagons[0].start[sideIndex]
-//            let firstPoint = walker.appliedToOrigin
-//            let secondPoint = walker.goForward(cuffHalfLengths[i] * 2).appliedToOrigin
-//            cuffGuidelines.append(HyperbolicPolyline([firstPoint, secondPoint]))
-//            let oppositePoint = hexagons[0].start[(sideIndex - 1) %% 6].appliedToOrigin
-//            let orthoGuideline = HyperbolicPolyline([firstPoint, oppositePoint])
-//            orthoGuideline.lineColor = UIColor.blueColor()
-//            orthoGuidelines.append(orthoGuideline)
-//        }
+        for i in 0...2 {
+            let sideIndex = sideIndexForCuffIndex(i, AndHexagonIndex: 0)
+            let walker = hexagons[0].start[sideIndex]
+            let firstPoint = walker.appliedToOrigin
+            let oppositePoint = hexagons[0].start[(sideIndex - 1) %% 6].appliedToOrigin
+            let orthoGuideline = HyperbolicPolyline([firstPoint, oppositePoint])
+            orthoGuideline.lineColor = UIColor.grayColor()
+            orthoGuidelines.append(orthoGuideline)
+            if hexagons[0].isCuffIndex(i) {
+                let secondPoint = walker.goForward(cuffHalfLengths[i].re * 2).appliedToOrigin
+                cuffGuidelines.append(HyperbolicPolyline([firstPoint, secondPoint]))
+            }
+        }
     }
     
     func setUpLocalGroupoid() {
@@ -154,6 +155,9 @@ class Pants {
         }
     }
     
+    /**
+     - returns: The side index of hexagons[**hexagonIndex**] for cuff **cuffIndex**
+     */
     func sideIndexForCuffIndex(cuffIndex: Int, AndHexagonIndex hexagonIndex: Int) -> Int {
         return hexagonIndex == 0 ? 2 * cuffIndex : 4 - 2 * cuffIndex
     }
