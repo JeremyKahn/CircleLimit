@@ -14,7 +14,7 @@ extension CircleViewController {
         super.viewDidLoad()
         print("CircleViewController loaded")
         if CircleViewController.testing { return }
-        makeInitialPants()
+        makeInitialGeneralPants()
         setUpGroupAndGuidelinesForPants()
     }
     
@@ -64,6 +64,18 @@ extension CircleViewController {
             cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.0))
         }
         pantsArray = [pants0, pants1]
+    }
+    
+    func makeInitialGeneralPants() {
+        // Here we're going to make a (2, 2, 2, 3) orbifold out of two pairs of pants
+        let cph0 = CuffPlaceholder()
+        let pph0 = PantsPlaceholder()
+        let pph1 = PantsPlaceholder()
+        pph0.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(2), NumberCuff.cuff(cph0, 0)]
+        pph1.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 1)]
+        (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph0, pph1])
+        pantsArray[0].setColor(UIColor.blueColor())
+        pantsArray[1].setColor(UIColor.greenColor())
     }
     
     // We're assuming here that the pants have already had their cuffHalfLengths set
