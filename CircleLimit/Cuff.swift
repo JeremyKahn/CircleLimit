@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A pair of pants, with an identified cuff
 struct PantsCuff {
     
     var pants: Pants
@@ -19,9 +20,10 @@ struct PantsCuff {
     
 }
 
+/// A cuff, with two associated pants
 class Cuff {
     
-    // This gives up the point at the middle of the selected cuff segment
+    // The point at the middle of the selected cuff segment
     var baseMask: HTrans {
         let pants = pantsCuffs[0].pants
         let index = pantsCuffs[0].index
@@ -68,6 +70,11 @@ class Cuff {
     
     var transformedGuideline: HDrawable {
         return guideline.transformedBy(pantsCuffs[0].pants.baseMask)
+    }
+    
+    
+    convenience init(pantsCuff0: PantsCuff, pantsCuff1: PantsCuff, twist: Double) {
+        self.init(pants0: pantsCuff0.pants, index0: pantsCuff0.index, pants1: pantsCuff1.pants, index1: pantsCuff1.index, twist: twist)
     }
     
     

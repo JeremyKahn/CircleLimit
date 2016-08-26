@@ -14,6 +14,9 @@
 		1B4CA0A71CF4A64D0022C41B /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
 		1B4CA0A91CF4B1990022C41B /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
 		1B4CA0AB1CF4B3340022C41B /* Groupoid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */; };
+		1B53DD2A1D70834200E04616 /* PantsMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B53DD291D70834200E04616 /* PantsMaker.swift */; };
+		1B53DD2B1D70834200E04616 /* PantsMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B53DD291D70834200E04616 /* PantsMaker.swift */; };
+		1B53DD2C1D70834200E04616 /* PantsMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B53DD291D70834200E04616 /* PantsMaker.swift */; };
 		1B594D091CF9B423001BFD65 /* HTransTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B594D081CF9B423001BFD65 /* HTransTests.swift */; };
 		1B5979EF1CBB17A400CEAEA7 /* ColorPicker.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B5979DC1CBB17A400CEAEA7 /* ColorPicker.storyboard */; };
 		1B5979F11CBB17A400CEAEA7 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */; };
@@ -128,6 +131,7 @@
 		1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hexagon.swift; sourceTree = "<group>"; };
 		1B4CA0A81CF4B1990022C41B /* Pants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pants.swift; sourceTree = "<group>"; };
 		1B4CA0AA1CF4B3340022C41B /* Groupoid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Groupoid.swift; sourceTree = "<group>"; };
+		1B53DD291D70834200E04616 /* PantsMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PantsMaker.swift; sourceTree = "<group>"; };
 		1B594D081CF9B423001BFD65 /* HTransTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = HTransTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1B5979DD1CBB17A400CEAEA7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ColorPicker.storyboard; sourceTree = "<group>"; };
 		1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ColorExtensions.swift; path = ColorStudent/ColorExtensions.swift; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 			children = (
 				1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */,
 				1B1754681CF5E2BC00959DA3 /* Cuff.swift */,
+				1B53DD291D70834200E04616 /* PantsMaker.swift */,
 				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
 				1B4CA0A81CF4B1990022C41B /* Pants.swift */,
 				1BDBD0891B5C2BEA0057B710 /* Complex.swift */,
@@ -487,6 +492,7 @@
 				1B5979F91CBB17A400CEAEA7 /* LightnessGradientView.swift in Sources */,
 				1BDBD08F1B5C43590057B710 /* PoincareView.swift in Sources */,
 				1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */,
+				1B53DD2A1D70834200E04616 /* PantsMaker.swift in Sources */,
 				1B740F9A1C06A2FC0082BC4C /* Extensions.swift in Sources */,
 				1B4CA0A71CF4A64D0022C41B /* Hexagon.swift in Sources */,
 				1BDBD0821B5C21BE0057B710 /* CircleViewController.swift in Sources */,
@@ -508,6 +514,7 @@
 			files = (
 				1BD7A7DD1CF9C0DB0010F45E /* PoincareView.swift in Sources */,
 				1BD7A7D91CF9C0A80010F45E /* HDrawable.swift in Sources */,
+				1B53DD2B1D70834200E04616 /* PantsMaker.swift in Sources */,
 				1BD7A7DA1CF9C0A80010F45E /* HyperbolicPolyline.swift in Sources */,
 				1BD7A7DB1CF9C0A80010F45E /* HyperbolicPolygon.swift in Sources */,
 				1BD7A7DC1CF9C0A80010F45E /* HyperbolicDot.swift in Sources */,
@@ -545,6 +552,7 @@
 				1BE3B6521D6DF39500213F23 /* HDrawable.swift in Sources */,
 				1BE3B6551D6DF39500213F23 /* HyperbolicDot.swift in Sources */,
 				1BE3B6391D6DF32600213F23 /* Cuff.swift in Sources */,
+				1B53DD2C1D70834200E04616 /* PantsMaker.swift in Sources */,
 				1BE3B63D1D6DF33900213F23 /* HyperbolicTransformation.swift in Sources */,
 				1BE3B64F1D6DF37500213F23 /* LocationTable.swift in Sources */,
 				1BE3B64E1D6DF37500213F23 /* GroupGeneration.swift in Sources */,
@@ -835,6 +843,7 @@
 				1BE3B6341D6DF2D700213F23 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
