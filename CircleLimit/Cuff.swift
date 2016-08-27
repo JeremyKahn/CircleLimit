@@ -65,7 +65,7 @@ class Cuff {
     var pantsCuffs: [PantsCuff!] = [nil, nil]
     
     var guideline: HDrawable {
-        return pantsCuffs[0].pants.cuffGuidelines[pantsCuffs[0].index]
+        return pantsCuffs[0].pants.cuffGuidelines[pantsCuffs[0].index]!
     }
     
     var transformedGuideline: HDrawable {

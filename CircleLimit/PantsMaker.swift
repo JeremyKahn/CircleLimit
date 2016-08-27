@@ -72,6 +72,7 @@ class PantsPlaceholder {
     
 }
 
+// At some point we should check that we have a valid pants, with 1/p + 1/q + 1/r < 1 (and actual cuffs count as infinity)
 func pantsAndCuffArrayFromPlaceholders(placeholders: [PantsPlaceholder]) -> ([Pants], [Cuff]) {
     var pantsArray: [Pants] = []
     var cuffArray: [Cuff] = []
@@ -84,7 +85,7 @@ func pantsAndCuffArrayFromPlaceholders(placeholders: [PantsPlaceholder]) -> ([Pa
             case .number(let n):
                 return CuffRotation.rotation(n)
             case .cuff:
-                return CuffRotation.cuff(acosh(2.0))
+                return CuffRotation.cuff(0.3)
             }
         }
         let pants = Pants(cuffHalfLengths: cuffs)

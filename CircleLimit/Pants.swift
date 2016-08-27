@@ -80,21 +80,32 @@ class Pants {
         
     }
     
+    static var firstHexagonOnly = true
+    
+    // This would actually be more readable as a nested for loop, with append
     var hexagonGuidelines: [HDrawable] {
-//        return [HDrawable](hexagons.map({$0.altitudeGuidelines}).flatten())
-        return hexagons.map({$0.hexagonGuideline.transformedBy(baseMask.following($0.baseMask))})
+        if Pants.firstHexagonOnly {
+            let h = hexagons[0]
+            return h.guidelines.map({$0.transformedBy(baseMask.following(h.baseMask))})
+        }
+        let nestedArray = hexagons.map() {
+            (h: Hexagon) -> [HDrawable] in
+            h.guidelines.map({$0.transformedBy(baseMask.following(h.baseMask))})
+        }
+        return nestedArray.flatten().map({$0})
     }
     
     func setColor(color: UIColor) {
         self.color = color
         hexagons[0].color = color
-        hexagons[1].color = weightedColor([0.6, 0.4], colors: [color, UIColor.grayColor()])
+        hexagons[1].color = weightedColor([0.5, 0.5], colors: [color, UIColor.grayColor()])
         for h in hexagons {
             h.hexagonGuideline.fillColor = h.color
         }
     }
     
-    var cuffGuidelines: [HDrawable] = []
+    /// An array of size three, with a guideline for each actual cuff, and nil at rotation indices
+    var cuffGuidelines: [HDrawable?] = Array(count: 3, repeatedValue: nil)
     
     var orthoGuidelines: [HDrawable] = []
     
@@ -115,11 +126,15 @@ class Pants {
     }
     
     convenience init(cuffHalfLengths: [CuffRotation]) {
-        self.init(cuffHalfLengths: cuffHalfLengths.map({$0.complexLength}))
+        var complexLengths = cuffHalfLengths.map({$0.complexLength})
+//        if complexLengths[0].re == 0 && complexLengths[1].re == 0 && complexLengths[2].im == 0 {
+//            print("Hello, Jeremy!")
+////            complexLengths[0] = Double.PI.i - complexLengths[0]
+//        }
+        self.init(cuffHalfLengths: complexLengths)
     }
     
     func setUpGuidelines() {
-        cuffGuidelines = []
         orthoGuidelines = []
         for i in 0...2 {
             let sideIndex = sideIndexForCuffIndex(i, AndHexagonIndex: 0)
@@ -129,9 +144,9 @@ class Pants {
             let orthoGuideline = HyperbolicPolyline([firstPoint, oppositePoint])
             orthoGuideline.lineColor = UIColor.grayColor()
             orthoGuidelines.append(orthoGuideline)
-            if hexagons[0].isCuffIndex(i) {
+            if hexagons[0].isCuffIndex(sideIndex) {
                 let secondPoint = walker.goForward(cuffHalfLengths[i].re * 2).appliedToOrigin
-                cuffGuidelines.append(HyperbolicPolyline([firstPoint, secondPoint]))
+                cuffGuidelines[i] = HyperbolicPolyline([firstPoint, secondPoint])
             }
         }
     }

@@ -33,8 +33,8 @@ struct HexagonEntry {
     static var placeholder = HexagonEntry()
     
     /// (entryIndex, motion, hexagon?.id)
-    var nice: (Int, (String, String), Int?) {
-        return (entryIndex, (motion.u.nice, motion.v.nice), hexagon?.id)
+    var nice: (Int, String, Int?) {
+        return (entryIndex, "a: " + motion.a.nice + " lambda: " + motion.lambda.nice, hexagon?.id)
     }
 }
 
@@ -72,8 +72,8 @@ struct ForwardState {
     var newMotion: HTrans
     var state: RotationState
     
-    var nice:  (Int, Int?, (String, String), RotationState) {
-        return (entry.entryIndex, entry.hexagon?.id, (newMotion.u.nice, newMotion.v.nice), state)
+    var nice:  (Int, Int?, String, RotationState) {
+        return (entry.entryIndex, entry.hexagon?.id, ("a: " + newMotion.a.nice + " lambda: " + newMotion.lambda.nice), state)
     }
     
     init(entry: HexagonEntry, newMotion: HTrans, state: RotationState) {
@@ -117,6 +117,16 @@ enum CuffRotation {
     /// An corner with angle pi/q
     case rotation(Int)
     
+    init(complexLength: Complex64) {
+        if complexLength.im.abs < 0.0000001 {
+            self = CuffRotation.cuff(complexLength.re)
+        } else if complexLength.re.abs < 0.0000001 {
+            self = CuffRotation.rotation(Int(Double.PI/complexLength.im))
+        } else {
+            fatalError()
+        }
+    }
+    
     var complexLength: Complex64 {
         switch self {
         case cuff(let length):
@@ -126,6 +136,14 @@ enum CuffRotation {
         }
     }
     
+    var rotation: Int {
+        switch self {
+        case .rotation(let r):
+            return r
+        case .cuff:
+            return 0
+        }
+    }
 }
 
 /// A right angled hexagon in the hyperbolic plane
@@ -145,12 +163,10 @@ class Hexagon {
     var sideLengths = Array<Complex64>(count: 6, repeatedValue: acosh(2.0 + 0.i))
     
     /// the rotation numbers, padded with zeroes for cuffs
-    var rotationArray: [Int] {
-        return [0, 0, 0]
-    }
+    var rotationArray: [Int]
     
     func isCuffIndex(i: Int) -> Bool {
-        return rotationArray[i / 2] == 0
+        return i % 2 == 0 && rotationArray[i / 2] == 0
     }
     
     func rotationNumberForIndex(i: Int) -> Int {
@@ -166,25 +182,31 @@ class Hexagon {
      - remark: We assume that the hexagon sides are numbered ***clockwise*** for the purposes of RotationState.left and .right
      */
     func newRotationState(old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
+        // If the exit index is even, the transition is allowed if there is an actual cusp at this index, and we are not entering from an adjacent side
         if exit % 2 == 0 {
             if abs(exit - entrance) == 1 || (exit == 0 && entrance == 5) {
                 return nil
             }
             return isCuffIndex(exit) ? RotationState.none : nil
         }
+        // otherwise we need to examine the type of the two adjacent sides
         let exitPlusOne = (exit + 1) % 6
         let exitMinusOne = (exit + 5) % 6
+        // left and right will hold the rotation around the adjancent rotation points
+        // each one is zero if the adjacent side is a cuff
         var left = isCuffIndex(exitMinusOne) ? 0 : 1
         var right = isCuffIndex(exitPlusOne) ? 0 : 1
-        if (exit - entrance + 6) % 6 == 2 && !isCuffIndex(exitPlusOne) {
+        // Are we rotating to the left around exitMinusOne?
+        if (exit - entrance + 6) % 6 == 2 && left > 0 {
             left = old.left + 1
-            if left > rotationNumberForIndex(exitPlusOne) {
+            if left > rotationNumberForIndex(exitMinusOne) {
                 return nil
             }
         }
-        if (exit - entrance + 6) % 6 == 4 && !isCuffIndex(exitMinusOne) {
+        // Are we rotating to the right around exitPlusOne?
+        if (exit - entrance + 6) % 6 == 4 && right > 0 {
             right = old.right + 1
-            if right >= rotationNumberForIndex(exitMinusOne) {
+            if right >= rotationNumberForIndex(exitPlusOne) {
                 return nil
             }
         }
@@ -193,13 +215,13 @@ class Hexagon {
     
     
     /// the lengths of the parts from the start to the foot of the altitude
-    var firstParts: [Double] = Array<Double>(count: 6, repeatedValue: 0.0)
+    var firstParts = Array<Complex64>(count: 6, repeatedValue: Complex64())
     
     /// the lengths of the parts from the foot of the altitude to the end
-    var secondParts: [Double] = Array<Double>(count: 6, repeatedValue: 0.0)
+    var secondParts = Array<Complex64>(count: 6, repeatedValue: Complex64())
     
     /// the distances from the orthocenter to the feet of the altitude
-    var altitudeParts: [Double] = Array<Double>(count: 6, repeatedValue: 0.0)
+    var altitudeParts = Array<Double>(count: 6, repeatedValue: 0.0)
     
     /// the transformations from the base frame to the feet of the altitude
     var downFromOrthocenter: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
@@ -233,7 +255,7 @@ class Hexagon {
     
     var guidelines: [HDrawable] {
         if Hexagon.hotPants {
-            return [hexagonGuideline]
+            return [hexagonGuideline] + altitudeGuidelines
         }
         else {
             return sideGuidelines + altitudeGuidelines
@@ -264,14 +286,20 @@ class Hexagon {
     init(alternatingSideLengths: [Complex64]) {
         id = Hexagon.nextId
         Hexagon.nextId += 1
+        rotationArray = alternatingSideLengths.map({CuffRotation(complexLength: $0).rotation})
         setAlternatingSideLengths(alternatingSideLengths)
     }
     
-    convenience init(alternatingSideLengths: [CuffRotation]) {
-        self.init(alternatingSideLengths: alternatingSideLengths.map({$0.complexLength}))
+    init(alternatingSideLengths: [CuffRotation]) {
+        id = Hexagon.nextId
+        Hexagon.nextId += 1
+        let complexAlternatingSideLengths = alternatingSideLengths.map({$0.complexLength})
+        rotationArray = alternatingSideLengths.map({$0.rotation})
+        setAlternatingSideLengths(complexAlternatingSideLengths)
     }
     
     /// (Re)compute the geometry from the alternating side lengths
+    /// Should work as a recomputation, when we just change the lengths of the cuffs
     func setAlternatingSideLengths(alternatingSideLengths: [Complex64]) {
         for i in 0..<3 {
             sideLengths[2 * i] = alternatingSideLengths[i]
@@ -280,7 +308,11 @@ class Hexagon {
             let (A, B, C) = (sideLengths[(i + 3) %% 6], sideLengths[(i - 1) %% 6], sideLengths[(i + 1) %% 6])
             let num = cosh(B) * cosh(C) + cosh(A)
             let denom = sinh(B) * sinh(C)
-            sideLengths[i] = acosh(num/denom)
+            var sideLength = acosh(num/denom)
+            if sideLength.re < 0 {
+                sideLength = -sideLength
+            }
+            sideLengths[i] = sideLength
         }
         setUpEverything()
     }
@@ -306,15 +338,26 @@ class Hexagon {
     }
     
     /// Compute all parameters and measurements from the side lengths
+    /* This is complicated in the case where the side lengths are complex:
+     We want start, middle, foot, and end to be correctly computed when the side in non-degenerate
+     They can be junk (I think) when the side is degenerate
+     */
     func setUpEverything() {
         for i in 0..<6 {
-            firstParts[i] = acoth(cosh(sideLengths[(i - 1) %% 6]) / coth(sideLengths[(i - 2) %% 6])).re
-            secondParts[i] = acoth(cosh(sideLengths[(i + 1) %% 6]) / coth(sideLengths[(i + 2) %% 6])).re
+            firstParts[i] = acoth(cosh(sideLengths[(i - 1) %% 6]) / coth(sideLengths[(i - 2) %% 6]))
+            if (firstParts[i].im - Double.PI/2).abs < 0.00001 &&  firstParts[i].re > 0.0000001 {
+                firstParts[i].im = -firstParts[i].im
+            }
+            secondParts[i] = acoth(cosh(sideLengths[(i + 1) %% 6]) / coth(sideLengths[(i + 2) %% 6]))
+            if (secondParts[i].im - Double.PI/2).abs < 0.00001 && secondParts[i].re > 0.0000001 {
+                secondParts[i].im = -secondParts[i].im
+            }
         }
+        // We want to correctly compute altitudeParts and angleToNextAltitude as real numbers in all cases
         for i in 0..<6 {
-            altitudeParts[i] = atanh(cosh(firstParts[i]) * tanh(secondParts[(i - 1) %% 6]))
+            altitudeParts[i] = atanh(cosh(firstParts[i]) * tanh(secondParts[(i - 1) %% 6])).re
             // This is redundant because angleToNextAltitude[i + 3] == angleToNextAltitude[i]
-            angleToNextAltitude[i] = acos(sinh(secondParts[i]) * sinh(firstParts[(i + 1) % 6]))
+            angleToNextAltitude[i] = acos(sinh(secondParts[i]) * sinh(firstParts[(i + 1) % 6])).re
         }
         // Here we're using that downFromOrthocenter[0] is HTrans.identity
         for i in 0..<5 {
@@ -323,8 +366,8 @@ class Hexagon {
         for i in 0..<6 {
             foot[i] = downFromOrthocenter[i].goForward(altitudeParts[i])
             middle[i] = foot[i].turnLeft
-            end[i] = middle[i].goForward(secondParts[i])
-            start[i] = middle[i].goForward(-firstParts[i])
+            end[i] = middle[i].goForward(secondParts[i].re)
+            start[i] = middle[i].goForward(-firstParts[i].re)
         }
         sideGuidelines = []
         for i in 0..<6 {

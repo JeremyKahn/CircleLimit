@@ -4,53 +4,90 @@ import UIKit
 
 @testable import CircleLimitIOS
 
-let s = acosh(2 + 0.i)
-
-let c3 = [1.0, 2.0, 3.0]
-
-let pants0 = Pants(cuffHalfLengths: c3)
-
-let pants1 = Pants(cuffHalfLengths: c3)
-
+var pantsArray: [Pants] = []
 var cuffArray: [Cuff] = []
 
-for i in 0...2 {
-    cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.5))
+enum TestType {
+    case t2323, t334
 }
 
-let pantsArray = [pants0, pants1]
+func makeInitialGeneralPants() {
+    let testType = TestType.t2323
+    switch testType {
+    case .t2323:
+        let cph0 = CuffPlaceholder()
+        let pph0 = PantsPlaceholder()
+        let pph1 = PantsPlaceholder()
+        pph0.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 0)]
+        pph1.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 1)]
+        (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph0, pph1])
+        pantsArray[0].setColor(UIColor.blueColor())
+        pantsArray[1].setColor(UIColor.greenColor())
+    case .t334:
+        let pph = PantsPlaceholder()
+        pph.numberCuffArray = [NumberCuff.number(3), NumberCuff.number(3), NumberCuff.number(4)]
+        (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph])
+        pantsArray[0].setColor(UIColor.greenColor())
+    }
+}
 
-let baseHexagon = pants0.hexagons[0]
+makeInitialGeneralPants()
 
-let neighbors = baseHexagon.neighbor.map() {$0.nice}
+let pants = pantsArray[0]
+let baseHexagon = pants.hexagons[0]
 
-neighbors[0]
+baseHexagon.rotationArray
 
-neighbors
+//var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
+let states = baseHexagon.forwardStates
 
-baseHexagon.id
+states.count
 
-let q = pantsArray.map({$0.hexagons.map({$0.id})})
+//for _ in 0...5 {
+//    steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
+//}
 
-q
+let niceStates = states.map({$0.nice})
 
-let f = baseHexagon.forwardStates
+niceStates[0]
+niceStates[1]
+niceStates[2]
+niceStates[3]
 
-let ff = f.map({$0.nice})
 
-ff[0]
+let sl = baseHexagon.sideLengths.map({$0.nice})
 
-ff[1]
+sl
 
-ff[2]
+let a = baseHexagon.sideLengths[0]
 
-ff[3]
+Double.PI.i/a
 
-ff[4]
+let pp = baseHexagon.neighbor.map({$0.nice})
+pp
+pp[1]
+pp[3]
+pp[4]
+pp[5]
 
-ff[5]
+baseHexagon.sideLengths
 
-(f[0].entry.hexagon!.id, f[0].newMotion.u.nice, f[0].newMotion.v.nice, f[0].state)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

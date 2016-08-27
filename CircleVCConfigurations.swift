@@ -54,28 +54,45 @@ extension CircleViewController {
     
     
     
-    // We're going to work first with two pants with the i'th cuffs joined
-    func makeInitialPants() {
-        let pants0 = Pants(cuffHalfLengths: cuffLengths)
-        pants0.setColor(UIColor.blueColor())
-        let pants1 = Pants(cuffHalfLengths: cuffLengths)
-        pants1.setColor(UIColor.greenColor())
-        for i in 0...2 {
-            cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.0))
-        }
-        pantsArray = [pants0, pants1]
+    
+    enum TestType {
+        case t2323, t334, pants, torus2
     }
     
     func makeInitialGeneralPants() {
-        // Here we're going to make a (2, 2, 2, 3) orbifold out of two pairs of pants
-        let cph0 = CuffPlaceholder()
-        let pph0 = PantsPlaceholder()
-        let pph1 = PantsPlaceholder()
-        pph0.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(2), NumberCuff.cuff(cph0, 0)]
-        pph1.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 1)]
-        (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph0, pph1])
-        pantsArray[0].setColor(UIColor.blueColor())
-        pantsArray[1].setColor(UIColor.greenColor())
+        let testType = TestType.t2323
+        switch testType {
+        case .pants:
+            let pants0 = Pants(cuffHalfLengths: cuffLengths)
+            pants0.setColor(UIColor.blueColor())
+            let pants1 = Pants(cuffHalfLengths: cuffLengths)
+            pants1.setColor(UIColor.greenColor())
+            for i in 0...2 {
+                cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.0))
+            }
+            pantsArray = [pants0, pants1]
+        case .t2323:
+            let cph0 = CuffPlaceholder()
+            let pph0 = PantsPlaceholder()
+            let pph1 = PantsPlaceholder()
+            pph0.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 0)]
+            pph1.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 1)]
+            (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph0, pph1])
+            pantsArray[0].setColor(UIColor.blueColor())
+            pantsArray[1].setColor(UIColor.greenColor())
+        case .t334:
+            let pph = PantsPlaceholder()
+            pph.numberCuffArray = [NumberCuff.number(3), NumberCuff.number(4), NumberCuff.number(5)]
+            (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph])
+            pantsArray[0].setColor(UIColor.greenColor())
+        case .torus2:
+            let pph = PantsPlaceholder()
+            let cph = CuffPlaceholder()
+            pph.numberCuffArray = [NumberCuff.number(2), NumberCuff.cuff(cph, 0), NumberCuff.cuff(cph, 1)]
+            (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph])
+            pantsArray[0].setColor(UIColor.blueColor())
+        }
+        
     }
     
     // We're assuming here that the pants have already had their cuffHalfLengths set
@@ -85,13 +102,19 @@ extension CircleViewController {
         let baseHexagon = pants.hexagons[0]
         
         print("Generating group for distance \(groupGenerationCutoffDistance)")
-        let endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
-         //        var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
-        //        for _ in 0...5 {
-        //            steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
-        //        }
-        //        let endStates = steppedStates.flatten().map(project)
-        let group = groupFromEndStates(endStates, for: baseHexagon)
+        let serious = false
+        let trivial = false
+        var endStates: [EndState] = []
+        if serious {
+            endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
+        } else {
+            var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
+            for _ in 0...10 {
+                steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
+            }
+            endStates = steppedStates.flatten().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
+        }
+        let group = !trivial ? groupFromEndStates(endStates, for: baseHexagon) : [HTrans()]
         
         cuffGuidelines = []
         for cuff in cuffArray {
@@ -105,13 +128,14 @@ extension CircleViewController {
             for i in 0...1 {
                 let hexagon = Q.hexagons[i]
                 let morphismsToHexagon = endStates.filter({$0.hexagon === hexagon})
-                let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance})
+                // We're temporary putting in a default, which is actually garbage
+                let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance})!
                 hexagon.baseMask = motion
             }
         }
         
         generalGuidelines = []
-        for Q in pantsArray {
+        for Q in (!Pants.firstHexagonOnly ? pantsArray : [pantsArray[0]]) {
             generalGuidelines += Q.transformedGuidelines
             //            for i in 0...1 {
             //                let hexagon = Q.hexagons[i]

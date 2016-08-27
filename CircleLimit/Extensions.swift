@@ -158,8 +158,8 @@ extension Array {
         return indices.map({self[$0]})
     }
     
-    func leastElementFor<U: Comparable>(f: Element -> U) -> Element {
-        return minElement({f($0) < f($1)})!
+    func leastElementFor<U: Comparable>(f: Element -> U) -> Element? {
+        return minElement({f($0) < f($1)})
     }
     
     func sortByFunction<U: Comparable>(f: Element -> U) -> [Element] {

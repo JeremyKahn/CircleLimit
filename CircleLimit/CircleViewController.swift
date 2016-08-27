@@ -756,7 +756,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     @IBAction func twoTouchLongPress(sender: UILongPressGestureRecognizer) {
         print("Two touch long press")
         print("Enjoy your day!")
-        let x = [1, 2, 3]
     }
     
     @IBAction func longPress(sender: UILongPressGestureRecognizer) {
