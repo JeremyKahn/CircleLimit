@@ -52,7 +52,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     // MARK: Debugging variables
-    var drawOnlyHexagonTesselation = true
+    var drawOnlyHexagonTesselation = false
     
     static var testing = false
     

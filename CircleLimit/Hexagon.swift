@@ -224,6 +224,10 @@ class Hexagon {
                 return nil
             }
         }
+        // This is a trick to make sure that we don't collide with the bouncing rightward rotation
+        if (exit - entrance) %% 6 == 4 && old.left == rotationNumberForIndex((entrance + 1) % 6) {
+            left = 2
+        }
         // Are we rotating to the right around exitPlusOne?
         if (exit - entrance + 6) % 6 == 4 && right > 0 {
             right = old.right + 1

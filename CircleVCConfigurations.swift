@@ -101,7 +101,7 @@ extension CircleViewController {
         pants = pantsArray[0]
         let baseHexagon = pants.hexagons[0]
         
-        let serious = false
+        let serious = true
         let trivial = false
         var endStates: [EndState] = []
         if serious {
@@ -109,7 +109,7 @@ extension CircleViewController {
             endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
         } else {
             var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
-            for _ in 0...7 {
+            for _ in 0...9 {
                 steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
             }
             endStates = steppedStates.flatten().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
