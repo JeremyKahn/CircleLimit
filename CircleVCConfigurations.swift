@@ -60,7 +60,7 @@ extension CircleViewController {
     }
     
     func makeInitialGeneralPants() {
-        let testType = TestType.t2323
+        let testType = TestType.t334
         switch testType {
         case .pants:
             let pants0 = Pants(cuffHalfLengths: cuffLengths)
@@ -76,7 +76,7 @@ extension CircleViewController {
             let pph0 = PantsPlaceholder()
             let pph1 = PantsPlaceholder()
             pph0.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 0)]
-            pph1.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 1)]
+            pph1.numberCuffArray = [NumberCuff.number(3), NumberCuff.number(5), NumberCuff.cuff(cph0, 1)]
             (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph0, pph1])
             pantsArray[0].setColor(UIColor.blueColor())
             pantsArray[1].setColor(UIColor.greenColor())
@@ -101,21 +101,23 @@ extension CircleViewController {
         pants = pantsArray[0]
         let baseHexagon = pants.hexagons[0]
         
-        print("Generating group for distance \(groupGenerationCutoffDistance)")
         let serious = false
         let trivial = false
         var endStates: [EndState] = []
         if serious {
+            print("Generating group for distance \(groupGenerationCutoffDistance)")
             endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
         } else {
             var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
-            for _ in 0...10 {
+            for _ in 0...7 {
                 steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
             }
             endStates = steppedStates.flatten().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
+            hexagonTesselation =  endStates.map() { $0.translatedHexagon } + steppedStates.flatten().map() { $0.lineToDraw }
         }
-        let group = !trivial ? groupFromEndStates(endStates, for: baseHexagon) : [HTrans()]
+        let group = trivial || drawOnlyHexagonTesselation ? [HTrans()] : groupFromEndStates(endStates, for: baseHexagon)
         
+        // Set up the cuff Guidelines
         cuffGuidelines = []
         for cuff in cuffArray {
             cuffGuidelines.append(cuff.transformedGuideline)
@@ -124,25 +126,32 @@ extension CircleViewController {
             cuffGuidelines[i].lineColor = UIColor.redColor()
         }
         
-        for Q in pantsArray {
-            for i in 0...1 {
-                let hexagon = Q.hexagons[i]
-                let morphismsToHexagon = endStates.filter({$0.hexagon === hexagon})
-                // We're temporary putting in a default, which is actually garbage
-                let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance})!
-                hexagon.baseMask = motion
+        if !drawOnlyHexagonTesselation {
+            // Compute the baseMask for each hexagon for each pants
+            for Q in pantsArray {
+                for i in 0...1 {
+                    let hexagon = Q.hexagons[i]
+                    let morphismsToHexagon = endStates.filter({$0.hexagon === hexagon})
+                    let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance})!
+                    hexagon.baseMask = motion
+                }
+            }
+            
+            // The generalGuidelines will include the transformed guidelines for the pants
+            generalGuidelines = []
+            let firstPantsOnly = false
+            for Q in (firstPantsOnly ? [pantsArray[0]] : pantsArray) {
+                generalGuidelines += Q.transformedGuidelines
+                //            for i in 0...1 {
+                //                let hexagon = Q.hexagons[i]
+                //                let altitudeGuidelines = hexagon.altitudeGuidelines.map({$0.transformedBy(hexagon.baseMask)})
+                //                generalGuidelines += altitudeGuidelines
+                //            }
             }
         }
         
-        generalGuidelines = []
-        for Q in (!Pants.firstHexagonOnly ? pantsArray : [pantsArray[0]]) {
-            generalGuidelines += Q.transformedGuidelines
-            //            for i in 0...1 {
-            //                let hexagon = Q.hexagons[i]
-            //                let altitudeGuidelines = hexagon.altitudeGuidelines.map({$0.transformedBy(hexagon.baseMask)})
-            //                generalGuidelines += altitudeGuidelines
-            //            }
-        }
+    
+        // Set up the groups
         let dressedGroup = group.map() {Action(M: $0)}
         makeGroupForIntegerDistanceWith(dressedGroup)
         searchingGroup = groupForIntegerDistance[min(7, maxGroupDistance)]

@@ -80,7 +80,7 @@ class Pants {
         
     }
     
-    static var firstHexagonOnly = true
+    static var firstHexagonOnly = false
     
     // This would actually be more readable as a nested for loop, with append
     var hexagonGuidelines: [HDrawable] {

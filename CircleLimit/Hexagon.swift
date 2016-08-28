@@ -82,11 +82,32 @@ struct ForwardState {
         self.state = state
 //        print("Hexagon: \(newMotion)")
     }
+    
+    var lineToDraw: HDrawable {
+        let oldMotion = newMotion.following(entry.motion.inverse)
+        let start = oldMotion.appliedToOrigin
+        let end = newMotion.appliedToOrigin
+        let line = HyperbolicPolyline([start, end])
+        line.lineColor = UIColor.redColor()
+        return line
+    }
+    
+    var endState: EndState {
+        return EndState(motion: newMotion, hexagon: entry.hexagon!)
+    }
+    
+    var guidelines: [HDrawable] {
+        return [lineToDraw, endState.translatedHexagon]
+    }
 }
 
 struct EndState {
     var motion: HyperbolicTransformation
     var hexagon: Hexagon
+    
+    var translatedHexagon: HDrawable {
+        return hexagon.hexagonGuideline.transformedBy(motion)
+    }
 }
 
 /**
@@ -102,7 +123,7 @@ func nextForwardStates(s: ForwardState) -> [ForwardState] {
 }
 
 func project(f: ForwardState) -> EndState {
-    return EndState(motion: f.newMotion, hexagon: f.entry.hexagon!)
+    return f.endState
 }
 
 func groupFromEndStates(endStates: [EndState], for baseHexagon: Hexagon) -> [HTrans] {

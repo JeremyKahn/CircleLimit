@@ -45,9 +45,17 @@ struct MatchedPoint {
 
 class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureRecognizerDelegate, ColorPickerDelegate {
     
-    static var testing = false
+    enum Mode {
+        case Usual
+        case Drawing
+        case Moving
+    }
     
     // MARK: Debugging variables
+    var drawOnlyHexagonTesselation = true
+    
+    static var testing = false
+    
     var tracingGroupMaking = false
     
     var tracingZoom = true
@@ -61,16 +69,20 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return true
     }
     
-    // MARK: - Flags
+    // MARK: Flags
     var drawing = true
     
     var suppressTouches: Bool {
         return !drawing || changingColor || formingPolygon
     }
     
-    // MARK: - General properties
+    var formingPolygon: Bool {
+        return newCurve != nil
+    }
+    
+    // MARK: Guidelines
     var guidelines: [HDrawable] {
-        return generalGuidelines + cuffGuidelines
+        return drawOnlyHexagonTesselation ? hexagonTesselation : generalGuidelines + cuffGuidelines
     }
     
     var generalGuidelines: [HDrawable] = []
@@ -79,10 +91,11 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var hexagonGuidelines: [HDrawable] = []
     
-    var fixedPoints: [HDrawable] = []
+    var hexagonTesselation: [HDrawable] = []
     
     var drawGuidelines = true
     
+    // MARK: Arrays of objects
     var drawObjects: [HDrawable] = []
     
     var oldDrawObjects: [HDrawable] = [] {
@@ -93,22 +106,15 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var undoneObjects: [HDrawable] = []
     
+    // MARK: For moving the picture
     // The translates (by the color fixing subgroup) of a disk around the origin of this radius should cover the boundary of that disk
     // Right now the size is determined by trial and error
     var searchingGroup: [Action] = []
     
-    enum Mode {
-        case Usual
-        case Drawing
-        case Moving
-    }
-    
-    var formingPolygon: Bool {
-        return newCurve != nil
-    }
-    
     var mask: HyperbolicTransformation = HyperbolicTransformation()
     
+    // MARK: For moving the points
+    var fixedPoints: [HDrawable] = []
     
     var touchDistance: Double {
         let m = Double(multiplier)
@@ -178,6 +184,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var cuffLengths = Array<Double>(count: 3, repeatedValue: acosh(2.0))
     
+    var minLogScaleChange = 0.025
+    
+    // MARK: Parameters for making the group
     let largeGenerationDistance = 10.0
     
     let smallGenerationDistance = 7.5
@@ -188,11 +197,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var maxTimeToMakeLargeGroup = 10.0
     
-    var minLogScaleChange = 0.025
-    
     var apparentBasePoint = HTrans()
     
-    // MARK: PoincareViewDataSource
+    // MARK: For PoincareViewDataSource
     var objectsToDraw: [HDrawable] {
         var fullDrawObjects = drawGuidelines ? guidelines : []
         fullDrawObjects += drawObjects
