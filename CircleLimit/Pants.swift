@@ -126,7 +126,7 @@ class Pants {
     }
     
     convenience init(cuffHalfLengths: [CuffRotation]) {
-        var complexLengths = cuffHalfLengths.map({$0.complexLength})
+        let complexLengths = cuffHalfLengths.map({$0.complexLength})
 //        if complexLengths[0].re == 0 && complexLengths[1].re == 0 && complexLengths[2].im == 0 {
 //            print("Hello, Jeremy!")
 ////            complexLengths[0] = Double.PI.i - complexLengths[0]
@@ -164,7 +164,8 @@ class Pants {
                 localGroupoidGenerators.append(g)
                 
                 // This is the new one
-                let e = HexagonEntry(entryIndex: k, motion: instruction, hexagon: end)
+                var e = HexagonEntry(entryIndex: k, motion: instruction, hexagon: end)
+                e.oldHexagon = start
                 start.neighbor[j] = e
             }
         }
@@ -217,11 +218,13 @@ class Pants {
             groupoidEltsToAdjacentPants[k] = g
             
             // The new and cooler way
-            let e = HexagonEntry(entryIndex: neighborSideIndex, motion: instruction, hexagon: neighborHexagon)
+            var e = HexagonEntry(entryIndex: neighborSideIndex, motion: instruction, hexagon: neighborHexagon)
+            e.oldHexagon = selfHexagon
             selfHexagon.neighbor[selfSideIndex] = e
             
             if updateNeighbor {
-                let eN = HexagonEntry(entryIndex: selfSideIndex, motion: instruction.inverse, hexagon: selfHexagon)
+                var eN = HexagonEntry(entryIndex: selfSideIndex, motion: instruction.inverse, hexagon: selfHexagon)
+                eN.oldHexagon = neighborHexagon
                 neighborHexagon.neighbor[neighborSideIndex] = eN
             }
         }

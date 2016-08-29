@@ -52,7 +52,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     // MARK: Debugging variables
-    var drawOnlyHexagonTesselation = false
+    var drawOnlyHexagonTesselation = true
     
     static var testing = false
     
@@ -187,9 +187,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var minLogScaleChange = 0.025
     
     // MARK: Parameters for making the group
-    let largeGenerationDistance = 10.0
+    let largeGenerationDistance =  8.0
     
-    let smallGenerationDistance = 7.5
+    let smallGenerationDistance = 6.0
     
     var maxTimeToMakeGroup = 10.0
     

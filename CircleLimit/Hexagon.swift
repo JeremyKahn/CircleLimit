@@ -9,7 +9,7 @@
 import UIKit
 
 /** An entry into an adjacent hexagon (from a given one).
-    Computed from the geometric graph and used to compute the groupoid
+ Computed from the geometric graph and used to compute the groupoid
  */
 struct HexagonEntry {
     
@@ -21,6 +21,9 @@ struct HexagonEntry {
     
     /// The hexagon we will enter
     var hexagon: Hexagon? = nil
+    
+    /// The hexagon that we left
+    var oldHexagon: Hexagon? = nil
     
     init() {}
     
@@ -42,6 +45,18 @@ struct RotationState {
     
     var left: Int
     var right: Int
+    
+    var thing = false
+    
+    init(left: Int, right: Int) {
+        self.left = left
+        self.right = right
+    }
+    
+    init(left: Int, right: Int, thing: Bool) {
+        self.init(left: left, right: right)
+        self.thing = thing
+    }
     
     static var none: RotationState {
         return RotationState(left: 0, right: 0)
@@ -80,13 +95,14 @@ struct ForwardState {
         self.entry = entry
         self.newMotion = newMotion
         self.state = state
-//        print("Hexagon: \(newMotion)")
+        //        print("Hexagon: \(newMotion)")
     }
     
     var lineToDraw: HDrawable {
         let oldMotion = newMotion.following(entry.motion.inverse)
-        let start = oldMotion.appliedToOrigin
-        let end = newMotion.appliedToOrigin
+        let start = oldMotion.appliedTo(entry.oldHexagon!.centerpoint)
+        let end = newMotion.appliedTo(entry.hexagon!.centerpoint)
+        //        let line = HyperbolicDot(center: end, radius: 0.025)
         let line = HyperbolicPolyline([start, end])
         line.lineColor = UIColor.redColor()
         return line
@@ -196,16 +212,22 @@ class Hexagon {
     
     /**
      - parameters:
-        - old: The old rotationState
-        - entrance: The index of the side by which we are entering, in 0..<6
-        - exit: The index of the side by which we are exiting, in 0..<6
+     - old: The old rotationState
+     - entrance: The index of the side by which we are entering, in 0..<6
+     - exit: The index of the side by which we are exiting, in 0..<6
      - returns: The rotation state in the new hexagon, or nil if this exit is forbidden *for any reason*
      - remark: We assume that the hexagon sides are numbered ***clockwise*** for the purposes of RotationState.left and .right
      */
     func newRotationState(old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
-        // If the exit index is even, the transition is allowed if there is an actual cusp at this index, and we are not entering from an adjacent side
+        // If the exit index is even, the transition is allowed if there is an actual cuff at this index, and we are not entering from an adjacent side
         if exit % 2 == 0 {
-            if abs(exit - entrance) == 1 || (exit == 0 && entrance == 5) {
+            // Or we could write: if abs((entrance - exit) %% 6 - 3) == 2
+            if abs(exit - entrance) == 1 || (exit == 0 && entrance == 5)  {
+                return nil
+            }
+            
+            // This is the one other case where we can't go across the cuff, because we've gone across it by right rotation around an index 2 rotation point
+            if old.left == 2 && (exit - entrance) %% 6 == 3 &&  rotationNumberForIndex((entrance + 1) % 6) == 2 {
                 return nil
             }
             return isCuffIndex(exit) ? RotationState.none : nil
@@ -217,6 +239,7 @@ class Hexagon {
         // each one is zero if the adjacent side is a cuff
         var left = isCuffIndex(exitMinusOne) ? 0 : 1
         var right = isCuffIndex(exitPlusOne) ? 0 : 1
+        var special = false
         // Are we rotating to the left around exitMinusOne?
         if (exit - entrance + 6) % 6 == 2 && left > 0 {
             left = old.left + 1
@@ -224,10 +247,21 @@ class Hexagon {
                 return nil
             }
         }
+        
         // This is a trick to make sure that we don't collide with the bouncing rightward rotation
         if (exit - entrance) %% 6 == 4 && old.left == rotationNumberForIndex((entrance + 1) % 6) {
-            left = 2
+            left = old.thing ? 3 : 2
         }
+        
+        // This is another trick to deal with rotation number 2
+        if (exit - entrance) %% 6 == 4 && old.left == rotationNumberForIndex((entrance + 1) % 6) - 1 && rotationNumberForIndex(exitMinusOne) == 2 {
+            special = true
+        }
+        if old.thing && (exit - entrance) %% 6 == 2 {
+            special = true
+        }
+        
+        
         // Are we rotating to the right around exitPlusOne?
         if (exit - entrance + 6) % 6 == 4 && right > 0 {
             right = old.right + 1
@@ -235,7 +269,7 @@ class Hexagon {
                 return nil
             }
         }
-        return RotationState(left: left, right: right)
+        return RotationState(left: left, right: right, thing: special)
     }
     
     
@@ -265,6 +299,9 @@ class Hexagon {
     
     /// the frames at the end of the sides, pointing forward
     var end: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
+    
+    /// A point which we hope will aways be in the interior of the hexagon
+    var centerpoint: HPoint = HPoint()
     
     /// lines to draw the sides
     var sideGuidelines: [HDrawable] = []
@@ -370,11 +407,11 @@ class Hexagon {
     func setUpEverything() {
         for i in 0..<6 {
             firstParts[i] = acoth(cosh(sideLengths[(i - 1) %% 6]) / coth(sideLengths[(i - 2) %% 6]))
-            if (firstParts[i].im - Double.PI/2).abs < 0.00001 &&  firstParts[i].re > 0.0000001 {
+            if (firstParts[i].im - Double.PI/2).abs < 0.00001 && sideLengths[i].re.abs > 0.00001 {
                 firstParts[i].im = -firstParts[i].im
             }
             secondParts[i] = acoth(cosh(sideLengths[(i + 1) %% 6]) / coth(sideLengths[(i + 2) %% 6]))
-            if (secondParts[i].im - Double.PI/2).abs < 0.00001 && secondParts[i].re > 0.0000001 {
+            if (secondParts[i].im - Double.PI/2).abs < 0.00001 && sideLengths[i].re.abs > 0.00001 {
                 secondParts[i].im = -secondParts[i].im
             }
         }
@@ -404,7 +441,10 @@ class Hexagon {
             let line = HyperbolicPolyline([HPoint(), foot[i].appliedToOrigin])
             altitudeGuidelines.append(line)
         }
-        
+        if let twoIndex = ([0, 1, 2].filter({rotationArray[$0] == 2})).first {
+            let opp = (2 * twoIndex + 3) % 6
+            centerpoint = downFromOrthocenter[opp].goForward(altitudeParts[opp]/2).appliedToOrigin
+        }
         let vertices = [0, 1, 2, 3, 4, 5, 0].map({start[$0].basePoint})
         let h = HyperbolicPolygon(vertices)
         h.useFillColorTable = false

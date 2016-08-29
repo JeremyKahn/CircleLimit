@@ -17,6 +17,17 @@ class CuffPlaceholder {
     
     var pantsCuffArray = Array<PantsCuff?>(count: 2, repeatedValue: nil)
     
+    var halfLength = 1.2
+    
+    var twist = 0.4
+    
+    init() {}
+    
+    init(halfLength: Double, twist: Double) {
+        self.halfLength = halfLength
+        self.twist = twist
+    }
+    
     var complete: Bool {
         return pantsCuffArray.reduce(true, combine: {$0 && $1 != nil})
     }
@@ -84,8 +95,8 @@ func pantsAndCuffArrayFromPlaceholders(placeholders: [PantsPlaceholder]) -> ([Pa
                 fatalError()
             case .number(let n):
                 return CuffRotation.rotation(n)
-            case .cuff:
-                return CuffRotation.cuff(0.3)
+            case .cuff(let c, _):
+                return CuffRotation.cuff(c.halfLength)
             }
         }
         let pants = Pants(cuffHalfLengths: cuffs)
@@ -97,7 +108,7 @@ func pantsAndCuffArrayFromPlaceholders(placeholders: [PantsPlaceholder]) -> ([Pa
                 cph.pantsCuffArray[i] = PantsCuff(pants: pants, index: cuffIndex)
                 if cph.complete {
                     let pantsCuffArray = cph.pantsCuffArray
-                    cuffArray.append(Cuff(pantsCuff0: pantsCuffArray[0]!, pantsCuff1: pantsCuffArray[1]!, twist: 0.0))
+                    cuffArray.append(Cuff(pantsCuff0: pantsCuffArray[0]!, pantsCuff1: pantsCuffArray[1]!, twist: cph.twist))
                 }
             default:
                 break

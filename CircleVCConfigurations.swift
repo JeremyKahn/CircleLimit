@@ -72,22 +72,22 @@ extension CircleViewController {
             }
             pantsArray = [pants0, pants1]
         case .t2323:
-            let cph0 = CuffPlaceholder()
+            let cph0 = CuffPlaceholder(halfLength: 0.5, twist: 0.1)
             let pph0 = PantsPlaceholder()
             let pph1 = PantsPlaceholder()
             pph0.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 0)]
-            pph1.numberCuffArray = [NumberCuff.number(3), NumberCuff.number(5), NumberCuff.cuff(cph0, 1)]
+            pph1.numberCuffArray = [NumberCuff.number(3), NumberCuff.number(2), NumberCuff.cuff(cph0, 1)]
             (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph0, pph1])
             pantsArray[0].setColor(UIColor.blueColor())
             pantsArray[1].setColor(UIColor.greenColor())
         case .t334:
             let pph = PantsPlaceholder()
-            pph.numberCuffArray = [NumberCuff.number(3), NumberCuff.number(4), NumberCuff.number(5)]
+            pph.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.number(7)]
             (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph])
             pantsArray[0].setColor(UIColor.greenColor())
         case .torus2:
             let pph = PantsPlaceholder()
-            let cph = CuffPlaceholder()
+            let cph = CuffPlaceholder(halfLength: 1.0, twist: 0.2)
             pph.numberCuffArray = [NumberCuff.number(2), NumberCuff.cuff(cph, 0), NumberCuff.cuff(cph, 1)]
             (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph])
             pantsArray[0].setColor(UIColor.blueColor())
@@ -101,7 +101,7 @@ extension CircleViewController {
         pants = pantsArray[0]
         let baseHexagon = pants.hexagons[0]
         
-        let serious = true
+        let serious = false
         let trivial = false
         var endStates: [EndState] = []
         if serious {
@@ -109,13 +109,19 @@ extension CircleViewController {
             endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
         } else {
             var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
-            for _ in 0...9 {
+            for i in 0..<14 {
                 steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
+                print("At stage \(i) in adding new states for a total of \(steppedStates.flatten().count) states")
             }
             endStates = steppedStates.flatten().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
-            hexagonTesselation =  endStates.map() { $0.translatedHexagon } + steppedStates.flatten().map() { $0.lineToDraw }
+            if drawOnlyHexagonTesselation {
+                hexagonTesselation = steppedStates.flatten().map() { $0.lineToDraw }
+            }
         }
-        let group = trivial || drawOnlyHexagonTesselation ? [HTrans()] : groupFromEndStates(endStates, for: baseHexagon)
+        if drawOnlyHexagonTesselation {
+            hexagonTesselation = endStates.map() { $0.translatedHexagon } + hexagonTesselation
+        }
+        let group = trivial || drawOnlyHexagonTesselation  ? [HTrans()] : groupFromEndStates(endStates, for: baseHexagon)
         
         // Set up the cuff Guidelines
         cuffGuidelines = []
@@ -150,7 +156,7 @@ extension CircleViewController {
             }
         }
         
-    
+        
         // Set up the groups
         let dressedGroup = group.map() {Action(M: $0)}
         makeGroupForIntegerDistanceWith(dressedGroup)
