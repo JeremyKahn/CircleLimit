@@ -10,13 +10,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/CircleViewController.swift"
-            timestampString = "494172744.759404"
+            timestampString = "494438566.27059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "766"
-            endingLineNumber = "766"
-            landmarkName = "twoTouchLongPress(_:)"
-            landmarkType = "5">
+            startingLineNumber = "772"
+            endingLineNumber = "772"
+            landmarkName = "CircleViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -32,7 +32,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "272"
             endingLineNumber = "272"
-            landmarkName = "newRotationState(_:entrance:exit:)"
+            landmarkName = "setAlternatingSideLengths(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -49,24 +49,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "260"
             endingLineNumber = "260"
-            landmarkName = "newRotationState(_:entrance:exit:)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            condition = "entrance &gt; 5 || entrance &lt; 0 || exit &gt; 5 || exit &lt; 0"
-            continueAfterRunningActions = "No"
-            filePath = "CircleLimit/Hexagon.swift"
-            timestampString = "494185493.912323"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
-            landmarkName = "newRotationState(_:entrance:exit:)"
+            landmarkName = "copy()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -82,23 +65,23 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "452"
             endingLineNumber = "452"
-            landmarkName = "setUpEverything()"
-            landmarkType = "5">
+            landmarkName = "Hexagon"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CircleVCConfigurations.swift"
-            timestampString = "494186000.92437"
+            filePath = "CircleLimit/CircleViewController.swift"
+            timestampString = "494438566.27059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "setUpGroupAndGuidelinesForPants()"
+            startingLineNumber = "720"
+            endingLineNumber = "720"
+            landmarkName = "simplePan(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -109,11 +92,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/CircleViewController.swift"
-            timestampString = "494186524.197286"
+            timestampString = "494438566.27059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "714"
-            endingLineNumber = "714"
+            startingLineNumber = "723"
+            endingLineNumber = "723"
             landmarkName = "singleTap(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -124,14 +107,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CircleLimit/CircleViewController.swift"
-            timestampString = "494186529.146847"
+            filePath = "CircleLimit/PantsMaker.swift"
+            timestampString = "494441242.577246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "717"
-            endingLineNumber = "717"
-            landmarkName = "singleTap(_:)"
-            landmarkType = "5">
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "pantsAndCuffArrayFromPlaceholders(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

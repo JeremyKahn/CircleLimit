@@ -52,7 +52,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     // MARK: Debugging variables
-    var drawOnlyHexagonTesselation = true
+    var drawOnlyHexagonTesselation = false
     
     static var testing = false
     
@@ -63,6 +63,11 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var tracingGesturesAndTouches = false
     
     var trivialGroup = false
+    
+    var testType: TestType = TestType.t2223
+    var serious = true
+    
+    var trivial = false
     
     // MARK: Basic overrides
     override func prefersStatusBarHidden() -> Bool {
@@ -82,12 +87,10 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // MARK: Guidelines
     var guidelines: [HDrawable] {
-        return drawOnlyHexagonTesselation ? hexagonTesselation : generalGuidelines + cuffGuidelines
+        return drawOnlyHexagonTesselation ? hexagonTesselation : generalGuidelines + surface.cuffGuidelines
     }
     
     var generalGuidelines: [HDrawable] = []
-    
-    var cuffGuidelines: [HDrawable] = []
     
     var hexagonGuidelines: [HDrawable] = []
     
@@ -114,6 +117,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var mask: HyperbolicTransformation = HyperbolicTransformation()
     
     // MARK: For moving the points
+    // TODO: Initialize these properly from the fixed points in the hexagons
     var fixedPoints: [HDrawable] = []
     
     var touchDistance: Double {
@@ -124,28 +128,25 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     // MARK: Stuff to edit pants
-    var pants: Pants!
-    
-    var pantsArray: [Pants] = []
+    /// The surface that determines the group
+    var surface: Surface!
     
     var hexagons: [Hexagon] {
-        return [Hexagon](pantsArray.map({$0.hexagons}).flatten())
+        return [Hexagon](surface.pantsArray.map({$0.hexagons}).flatten())
     }
     
-    var hexagonEntrys: [[(Int, HTrans, Int)]] {
-        var result: [[(Int, HTrans, Int)]] = []
-        for h in hexagons {
-            let list = h.neighbor.map() {
-                (e: HexagonEntry) -> (Int, HTrans, Int) in
-                (e.entryIndex, e.motion, e.hexagon!.id)
-            }
-            result.append(list)
-        }
-        return result
-    }
+//    var hexagonEntrys: [[(Int, HTrans, Int)]] {
+//        var result: [[(Int, HTrans, Int)]] = []
+//        for h in hexagons {
+//            let list = h.neighbor.map() {
+//                (e: HexagonEntry) -> (Int, HTrans, Int) in
+//                (e.entryIndex, e.motion, e.hexagon!.id)
+//            }
+//            result.append(list)
+//        }
+//        return result
+//    }
     
-    // cuffArray and cuffGuidelines are _parallel arrays_ for better or for worse
-    var cuffArray: [Cuff] = []
     
     //    var cuffGuidelines: [HDrawable] {
     //        return pants.cuffGuidelines
@@ -167,16 +168,16 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var cuffEditIndex: Int? {
         didSet {
             if let i = cuffEditIndex {
-                cuffGuidelines[i].lineColor = UIColor.redColor()
+                surface.cuffGuidelines[i].lineColor = UIColor.redColor()
             } else  if let i = oldValue {
-                cuffGuidelines[i].lineColor = UIColor.blackColor()
+                surface.cuffGuidelines[i].lineColor = UIColor.blackColor()
             }
         }
     }
     
     var cuffToEdit: Cuff? {
         if let i = cuffEditIndex {
-            return cuffArray[i]
+            return surface.cuffArray[i]
         } else {
             return nil
         }
@@ -187,9 +188,13 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var minLogScaleChange = 0.025
     
     // MARK: Parameters for making the group
-    let largeGenerationDistance =  8.0
+    var largeGenerationDistance = 0.0
     
-    let smallGenerationDistance = 6.0
+    func distance() -> Double {
+        return testType.distanceToGo
+    }
+    
+    let smallGenerationDistance = 5.0
     
     var maxTimeToMakeGroup = 10.0
     
@@ -720,8 +725,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             stateStack.append(State(completedObjects: nil, newCurve: (newCurve!.copy() as! HyperbolicPolyline)))
             newCurve!.addPoint(z!)
         } else if canEditPants && !editingPants {
-            let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: cuffGuidelines)
-            for i in 0..<cuffArray.count {
+            let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: surface.cuffGuidelines)
+            for i in 0..<surface.cuffArray.count {
                 let (object, group) = g[i]
                 if let line = object as? HyperbolicPolyline {
                     for action in group {
@@ -760,8 +765,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     
-    @IBAction func twoTouchLongPress(sender: UILongPressGestureRecognizer) {
-        print("Two touch long press")
+    @IBAction func threeTouchLongPress(sender: UILongPressGestureRecognizer) {
+        print("Three touch long press")
         print("Enjoy your day!")
     }
     

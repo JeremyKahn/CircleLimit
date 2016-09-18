@@ -10,6 +10,12 @@
 		1B1754691CF5E2BC00959DA3 /* Cuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1754681CF5E2BC00959DA3 /* Cuff.swift */; };
 		1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B21D0E11CF35BE9001FF636 /* Queue.swift */; };
 		1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */; };
+		1B2F23541D899047004622F6 /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F23531D899047004622F6 /* Surface.swift */; };
+		1B2F23551D899801004622F6 /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F23531D899047004622F6 /* Surface.swift */; };
+		1B2F23561D899802004622F6 /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F23531D899047004622F6 /* Surface.swift */; };
+		1B2F23591D89A687004622F6 /* TestType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F23581D89A687004622F6 /* TestType.swift */; };
+		1B2F235A1D89A687004622F6 /* TestType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F23581D89A687004622F6 /* TestType.swift */; };
+		1B2F235B1D89A687004622F6 /* TestType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F23581D89A687004622F6 /* TestType.swift */; };
 		1B3643181CF0BE6100F9D6AD /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3643171CF0BE6100F9D6AD /* Flags.swift */; };
 		1B4CA0A71CF4A64D0022C41B /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
 		1B4CA0A91CF4B1990022C41B /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
@@ -34,6 +40,7 @@
 		1BC1B2C01C3D702D00FF17C6 /* LocationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2BF1C3D702D00FF17C6 /* LocationTable.swift */; };
 		1BC1B2C21C3D713300FF17C6 /* HyperbolicTransformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */; };
 		1BC1B2C41C3D71B400FF17C6 /* GroupGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1B2C31C3D71B400FF17C6 /* GroupGeneration.swift */; };
+		1BCD11B81D7F62BD006B1AF1 /* States.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD11B71D7F62BD006B1AF1 /* States.swift */; };
 		1BD7A7CA1CF9C0560010F45E /* Cuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1754681CF5E2BC00959DA3 /* Cuff.swift */; };
 		1BD7A7CB1CF9C0560010F45E /* Hexagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */; };
 		1BD7A7CC1CF9C0560010F45E /* Pants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CA0A81CF4B1990022C41B /* Pants.swift */; };
@@ -66,6 +73,8 @@
 		1BDBD08A1B5C2BEA0057B710 /* Complex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD0891B5C2BEA0057B710 /* Complex.swift */; };
 		1BDBD08F1B5C43590057B710 /* PoincareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD08E1B5C43590057B710 /* PoincareView.swift */; };
 		1BDD539F1B7162620054445B /* DynamicProgramming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDD539E1B7162620054445B /* DynamicProgramming.swift */; };
+		1BE0B49F1D7F665B00FA1583 /* States.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD11B71D7F62BD006B1AF1 /* States.swift */; };
+		1BE0B4A01D7F665C00FA1583 /* States.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD11B71D7F62BD006B1AF1 /* States.swift */; };
 		1BE3B62C1D6DF2D700213F23 /* CircleLimitIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE3B62B1D6DF2D700213F23 /* CircleLimitIOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BE3B6301D6DF2D700213F23 /* CircleLimitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BE3B6291D6DF2D700213F23 /* CircleLimitIOS.framework */; };
 		1BE3B6311D6DF2D700213F23 /* CircleLimitIOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1BE3B6291D6DF2D700213F23 /* CircleLimitIOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -127,6 +136,8 @@
 		1B1754681CF5E2BC00959DA3 /* Cuff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cuff.swift; sourceTree = "<group>"; };
 		1B21D0E11CF35BE9001FF636 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CircleVCConfigurations.swift; path = ../CircleVCConfigurations.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		1B2F23531D899047004622F6 /* Surface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Surface.swift; sourceTree = "<group>"; };
+		1B2F23581D89A687004622F6 /* TestType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestType.swift; sourceTree = "<group>"; };
 		1B3643171CF0BE6100F9D6AD /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
 		1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hexagon.swift; sourceTree = "<group>"; };
 		1B4CA0A81CF4B1990022C41B /* Pants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pants.swift; sourceTree = "<group>"; };
@@ -149,6 +160,7 @@
 		1BC1B2BF1C3D702D00FF17C6 /* LocationTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTable.swift; sourceTree = "<group>"; };
 		1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = HyperbolicTransformation.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1BC1B2C31C3D71B400FF17C6 /* GroupGeneration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupGeneration.swift; sourceTree = "<group>"; };
+		1BCD11B71D7F62BD006B1AF1 /* States.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = States.swift; sourceTree = "<group>"; };
 		1BD7A7DE1CF9DAF20010F45E /* PantsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PantsTest.swift; sourceTree = "<group>"; };
 		1BD7A7E01CF9E7800010F45E /* ViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewTests.swift; sourceTree = "<group>"; };
 		1BDBD0591B5C21370057B710 /* CircleLimit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CircleLimit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -197,6 +209,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B2F235C1D89A6B4004622F6 /* Views and View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				1BDBD08E1B5C43590057B710 /* PoincareView.swift */,
+				1BDBD0811B5C21BE0057B710 /* CircleViewController.swift */,
+				1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */,
+				1B2F23581D89A687004622F6 /* TestType.swift */,
+			);
+			name = "Views and View Controllers";
+			sourceTree = "<group>";
+		};
 		1B5979D91CBB17A400CEAEA7 /* ColorStudent */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,14 +247,16 @@
 		1B6EB4761CAD78D900B08F09 /* Geometry */ = {
 			isa = PBXGroup;
 			children = (
-				1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */,
-				1B1754681CF5E2BC00959DA3 /* Cuff.swift */,
 				1B53DD291D70834200E04616 /* PantsMaker.swift */,
-				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
+				1B2F23531D899047004622F6 /* Surface.swift */,
 				1B4CA0A81CF4B1990022C41B /* Pants.swift */,
+				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
+				1B1754681CF5E2BC00959DA3 /* Cuff.swift */,
+				1BCD11B71D7F62BD006B1AF1 /* States.swift */,
 				1BDBD0891B5C2BEA0057B710 /* Complex.swift */,
 				1BDBD0831B5C22740057B710 /* PoincareDisk.swift */,
 				1BC1B2C11C3D713300FF17C6 /* HyperbolicTransformation.swift */,
+				1B5979E01CBB17A400CEAEA7 /* ColorExtensions.swift */,
 			);
 			name = Geometry;
 			sourceTree = "<group>";
@@ -275,9 +300,7 @@
 			isa = PBXGroup;
 			children = (
 				1BDBD0651B5C21370057B710 /* Main.storyboard */,
-				1BDBD08E1B5C43590057B710 /* PoincareView.swift */,
-				1BDBD0811B5C21BE0057B710 /* CircleViewController.swift */,
-				1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */,
+				1B2F235C1D89A6B4004622F6 /* Views and View Controllers */,
 				1B6EB4761CAD78D900B08F09 /* Geometry */,
 				1B6EB4781CAD798600B08F09 /* Algorithms */,
 				1B6EB4711CAD718A00B08F09 /* HDrawable */,
@@ -483,14 +506,17 @@
 				1B5979FB1CBB17A400CEAEA7 /* TriangleView.swift in Sources */,
 				1B6EB4751CAD727700B08F09 /* HDrawable.swift in Sources */,
 				1B4CA0AB1CF4B3340022C41B /* Groupoid.swift in Sources */,
+				1B2F23591D89A687004622F6 /* TestType.swift in Sources */,
 				1B5979F11CBB17A400CEAEA7 /* ColorExtensions.swift in Sources */,
 				1BC1B2C01C3D702D00FF17C6 /* LocationTable.swift in Sources */,
 				1B4CA0A91CF4B1990022C41B /* Pants.swift in Sources */,
+				1BCD11B81D7F62BD006B1AF1 /* States.swift in Sources */,
 				1B6EB46E1CAD711D00B08F09 /* HyperbolicDot.swift in Sources */,
 				1BDD539F1B7162620054445B /* DynamicProgramming.swift in Sources */,
 				1BA2D5B31CA1E1C90036ACCD /* CenterPoint.swift in Sources */,
 				1B5979F91CBB17A400CEAEA7 /* LightnessGradientView.swift in Sources */,
 				1BDBD08F1B5C43590057B710 /* PoincareView.swift in Sources */,
+				1B2F23541D899047004622F6 /* Surface.swift in Sources */,
 				1B21D0E21CF35BE9001FF636 /* Queue.swift in Sources */,
 				1B53DD2A1D70834200E04616 /* PantsMaker.swift in Sources */,
 				1B740F9A1C06A2FC0082BC4C /* Extensions.swift in Sources */,
@@ -519,16 +545,19 @@
 				1BD7A7DB1CF9C0A80010F45E /* HyperbolicPolygon.swift in Sources */,
 				1BD7A7DC1CF9C0A80010F45E /* HyperbolicDot.swift in Sources */,
 				1BD7A7D11CF9C0680010F45E /* Groupoid.swift in Sources */,
+				1B2F23561D899802004622F6 /* Surface.swift in Sources */,
 				1BD7A7D21CF9C0680010F45E /* Queue.swift in Sources */,
 				1BD7A7D31CF9C0680010F45E /* CenterPoint.swift in Sources */,
 				1BD7A7E11CF9E7800010F45E /* ViewTests.swift in Sources */,
 				1BD7A7D41CF9C0680010F45E /* Extensions.swift in Sources */,
+				1BE0B4A01D7F665C00FA1583 /* States.swift in Sources */,
 				1BD7A7D51CF9C0680010F45E /* GroupGeneration.swift in Sources */,
 				1BD7A7D61CF9C0680010F45E /* LocationTable.swift in Sources */,
 				1BD7A7D71CF9C0680010F45E /* Flags.swift in Sources */,
 				1BD7A7D81CF9C0680010F45E /* DynamicProgramming.swift in Sources */,
 				1BD7A7CA1CF9C0560010F45E /* Cuff.swift in Sources */,
 				1BD7A7CB1CF9C0560010F45E /* Hexagon.swift in Sources */,
+				1B2F235A1D89A687004622F6 /* TestType.swift in Sources */,
 				1BD7A7CC1CF9C0560010F45E /* Pants.swift in Sources */,
 				1BD7A7CE1CF9C0560010F45E /* Complex.swift in Sources */,
 				1BD7A7CF1CF9C0560010F45E /* PoincareDisk.swift in Sources */,
@@ -551,13 +580,16 @@
 				1BE3B64C1D6DF37500213F23 /* CenterPoint.swift in Sources */,
 				1BE3B6521D6DF39500213F23 /* HDrawable.swift in Sources */,
 				1BE3B6551D6DF39500213F23 /* HyperbolicDot.swift in Sources */,
+				1BE0B49F1D7F665B00FA1583 /* States.swift in Sources */,
 				1BE3B6391D6DF32600213F23 /* Cuff.swift in Sources */,
 				1B53DD2C1D70834200E04616 /* PantsMaker.swift in Sources */,
 				1BE3B63D1D6DF33900213F23 /* HyperbolicTransformation.swift in Sources */,
+				1B2F235B1D89A687004622F6 /* TestType.swift in Sources */,
 				1BE3B64F1D6DF37500213F23 /* LocationTable.swift in Sources */,
 				1BE3B64E1D6DF37500213F23 /* GroupGeneration.swift in Sources */,
 				1BE3B63A1D6DF32600213F23 /* Hexagon.swift in Sources */,
 				1BE3B6511D6DF37500213F23 /* DynamicProgramming.swift in Sources */,
+				1B2F23551D899801004622F6 /* Surface.swift in Sources */,
 				1BE3B64D1D6DF37500213F23 /* Extensions.swift in Sources */,
 				1BE3B6541D6DF39500213F23 /* HyperbolicPolygon.swift in Sources */,
 				1BE3B6381D6DF32600213F23 /* ColorExtensions.swift in Sources */,
@@ -652,7 +684,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Debug;
 		};
@@ -689,7 +721,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

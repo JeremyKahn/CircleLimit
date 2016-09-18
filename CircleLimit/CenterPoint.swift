@@ -12,6 +12,12 @@ func centerPointAndRadius(points: [HPoint], delta: Double, startingAt startPoint
     guard points.count > 0 else {
         return (HPoint(), 0.0)
     }
+    if points.count == 1 {
+        return (points[0], 0.0)
+    }
+    if points.count == 2 {
+        return (points[0].midpointTo(points[1]), points[0].distanceTo(points[1])/2)
+    }
     var M = HyperbolicTransformation(a: startPoint)
     var movingPoints = points.map { M.appliedTo($0) }
     var finished = false

@@ -15,24 +15,26 @@ typealias HUVect = HTrans
 // representation is z -> lambda * (z - a)/(1 - a.bar * z)
 struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
-    var a: Complex64 {
-        return -v/u
-    }
-    
-    var lambda: Complex64 {
-        return u/u.conj
-    }
-    
+    // MARK: Stored Properties
     var u: Complex64 = Complex64(1.0, 0.0)
     
     var v: Complex64 = Complex64()
     
+    var conjugateInput = false
+    
+    // MARK: Computed Properties
     // MARK: Initializers
     
     // Does not check that the input is valid
     init(u: Complex64, v: Complex64) {
         self.u = u
         self.v = v
+    }
+    
+    init(u: Complex64, v: Complex64, conjugateInput: Bool) {
+        self.u = u
+        self.v = v
+        self.conjugateInput = conjugateInput
     }
     
     init(lambda: Complex64) {
@@ -76,6 +78,14 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     // MARK: Computed Properties
+    var a: Complex64 {
+        return -v/u
+    }
+    
+    var lambda: Complex64 {
+        return u/u.conj
+    }
+    
     var abs: Double {
         return v.abs/u.abs
     }
@@ -99,6 +109,8 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     static let turnAround = HyperbolicTransformation(lambda: -1 + 0.i)
     
+    static let flip = HyperbolicTransformation(u: 1 + 0.i, v: 0 + 0.i, conjugateInput: true)
+    
     var turnLeft: HTrans {
         return following(HTrans.turnLeft)
     }
@@ -119,6 +131,10 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return following(HTrans.goForward(distance))
     }
     
+    var flip: HTrans {
+        return following(HTrans.flip)
+    }
+    
     // MARK: Group operations and actions
     static let identity = HyperbolicTransformation()
     
@@ -131,6 +147,8 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     func appliedTo(z: Complex64) -> Complex64 {
+        var z = z
+        if conjugateInput { z = z.conj }
         let w = (u * z + v) / (v.conj * z + u.conj)
         return w
     }
@@ -151,9 +169,10 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     { return HyperbolicTransformation(u: u.conj, v: -v) }
     
     func following(B: HyperbolicTransformation) -> HyperbolicTransformation {
-        let r = u * B.u + v * B.v.conj
-        let s = u * B.v + v * B.u.conj
-        return HyperbolicTransformation(u: r, v: s)
+        let (a, b) = conjugateInput ? (B.u.conj, B.v.conj) : (B.u, B.v)
+        let r = u * a + v * b.conj
+        let s = u * b + v * a.conj
+        return HyperbolicTransformation(u: r, v: s, conjugateInput: B.conjugateInput != conjugateInput)
     }
     
     func toThe(n: Int) -> HyperbolicTransformation {
@@ -166,6 +185,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     // MARK: Conjugacy invariants and equivariants
+    // TODO: Remove or consider the case where conjugateImput is true
     // This is very close to correct when the axis is far from the origin
     // We return nil if the transformation is not hyperbolic
     var approximateDistanceOfTranslationAxisToOrigin: Double? {
@@ -230,7 +250,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     
     // This guarantees that v is about 0 and u is about plus or minus 1
     func closeToIdentity(tolerance: Double) -> Bool {
-        return v.abs < tolerance && u.im.abs < tolerance
+        return v.abs < tolerance && u.im.abs < tolerance && !conjugateInput
     }
     
     func nearTo(B:HyperbolicTransformation) -> Bool {
@@ -243,7 +263,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     var description : String {
-        return "a: " + a.nice + " lambda: " + lambda.nice
+        return "a: " + a.nice + " lambda: " + lambda.nice + "applied To " + (conjugateInput ? "z.conj" : "z")
     }
     
     // MARK: Random generation

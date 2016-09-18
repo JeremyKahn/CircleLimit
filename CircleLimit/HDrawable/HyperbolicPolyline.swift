@@ -16,11 +16,7 @@ class HyperbolicPolyline : HDrawable {
     
     var radius: Double = 0
     
-    var points: [HPoint] = [] {
-        didSet {
-          print("Polygon points now \(points)", when: observingAllChanges)
-        }
-    }
+    var points: [HPoint] = []
     
     var mask: HyperbolicTransformation = HyperbolicTransformation()
     
@@ -60,8 +56,6 @@ class HyperbolicPolyline : HDrawable {
         complete()
     }
     
-    
-    
     init(_ a: HyperbolicPolyline) {
         self.points = a.points
         self.lineColor = a.lineColor
@@ -70,8 +64,9 @@ class HyperbolicPolyline : HDrawable {
         self.fillColorBaseNumber = a.fillColorBaseNumber
         self.useFillColorTable = a.useFillColorTable
         self.fillColor = a.fillColor
-        update()
-        complete()
+        self.subsequenceTable = a.subsequenceTable
+        self.centerPoint = a.centerPoint
+        self.radius = a.radius
     }
     
    func copy() -> HDrawable {
@@ -108,6 +103,7 @@ class HyperbolicPolyline : HDrawable {
         complete()
     }
     
+    /// Computes centerPoint and radius
     func update() {
         (centerPoint, radius) = centerPointAndRadius(points, delta: 0.1, startingAt: centerPoint)
     }
@@ -124,6 +120,7 @@ class HyperbolicPolyline : HDrawable {
         }
     }
     
+    /// Builds the subsequence table for use for drawing translates
     func complete() {
         buildSubsequenceTable()
     }
@@ -207,8 +204,8 @@ class HyperbolicPolyline : HDrawable {
         for i in 0...(points.count-1) {
             points[i] = M.appliedTo(points[i])
             assert(points[i].abs <= 1)
-            updateAndComplete()
         }
+        centerPoint = M.appliedTo(centerPoint)
     }
     
     // MARK: - Getting the subsequence
@@ -233,6 +230,10 @@ class HyperbolicPolyline : HDrawable {
     // MARK: Building the Subsequence Table
     static var initialDistanceToleranceMultiplier = 0.2
     
+    static var maximumShrinkageFactor: Double = 1
+    
+    static var maxScaleIndex = Int(log(maximumShrinkageFactor) * stepsPerNaturalExponentOfScale)
+    
     var initialDistanceTolerance : Double {
         return intrinsicLineWidth * HyperbolicPolyline.initialDistanceToleranceMultiplier
     }
@@ -241,12 +242,10 @@ class HyperbolicPolyline : HDrawable {
         return initialDistanceTolerance * exp(Double(scaleIndex)/HyperbolicPolyline.stepsPerNaturalExponentOfScale)
     }
     
-    static var maximumShrinkageFactor: Double = 1
-    
-    static var maxScaleIndex = Int(log(maximumShrinkageFactor) * stepsPerNaturalExponentOfScale)
-    
+    /// The line of the subsequence table that we're currently computing
     var scaleIndex : Int = 0
     
+    /// The subsequence of points to use at each scale
     var subsequenceTable : [[Int]] = [[Int]](count: maxScaleIndex + 1, repeatedValue: [])
     
     struct radialDistanceCache {

@@ -34,7 +34,6 @@
                         <outlet property="pinchRecognizer" destination="tDE-AL-ekJ" id="ayW-em-yko"/>
                         <outlet property="poincareView" destination="IBq-aQ-8NE" id="eiR-RU-w03"/>
                         <outlet property="singleTapRecognizer" destination="HoZ-7h-xGw" id="fdr-5g-8uE"/>
-                        <outlet property="twoTouchLongPress" destination="HAX-7P-ZRj" id="aNQ-F4-SoR"/>
                         <segue destination="Ljh-JV-o78" kind="presentation" identifier="chooseColor" id="0j0-eS-miu"/>
                     </connections>
                 </viewController>
@@ -69,9 +68,9 @@
                         <outlet property="delegate" destination="vXZ-lx-hvc" id="1YQ-om-OeB"/>
                     </connections>
                 </pongPressGestureRecognizer>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" numberOfTouchesRequired="2" id="HAX-7P-ZRj">
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" numberOfTouchesRequired="3" id="HAX-7P-ZRj" userLabel="Three Touch Long Press">
                     <connections>
-                        <action selector="twoTouchLongPress:" destination="vXZ-lx-hvc" id="bH6-nv-Ibh"/>
+                        <action selector="threeTouchLongPress:" destination="vXZ-lx-hvc" id="2Xa-qF-DKT"/>
                         <outlet property="delegate" destination="vXZ-lx-hvc" id="8DE-Kg-NsW"/>
                     </connections>
                 </pongPressGestureRecognizer>

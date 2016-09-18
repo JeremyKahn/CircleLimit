@@ -55,6 +55,22 @@ class HPoint : Equatable, CustomStringConvertible {
         return moveSelfToOrigin.appliedTo(z).distanceToOrigin
     }
     
+    
+    /// The point at distance x from the origin, on the positive real axis
+    static func pointAtDistance(x: Double) -> HPoint {
+        return HPoint(distanceToAbs(x) + 0.i)
+    }
+    
+    func pointAtDistance(x: Double, toPoint otherPoint: HPoint) -> HPoint {
+        let translatedOther = moveSelfToOrigin.appliedTo(otherPoint)
+        let translatedResult = HPoint(Complex64(abs: distanceToAbs(x), arg: translatedOther.arg))
+        return moveSelfToOrigin.inverse.appliedTo(translatedResult)
+    }
+    
+    func midpointTo(p: HPoint) -> HPoint {
+        return pointAtDistance(distanceTo(p)/2, toPoint: p)
+    }
+    
     func liesWithin(cutoff: Double) -> (HPoint -> Bool) {
         let absCutoff = distanceToAbs(cutoff)
         let M = moveSelfToOrigin

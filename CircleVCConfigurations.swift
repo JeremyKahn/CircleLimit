@@ -14,8 +14,14 @@ extension CircleViewController {
         super.viewDidLoad()
         print("CircleViewController loaded")
         if CircleViewController.testing { return }
-        makeInitialGeneralPants()
+        setUpTestSurface()
         setUpGroupAndGuidelinesForPants()
+    }
+    
+    func setUpTestSurface() {
+        surface = testType.surface
+        largeGenerationDistance = testType.distanceToGo
+        groupGenerationCutoffDistance = largeGenerationDistance
     }
     
     func setUpThreeThreeFourGroup() {
@@ -52,111 +58,24 @@ extension CircleViewController {
         searchingGroup = groupForIntegerDistance[5].filter() { $0.action == I }
     }
     
-    
-    
-    
-    enum TestType {
-        case t2323, t334, pants, torus2
-    }
-    
-    func makeInitialGeneralPants() {
-        let testType = TestType.t334
-        switch testType {
-        case .pants:
-            let pants0 = Pants(cuffHalfLengths: cuffLengths)
-            pants0.setColor(UIColor.blueColor())
-            let pants1 = Pants(cuffHalfLengths: cuffLengths)
-            pants1.setColor(UIColor.greenColor())
-            for i in 0...2 {
-                cuffArray.append(Cuff(pants0: pants0, index0: i, pants1: pants1, index1: i, twist: 0.0))
-            }
-            pantsArray = [pants0, pants1]
-        case .t2323:
-            let cph0 = CuffPlaceholder(halfLength: 0.5, twist: 0.1)
-            let pph0 = PantsPlaceholder()
-            let pph1 = PantsPlaceholder()
-            pph0.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.cuff(cph0, 0)]
-            pph1.numberCuffArray = [NumberCuff.number(3), NumberCuff.number(2), NumberCuff.cuff(cph0, 1)]
-            (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph0, pph1])
-            pantsArray[0].setColor(UIColor.blueColor())
-            pantsArray[1].setColor(UIColor.greenColor())
-        case .t334:
-            let pph = PantsPlaceholder()
-            pph.numberCuffArray = [NumberCuff.number(2), NumberCuff.number(3), NumberCuff.number(7)]
-            (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph])
-            pantsArray[0].setColor(UIColor.greenColor())
-        case .torus2:
-            let pph = PantsPlaceholder()
-            let cph = CuffPlaceholder(halfLength: 1.0, twist: 0.2)
-            pph.numberCuffArray = [NumberCuff.number(2), NumberCuff.cuff(cph, 0), NumberCuff.cuff(cph, 1)]
-            (pantsArray, cuffArray) = pantsAndCuffArrayFromPlaceholders([pph])
-            pantsArray[0].setColor(UIColor.blueColor())
-        }
-        
-    }
-    
     // We're assuming here that the pants have already had their cuffHalfLengths set
     // And now we're computing the groupoid, the group, and the guidelines, and then setting up all the group segments
     func setUpGroupAndGuidelinesForPants() {
-        pants = pantsArray[0]
-        let baseHexagon = pants.hexagons[0]
-        
-        let serious = false
-        let trivial = false
-        var endStates: [EndState] = []
         if serious {
             print("Generating group for distance \(groupGenerationCutoffDistance)")
-            endStates = baseHexagon.allMorphisms(groupGenerationCutoffDistance)
+            surface.setupGroupoidAndGroupForDistance(groupGenerationCutoffDistance)
         } else {
-            var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
-            for i in 0..<14 {
-                steppedStates.append(steppedStates.last!.map(nextForwardStates).flatten().map({$0}))
-                print("At stage \(i) in adding new states for a total of \(steppedStates.flatten().count) states")
-            }
-            endStates = steppedStates.flatten().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
-            if drawOnlyHexagonTesselation {
-                hexagonTesselation = steppedStates.flatten().map() { $0.lineToDraw }
-            }
+            drawOnlyHexagonTesselation = true
+            surface.setupGroupoidAndGroupForSteps(testType.numberOfStepsToTake)
         }
-        if drawOnlyHexagonTesselation {
-            hexagonTesselation = endStates.map() { $0.translatedHexagon } + hexagonTesselation
-        }
-        let group = trivial || drawOnlyHexagonTesselation  ? [HTrans()] : groupFromEndStates(endStates, for: baseHexagon)
+        let group = trivial || drawOnlyHexagonTesselation  ? [HTrans()] : surface.group
         
-        // Set up the cuff Guidelines
-        cuffGuidelines = []
-        for cuff in cuffArray {
-            cuffGuidelines.append(cuff.transformedGuideline)
-        }
+        surface.setUpHexagonsAndGuidelines()
         if let i = cuffEditIndex {
-            cuffGuidelines[i].lineColor = UIColor.redColor()
+            surface.cuffGuidelines[i].lineColor = UIColor.redColor()
         }
-        
-        if !drawOnlyHexagonTesselation {
-            // Compute the baseMask for each hexagon for each pants
-            for Q in pantsArray {
-                for i in 0...1 {
-                    let hexagon = Q.hexagons[i]
-                    let morphismsToHexagon = endStates.filter({$0.hexagon === hexagon})
-                    let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance})!
-                    hexagon.baseMask = motion
-                }
-            }
-            
-            // The generalGuidelines will include the transformed guidelines for the pants
-            generalGuidelines = []
-            let firstPantsOnly = false
-            for Q in (firstPantsOnly ? [pantsArray[0]] : pantsArray) {
-                generalGuidelines += Q.transformedGuidelines
-                //            for i in 0...1 {
-                //                let hexagon = Q.hexagons[i]
-                //                let altitudeGuidelines = hexagon.altitudeGuidelines.map({$0.transformedBy(hexagon.baseMask)})
-                //                generalGuidelines += altitudeGuidelines
-                //            }
-            }
-        }
-        
-        
+        generalGuidelines = surface.generalGuidelines
+ 
         // Set up the groups
         let dressedGroup = group.map() {Action(M: $0)}
         makeGroupForIntegerDistanceWith(dressedGroup)

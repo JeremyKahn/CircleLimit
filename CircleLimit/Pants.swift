@@ -46,7 +46,15 @@ class Pants {
     
     var hexagons: [Hexagon]
     
-    var color = UIColor.clearColor()
+    var color = UIColor.clearColor() {
+        didSet {
+            hexagons[0].color = color
+            hexagons[1].color = weightedColor([0.5, 0.5], colors: [color, UIColor.grayColor()])
+            for h in hexagons {
+                h.hexagonGuideline.fillColor = h.color
+            }
+        }
+    }
     
     var localGroupoidGenerators: [GroupoidElement] = []
     
@@ -71,7 +79,7 @@ class Pants {
     var id: Int
     
     var transformedGuidelines: [HDrawable] {
-        return guidelines.map({$0.transformedBy(baseMask)})
+        return hexagonGuidelines
     }
     
     var guidelines: [HDrawable] {
@@ -85,23 +93,9 @@ class Pants {
     // This would actually be more readable as a nested for loop, with append
     var hexagonGuidelines: [HDrawable] {
         if Pants.firstHexagonOnly {
-            let h = hexagons[0]
-            return h.guidelines.map({$0.transformedBy(baseMask.following(h.baseMask))})
+            return hexagons[0].transformedGuidelines
         }
-        let nestedArray = hexagons.map() {
-            (h: Hexagon) -> [HDrawable] in
-            h.guidelines.map({$0.transformedBy(baseMask.following(h.baseMask))})
-        }
-        return nestedArray.flatten().map({$0})
-    }
-    
-    func setColor(color: UIColor) {
-        self.color = color
-        hexagons[0].color = color
-        hexagons[1].color = weightedColor([0.5, 0.5], colors: [color, UIColor.grayColor()])
-        for h in hexagons {
-            h.hexagonGuideline.fillColor = h.color
-        }
+        return hexagons.flatMap({$0.transformedGuidelines})
     }
     
     /// An array of size three, with a guideline for each actual cuff, and nil at rotation indices

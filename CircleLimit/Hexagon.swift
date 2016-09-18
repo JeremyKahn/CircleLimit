@@ -8,143 +8,6 @@
 
 import UIKit
 
-/** An entry into an adjacent hexagon (from a given one).
- Computed from the geometric graph and used to compute the groupoid
- */
-struct HexagonEntry {
-    
-    /// The index of the side where we will enter
-    var entryIndex: Int = 0
-    
-    /// The motion from base frame of the present hexagon to the new one
-    var motion: HyperbolicTransformation = HTrans.identity
-    
-    /// The hexagon we will enter
-    var hexagon: Hexagon? = nil
-    
-    /// The hexagon that we left
-    var oldHexagon: Hexagon? = nil
-    
-    init() {}
-    
-    init(entryIndex: Int, motion: HTrans, hexagon: Hexagon) {
-        self.entryIndex = entryIndex
-        self.motion = motion
-        self.hexagon = hexagon
-    }
-    
-    static var placeholder = HexagonEntry()
-    
-    /// (entryIndex, motion, hexagon?.id)
-    var nice: (Int, String, Int?) {
-        return (entryIndex, "a: " + motion.a.nice + " lambda: " + motion.lambda.nice, hexagon?.id)
-    }
-}
-
-struct RotationState {
-    
-    var left: Int
-    var right: Int
-    
-    var thing = false
-    
-    init(left: Int, right: Int) {
-        self.left = left
-        self.right = right
-    }
-    
-    init(left: Int, right: Int, thing: Bool) {
-        self.init(left: left, right: right)
-        self.thing = thing
-    }
-    
-    static var none: RotationState {
-        return RotationState(left: 0, right: 0)
-    }
-    
-    func exitStates(entrance i: Int, hexagon h: Hexagon) -> [(Int, RotationState)] {
-        let possibleSides = [i + 1, i + 2, i + 3, i + 4, i + 5].map({$0 % 6})
-        let resultsQ = possibleSides.map() { (j: Int) -> (Int, RotationState?) in
-            return (j, h.newRotationState(self, entrance: i, exit: j))
-        }
-        let results = resultsQ.filter({$0.1 != nil}).map() {
-            (j: Int, s: RotationState?) -> (Int, RotationState) in
-            return (j, s!)
-        }
-        return results
-    }
-    
-}
-
-
-
-
-
-
-/// The entry to the new hexagon, the motion to the new hexagon, and the state in the new hexagon
-struct ForwardState {
-    var entry: HexagonEntry
-    var newMotion: HTrans
-    var state: RotationState
-    
-    var nice:  (Int, Int?, String, RotationState) {
-        return (entry.entryIndex, entry.hexagon?.id, ("a: " + newMotion.a.nice + " lambda: " + newMotion.lambda.nice), state)
-    }
-    
-    init(entry: HexagonEntry, newMotion: HTrans, state: RotationState) {
-        self.entry = entry
-        self.newMotion = newMotion
-        self.state = state
-        //        print("Hexagon: \(newMotion)")
-    }
-    
-    var lineToDraw: HDrawable {
-        let oldMotion = newMotion.following(entry.motion.inverse)
-        let start = oldMotion.appliedTo(entry.oldHexagon!.centerpoint)
-        let end = newMotion.appliedTo(entry.hexagon!.centerpoint)
-        //        let line = HyperbolicDot(center: end, radius: 0.025)
-        let line = HyperbolicPolyline([start, end])
-        line.lineColor = UIColor.redColor()
-        return line
-    }
-    
-    var endState: EndState {
-        return EndState(motion: newMotion, hexagon: entry.hexagon!)
-    }
-    
-    var guidelines: [HDrawable] {
-        return [lineToDraw, endState.translatedHexagon]
-    }
-}
-
-struct EndState {
-    var motion: HyperbolicTransformation
-    var hexagon: Hexagon
-    
-    var translatedHexagon: HDrawable {
-        return hexagon.hexagonGuideline.transformedBy(motion)
-    }
-}
-
-/**
- - returns: The forward states that can be reached in one step from **s**
- */
-func nextForwardStates(s: ForwardState) -> [ForwardState] {
-    guard let hexagon = s.entry.hexagon else {return []}
-    let exitStates = s.state.exitStates(entrance: s.entry.entryIndex, hexagon: hexagon)
-    return exitStates.map() {
-        let entry = hexagon.neighbor[$0.0]
-        return ForwardState(entry: entry, newMotion: s.newMotion.following(entry.motion), state: $0.1)
-    }
-}
-
-func project(f: ForwardState) -> EndState {
-    return f.endState
-}
-
-func groupFromEndStates(endStates: [EndState], for baseHexagon: Hexagon) -> [HTrans] {
-    return endStates.filter({$0.hexagon === baseHexagon}).map({$0.motion})
-}
 
 /// Represents either a cuff or a rotation
 enum CuffRotation {
@@ -186,11 +49,15 @@ enum CuffRotation {
 /// A right angled hexagon in the hyperbolic plane
 class Hexagon {
     
+    // MARK: Basic stored properties
     static var nextId = 0
     
     var id: Int
     
-    /// The transformation to the base frame of the hexagon at the orthcenter
+    /**
+     The transformation to the base frame of the hexagon at the orthcenter
+     - remark:  We're using absolute coordinates, not relative to the pants
+     */
     var baseMask = HTrans()
     
     /// The color to be used to draw the hexagon, as a guideline
@@ -198,6 +65,8 @@ class Hexagon {
     
     /// the lengths of the sides
     var sideLengths = Array<Complex64>(count: 6, repeatedValue: acosh(2.0 + 0.i))
+    
+    // MARK: - The rotation data
     
     /// the rotation numbers, padded with zeroes for cuffs
     var rotationArray: [Int]
@@ -210,69 +79,8 @@ class Hexagon {
         return rotationArray[i / 2]
     }
     
-    /**
-     - parameters:
-     - old: The old rotationState
-     - entrance: The index of the side by which we are entering, in 0..<6
-     - exit: The index of the side by which we are exiting, in 0..<6
-     - returns: The rotation state in the new hexagon, or nil if this exit is forbidden *for any reason*
-     - remark: We assume that the hexagon sides are numbered ***clockwise*** for the purposes of RotationState.left and .right
-     */
-    func newRotationState(old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
-        // If the exit index is even, the transition is allowed if there is an actual cuff at this index, and we are not entering from an adjacent side
-        if exit % 2 == 0 {
-            // Or we could write: if abs((entrance - exit) %% 6 - 3) == 2
-            if abs(exit - entrance) == 1 || (exit == 0 && entrance == 5)  {
-                return nil
-            }
-            
-            // This is the one other case where we can't go across the cuff, because we've gone across it by right rotation around an index 2 rotation point
-            if old.left == 2 && (exit - entrance) %% 6 == 3 &&  rotationNumberForIndex((entrance + 1) % 6) == 2 {
-                return nil
-            }
-            return isCuffIndex(exit) ? RotationState.none : nil
-        }
-        // otherwise we need to examine the type of the two adjacent sides
-        let exitPlusOne = (exit + 1) % 6
-        let exitMinusOne = (exit + 5) % 6
-        // left and right will hold the rotation around the adjancent rotation points
-        // each one is zero if the adjacent side is a cuff
-        var left = isCuffIndex(exitMinusOne) ? 0 : 1
-        var right = isCuffIndex(exitPlusOne) ? 0 : 1
-        var special = false
-        // Are we rotating to the left around exitMinusOne?
-        if (exit - entrance + 6) % 6 == 2 && left > 0 {
-            left = old.left + 1
-            if left > rotationNumberForIndex(exitMinusOne) {
-                return nil
-            }
-        }
-        
-        // This is a trick to make sure that we don't collide with the bouncing rightward rotation
-        if (exit - entrance) %% 6 == 4 && old.left == rotationNumberForIndex((entrance + 1) % 6) {
-            left = old.thing ? 3 : 2
-        }
-        
-        // This is another trick to deal with rotation number 2
-        if (exit - entrance) %% 6 == 4 && old.left == rotationNumberForIndex((entrance + 1) % 6) - 1 && rotationNumberForIndex(exitMinusOne) == 2 {
-            special = true
-        }
-        if old.thing && (exit - entrance) %% 6 == 2 {
-            special = true
-        }
-        
-        
-        // Are we rotating to the right around exitPlusOne?
-        if (exit - entrance + 6) % 6 == 4 && right > 0 {
-            right = old.right + 1
-            if right >= rotationNumberForIndex(exitPlusOne) {
-                return nil
-            }
-        }
-        return RotationState(left: left, right: right, thing: special)
-    }
-    
-    
+    // MARK: - The derived geometry of the hexagon
+
     /// the lengths of the parts from the start to the foot of the altitude
     var firstParts = Array<Complex64>(count: 6, repeatedValue: Complex64())
     
@@ -303,6 +111,8 @@ class Hexagon {
     /// A point which we hope will aways be in the interior of the hexagon
     var centerpoint: HPoint = HPoint()
     
+    // MARK: - The guidelines
+    
     /// lines to draw the sides
     var sideGuidelines: [HDrawable] = []
     
@@ -315,14 +125,20 @@ class Hexagon {
     /// when set, use **hexagonGuideline** as the guideline
     static var hotPants = true
     
+    var transformedGuidelines: [HDrawable] {
+        return guidelines.map() {$0.transformedBy(baseMask)}
+    }
+    
     var guidelines: [HDrawable] {
         if Hexagon.hotPants {
-            return [hexagonGuideline] + altitudeGuidelines
+            return [hexagonGuideline]
         }
         else {
             return sideGuidelines + altitudeGuidelines
         }
     }
+    
+    // MARK: - Moving to adjacent hexagons
     
     /// The neighbors to the hexagon after the connections are formed
     var neighbor: [HexagonEntry] = Array<HexagonEntry>(count: 6, repeatedValue: HexagonEntry.placeholder)
@@ -345,6 +161,85 @@ class Hexagon {
         }
     }
     
+    /**
+     - parameters:
+     - old: The old rotationState
+     - entrance: The index of the side by which we are entering, in 0..<6
+     - exit: The index of the side by which we are exiting, in 0..<6
+     - returns: The rotation state in the new hexagon, or nil if this exit is forbidden *for any reason*
+     - remark: We assume that the hexagon sides are numbered ***clockwise*** for the purposes of RotationState.left and .right
+     */
+    func newRotationState(old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
+        // If the exit index is even, the transition is allowed if there is an actual cuff at this index, and we are not entering from an adjacent side
+        if exit % 2 == 0 {
+            guard isCuffIndex(exit) else { return nil }
+            // Or we could write: if abs((entrance - exit) %% 6 - 3) == 2
+            if abs(exit - entrance) == 1 || (exit == 0 && entrance == 5)  {
+                return nil
+            }
+            
+            // This is the one other case where we can't go across the cuff, because we've gone across it by right rotation around an index 2 rotation point
+            if old.left == 2 && (exit - entrance) %% 6 == 3 &&  rotationNumberForIndex((entrance + 1) % 6) == 2 {
+                return nil
+            }
+            return RotationState.none
+        }
+        // otherwise we need to examine the type of the two adjacent sides
+        let exitPlusOne = (exit + 1) % 6
+        let exitMinusOne = (exit + 5) % 6
+        // left and right will hold the rotation around the adjancent rotation points
+        // each one is zero if the adjacent side is a cuff
+        var left = isCuffIndex(exitMinusOne) ? 0 : 1
+        var right = isCuffIndex(exitPlusOne) ? 0 : 1
+        var special = false
+        // Are we rotating to the left around exitMinusOne?
+        if (exit - entrance + 6) % 6 == 2 && left > 0 {
+            left = old.left + 1
+            if left > rotationNumberForIndex(exitMinusOne) {
+                return nil
+            }
+        }
+        
+        // This is a trick to make sure that we don't collide with the bouncing rightward rotation
+        if (exit - entrance) %% 6 == 4 && old.left == rotationNumberForIndex((entrance + 1) % 6) && old.left > 0 {
+            left = old.thing ? 3 : 2
+        }
+        
+        // This is another trick to deal with rotation number 2
+        if (exit - entrance) %% 6 == 4 && old.left == rotationNumberForIndex((entrance + 1) % 6) - 1 && rotationNumberForIndex(exitMinusOne) == 2 {
+            special = true
+        }
+        if old.thing && (exit - entrance) %% 6 == 2 {
+            special = true
+        }
+        
+        
+        // Are we rotating to the right around exitPlusOne?
+        if (exit - entrance + 6) % 6 == 4 && right > 0 {
+            right = old.right + 1
+            if right >= rotationNumberForIndex(exitPlusOne) {
+                return nil
+            }
+        }
+        return RotationState(left: left, right: right, thing: special)
+    }
+
+    
+    /**
+     - returns: All elements of the groupoid starting at **self** within **cutoffDistance**
+     */
+    func groupoidForDistance(cutoffDistance: Double) -> [EndState] {
+        let base = forwardStates
+        // For better or for worse, this takes us one step past the cutoffDistance
+        let cutoffAbs = distanceToAbs(cutoffDistance)
+        let withinRange = {(f: ForwardState) -> Bool in f.newMotion.abs < cutoffAbs}
+        var result = fastLeastFixedPoint(base, expand: nextForwardStates, good: withinRange, project: project)
+        result.append(EndState(motion: HTrans.identity, hexagon: self))
+        return result
+    }
+    
+    // MARK: - Initialization and setup
+    
     init(alternatingSideLengths: [Complex64]) {
         id = Hexagon.nextId
         Hexagon.nextId += 1
@@ -358,6 +253,13 @@ class Hexagon {
         let complexAlternatingSideLengths = alternatingSideLengths.map({$0.complexLength})
         rotationArray = alternatingSideLengths.map({$0.rotation})
         setAlternatingSideLengths(complexAlternatingSideLengths)
+    }
+    
+    func copy() -> Hexagon {
+        let alternatingSideLengths = [sideLengths[0], sideLengths[2], sideLengths[4]]
+        let h = Hexagon(alternatingSideLengths: alternatingSideLengths)
+        h.color = color
+        return h
     }
     
     /// (Re)compute the geometry from the alternating side lengths
@@ -377,26 +279,6 @@ class Hexagon {
             sideLengths[i] = sideLength
         }
         setUpEverything()
-    }
-    
-    /**
-     - returns: All elements of the groupoid starting at **self** within **cutoffDistance**
-     */
-    func allMorphisms(cutoffDistance: Double) -> [EndState] {
-        let base = forwardStates
-        // For better or for worse, this takes us one step past the cutoffDistance
-        let cutoffAbs = distanceToAbs(cutoffDistance)
-        let withinRange = {(f: ForwardState) -> Bool in f.newMotion.abs < cutoffAbs}
-        var result = fastLeastFixedPoint(base, expand: nextForwardStates, good: withinRange, project: project)
-        result.append(EndState(motion: HTrans.identity, hexagon: self))
-        return result
-    }
-    
-    func copy() -> Hexagon {
-        let alternatingSideLengths = [sideLengths[0], sideLengths[2], sideLengths[4]]
-        let h = Hexagon(alternatingSideLengths: alternatingSideLengths)
-        h.color = color
-        return h
     }
     
     /// Compute all parameters and measurements from the side lengths
