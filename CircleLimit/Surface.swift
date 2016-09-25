@@ -33,7 +33,9 @@ class Surface {
         groupoid = baseHexagon.groupoidForDistance(distance)
         group = groupFromEndStates(groupoid, for: baseHexagon)
         if let shadowHexagon = shadowHexagon {
-            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.flip})
+            /* the '4' in downFromOrthocenter[4] is because the 0 side for hexagons[0] forms a contiguous cuff with the 4 side for hexagons[1]
+             */
+            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.following(shadowHexagon.downFromOrthocenter[4]).flip})
         }
         
     }
