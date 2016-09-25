@@ -14,6 +14,7 @@ class Surface {
     var cuffArray: [Cuff] = []
     var baseHexagon: Hexagon!
     var shadowHexagon: Hexagon?
+    var shadowHexagonIndex: Int?
     
     var groupoid: [EndState] = []
     var group: [HTrans] = []  // Or [Action]?
@@ -35,7 +36,7 @@ class Surface {
         if let shadowHexagon = shadowHexagon {
             /* the '4' in downFromOrthocenter[4] is because the 0 side for hexagons[0] forms a contiguous cuff with the 4 side for hexagons[1]
              */
-            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.following(shadowHexagon.downFromOrthocenter[4]).flip})
+            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.following(shadowHexagon.downFromOrthocenter[shadowHexagonIndex!]).flip})
         }
         
     }

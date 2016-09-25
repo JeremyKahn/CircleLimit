@@ -144,13 +144,30 @@ class PantsPlaceholder {
         switch type {
         case .whole:
             return pants[1].hexagons[0]
-        case .threeZeroHalf, .oneOneHalf:
+        case .threeZeroHalf:
             return pants[0].hexagons[1]
+        case .oneOneHalf:
+            return pants[0].hexagons[0]
+        }
+    }
+    
+    var shadowHexagonIndex: Int {
+        switch type {
+        case .oneOneHalf:
+            return 0
+        case .threeZeroHalf:
+            return 4
+        case .whole:
+            return 4
         }
     }
     
     convenience init(cuffArray: [NumberCuff]) {
         self.init(cuffArray: cuffArray, type: PantsPlaceholderType.whole)
+    }
+    
+    convenience init(halfCuff: NumberCuff, wholeCuff: NumberCuff) {
+        self.init(cuffArray: [halfCuff, wholeCuff], type: PantsPlaceholderType.oneOneHalf)
     }
     
     init(cuffArray: [NumberCuff], type: PantsPlaceholderType) {
@@ -217,6 +234,7 @@ func surfaceFromPlaceholders(pantsPlaceholders: [PantsPlaceholder], cuffPlacehol
     s.baseHexagon = pantsPlaceholders[0].hexagon
     if hasReflection {
         s.shadowHexagon = pantsPlaceholders[0].shadowHexagon
+        s.shadowHexagonIndex = pantsPlaceholders[0].shadowHexagonIndex
     }
     return s
 }

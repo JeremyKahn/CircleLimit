@@ -14,21 +14,16 @@ enum TestType {
     case orbiTorus(Int)
     case pants
     case t2223
+    case reflectedT2223
     case reflectedTriangle(Int, Int, Int)
-    
-    var numberOfPants: Int {
-        switch self {
-        case triangle, .orbiTorus, .t2223, .reflectedTriangle: return 1
-        case orbiFour, pants: return 2
-        }
-    }
+    case angelsAndDevils
     
     var numberOfStepsToTake: Int {
         switch self {
         case .triangle: return 15
-        case .reflectedTriangle: return 10
+        case .reflectedTriangle, .angelsAndDevils: return 10
         case pants: return 5
-        case orbiFour, .t2223: return 10
+        case orbiFour, .t2223, .reflectedT2223: return 10
         case .orbiTorus: return 7
         }
     }
@@ -36,8 +31,8 @@ enum TestType {
     var distanceToGo: Double {
         switch self {
         case .triangle: return 7.0
-        case .reflectedTriangle: return 7.0
-        case orbiFour, .t2223: return 7.0
+        case .reflectedTriangle, .angelsAndDevils: return 7.0
+        case orbiFour, .t2223, .reflectedT2223: return 7.0
         case orbiTorus, pants: return 10.0
         }
     }
@@ -57,6 +52,8 @@ enum TestType {
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(p), NumberCuff.number(q), NumberCuff.number(r)], type: .threeZeroHalf))
         case .triangle(let p, let q, let r):
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(p), NumberCuff.number(q), NumberCuff.number(r)]))
+        case .angelsAndDevils:
+            pants.append(PantsPlaceholder(halfCuff: NumberCuff.number(3), wholeCuff: NumberCuff.number(4)))
         case .orbiTorus(let p):
             let cuff1 = CuffPlaceholder(halfLength: 1, twist: 0.1)
             cuffs = [cuff1]
@@ -74,6 +71,10 @@ enum TestType {
             let cuff1 = CuffPlaceholder(halfLength: 1, twist: 0.1)
             cuffs = [cuff1]
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(2), NumberCuff.number(3), NumberCuff(c: cuff1, type: .folded)]))
+        case .reflectedT2223:
+            let cuff1 = CuffPlaceholder(halfLength: 1)
+            cuffs = [cuff1]
+            pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(2), NumberCuff.number(3), NumberCuff(c: cuff1, type: .folded)], type: PantsPlaceholderType.threeZeroHalf))
         }
         return (pants, cuffs)
     }
@@ -81,8 +82,8 @@ enum TestType {
     var surface: Surface {
         let (pantsPlaceholders, cuffPlaceholders) = pantsAndCuffPlaceholders
         let result = surfaceFromPlaceholders(pantsPlaceholders, cuffPlaceholders: cuffPlaceholders)
-        if numberOfPants >= 1 { result.pantsArray[0].color = UIColor.greenColor() }
-        if numberOfPants >= 2 { result.pantsArray[1].color = UIColor.blueColor() }
+        if result.pantsArray.count >= 1 { result.pantsArray[0].color = UIColor.greenColor() }
+        if result.pantsArray.count >= 2 { result.pantsArray[1].color = UIColor.blueColor() }
         return result
     }
     

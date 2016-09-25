@@ -165,8 +165,11 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return following(M)
     }
     
-    var inverse: HyperbolicTransformation
-    { return HyperbolicTransformation(u: u.conj, v: -v) }
+    var inverse: HyperbolicTransformation {
+        let uNew = conjugateInput ? u : u.conj
+        let vNew = conjugateInput ? -v.conj : -v
+        return HyperbolicTransformation(u: uNew, v: vNew, conjugateInput: conjugateInput)
+    }
     
     func following(B: HyperbolicTransformation) -> HyperbolicTransformation {
         let (a, b) = conjugateInput ? (B.u.conj, B.v.conj) : (B.u, B.v)
@@ -270,7 +273,12 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     static func randomInstance() -> HyperbolicTransformation {
         let a = (randomDouble() + randomDouble().i)/sqrt(2)
         let lambda = exp((randomDouble() * Double.PI * 2).i)
-        return HyperbolicTransformation(a: a, lambda: lambda)
+        var result = HyperbolicTransformation(a: a, lambda: lambda)
+        let t = random()
+        if t % 2 == 0 {
+            result = result.flip
+        }
+        return result
     }
     
 }

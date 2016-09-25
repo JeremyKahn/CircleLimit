@@ -64,8 +64,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var trivialGroup = false
     
-    var testType: TestType = TestType.reflectedTriangle(2, 3, 7)
- 
+    var testType = TestType.angelsAndDevils
+    
     var serious = true
     
     var trivial = false
