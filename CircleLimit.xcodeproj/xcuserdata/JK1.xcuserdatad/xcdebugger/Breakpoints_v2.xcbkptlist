@@ -27,11 +27,11 @@
             condition = "special"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/Hexagon.swift"
-            timestampString = "494189199.31479"
+            timestampString = "495985294.245655"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
+            startingLineNumber = "276"
+            endingLineNumber = "276"
             landmarkName = "setAlternatingSideLengths(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -44,11 +44,11 @@
             condition = "old.thing"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/Hexagon.swift"
-            timestampString = "494189199.31479"
+            timestampString = "495985294.245655"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
             landmarkName = "copy()"
             landmarkType = "5">
          </BreakpointContent>
@@ -60,11 +60,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CircleLimit/Hexagon.swift"
-            timestampString = "494189199.31479"
+            timestampString = "495985294.245655"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "452"
-            endingLineNumber = "452"
+            startingLineNumber = "456"
+            endingLineNumber = "456"
             landmarkName = "Hexagon"
             landmarkType = "3">
          </BreakpointContent>
@@ -81,7 +81,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "720"
             endingLineNumber = "720"
-            landmarkName = "simplePan(_:)"
+            landmarkName = "singleTap(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -99,22 +99,6 @@
             endingLineNumber = "723"
             landmarkName = "singleTap(_:)"
             landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CircleLimit/PantsMaker.swift"
-            timestampString = "494441242.577246"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
-            landmarkName = "pantsAndCuffArrayFromPlaceholders(_:)"
-            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

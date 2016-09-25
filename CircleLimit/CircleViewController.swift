@@ -64,7 +64,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var trivialGroup = false
     
-    var testType: TestType = TestType.t2223
+    var testType: TestType = TestType.reflectedTriangle(3, 3, 4)
+ 
     var serious = true
     
     var trivial = false
@@ -94,7 +95,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var hexagonGuidelines: [HDrawable] = []
     
-    var hexagonTesselation: [HDrawable] = []
+    var hexagonTesselation: [HDrawable] {
+        return surface.hexagonTesselation
+    }
     
     var drawGuidelines = true
     

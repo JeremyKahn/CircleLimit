@@ -181,16 +181,43 @@ class PantsPlaceholder {
         }
     }
     
+    var hasReflection: Bool {
+        switch type {
+        case .oneOneHalf, .threeZeroHalf:
+            return true
+        case .whole:
+            var result = false
+            for i in 0...2 {
+                if case let NumberCuff.cuff(_, cuffType) = cuffArray[i] {
+                    if cuffType == CuffType.reflected || cuffType == CuffType.glideReflected {
+                        result = true
+                    }
+                }
+            }
+            return result
+        }
+    }
+    
 
 }
 
 // At some point we should check that we have a valid pants, with 1/p + 1/q + 1/r < 1 (and actual cuffs count as infinity)
 func surfaceFromPlaceholders(pantsPlaceholders: [PantsPlaceholder], cuffPlaceholders: [CuffPlaceholder]) -> Surface {
-    let pantsArray: [Pants] = pantsPlaceholders.flatMap({$0.pants})
-    let cuffArray: [Cuff] = cuffPlaceholders.flatMap({$0.cuffArray})
+    let hasReflection = pantsPlaceholders.reduce(false, combine: {$0 || $1.hasReflection})
+    var pantsArray: [Pants]
+    var cuffArray: [Cuff]
+    if hasReflection {
+        pantsArray = pantsPlaceholders.flatMap({$0.pants})
+        cuffArray = cuffPlaceholders.flatMap({$0.cuffArray})
+    } else {
+        pantsArray = pantsPlaceholders.map({$0.pants[0]})
+        cuffArray = cuffPlaceholders.map({$0.cuffArray[0]})
+    }
     let s = Surface(pantsArray: pantsArray, cuffArray: cuffArray)
     s.baseHexagon = pantsPlaceholders[0].hexagon
-    s.shadowHexagon = pantsPlaceholders[0].shadowHexagon
+    if hasReflection {
+        s.shadowHexagon = pantsPlaceholders[0].shadowHexagon
+    }
     return s
 }
 

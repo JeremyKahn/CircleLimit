@@ -33,7 +33,7 @@ class Surface {
         groupoid = baseHexagon.groupoidForDistance(distance)
         group = groupFromEndStates(groupoid, for: baseHexagon)
         if let shadowHexagon = shadowHexagon {
-            group += groupFromEndStates(groupoid, for: shadowHexagon)
+            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.flip})
         }
         
     }
@@ -56,8 +56,9 @@ class Surface {
             for i in 0...1 {
                 let hexagon = Q.hexagons[i]
                 let morphismsToHexagon = groupoid.filter({$0.hexagon === hexagon})
-                let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance})!
-                hexagon.baseMask = motion
+                if let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance}) {
+                    hexagon.baseMask = motion
+                }
             }
             generalGuidelines += Q.transformedGuidelines
         }

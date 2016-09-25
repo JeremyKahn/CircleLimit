@@ -58,7 +58,7 @@ class Hexagon {
      The transformation to the base frame of the hexagon at the orthcenter
      - remark:  We're using absolute coordinates, not relative to the pants
      */
-    var baseMask = HTrans()
+    var baseMask: HTrans!
     
     /// The color to be used to draw the hexagon, as a guideline
     var color = UIColor.purpleColor()
@@ -126,8 +126,12 @@ class Hexagon {
     static var hotPants = true
     
     var transformedGuidelines: [HDrawable] {
-        return guidelines.map() {$0.transformedBy(baseMask)}
-    }
+        if let baseMask = baseMask {
+           return guidelines.map() {$0.transformedBy(baseMask)}
+        } else {
+            return []
+        }
+     }
     
     var guidelines: [HDrawable] {
         if Hexagon.hotPants {

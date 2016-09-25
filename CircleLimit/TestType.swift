@@ -14,10 +14,11 @@ enum TestType {
     case orbiTorus(Int)
     case pants
     case t2223
+    case reflectedTriangle(Int, Int, Int)
     
     var numberOfPants: Int {
         switch self {
-        case triangle, .orbiTorus, .t2223: return 1
+        case triangle, .orbiTorus, .t2223, .reflectedTriangle: return 1
         case orbiFour, pants: return 2
         }
     }
@@ -25,6 +26,7 @@ enum TestType {
     var numberOfStepsToTake: Int {
         switch self {
         case .triangle: return 15
+        case .reflectedTriangle: return 10
         case pants: return 5
         case orbiFour, .t2223: return 10
         case .orbiTorus: return 7
@@ -34,6 +36,7 @@ enum TestType {
     var distanceToGo: Double {
         switch self {
         case .triangle: return 7.0
+        case .reflectedTriangle: return 7.0
         case orbiFour, .t2223: return 7.0
         case orbiTorus, pants: return 10.0
         }
@@ -50,6 +53,8 @@ enum TestType {
             cuffs = [cuff1, cuff2, cuff3]
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff(c: cuff1), NumberCuff(c: cuff2), NumberCuff(c: cuff3)]))
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff(c: cuff1), NumberCuff(c: cuff2), NumberCuff(c: cuff3)]))
+        case .reflectedTriangle(let p, let q, let r):
+            pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(p), NumberCuff.number(q), NumberCuff.number(r)], type: .threeZeroHalf))
         case .triangle(let p, let q, let r):
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(p), NumberCuff.number(q), NumberCuff.number(r)]))
         case .orbiTorus(let p):
