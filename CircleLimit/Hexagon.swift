@@ -29,9 +29,9 @@ enum CuffRotation {
     
     var complexLength: Complex64 {
         switch self {
-        case cuff(let length):
+        case .cuff(let length):
             return length + 0.i
-        case rotation(let p):
+        case .rotation(let p):
             return (Double.PI/Double(p)).i
         }
     }
@@ -61,52 +61,52 @@ class Hexagon {
     var baseMask: HTrans!
     
     /// The color to be used to draw the hexagon, as a guideline
-    var color = UIColor.purpleColor()
+    var color = UIColor.purple
     
     /// the lengths of the sides
-    var sideLengths = Array<Complex64>(count: 6, repeatedValue: acosh(2.0 + 0.i))
+    var sideLengths = Array<Complex64>(repeating: acosh(2.0 + 0.i), count: 6)
     
     // MARK: - The rotation data
     
     /// the rotation numbers, padded with zeroes for cuffs
     var rotationArray: [Int]
     
-    func isCuffIndex(i: Int) -> Bool {
+    func isCuffIndex(_ i: Int) -> Bool {
         return i % 2 == 0 && rotationArray[i / 2] == 0
     }
     
-    func rotationNumberForIndex(i: Int) -> Int {
+    func rotationNumberForIndex(_ i: Int) -> Int {
         return rotationArray[i / 2]
     }
     
     // MARK: - The derived geometry of the hexagon
 
     /// the lengths of the parts from the start to the foot of the altitude
-    var firstParts = Array<Complex64>(count: 6, repeatedValue: Complex64())
+    var firstParts = Array<Complex64>(repeating: Complex64(), count: 6)
     
     /// the lengths of the parts from the foot of the altitude to the end
-    var secondParts = Array<Complex64>(count: 6, repeatedValue: Complex64())
+    var secondParts = Array<Complex64>(repeating: Complex64(), count: 6)
     
     /// the distances from the orthocenter to the feet of the altitude
-    var altitudeParts = Array<Double>(count: 6, repeatedValue: 0.0)
+    var altitudeParts = Array<Double>(repeating: 0.0, count: 6)
     
     /// the transformations from the base frame to the feet of the altitude
-    var downFromOrthocenter: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
+    var downFromOrthocenter: [HUVect] = [HUVect](repeating: HTrans.identity, count: 6)
     
     
-    var angleToNextAltitude: [Double] = Array<Double>(count: 6, repeatedValue: 0.0)
+    var angleToNextAltitude: [Double] = Array<Double>(repeating: 0.0, count: 6)
     
     /// the frames at the feet (pointing outward), rel the base frame
-    var foot: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
+    var foot: [HUVect] = [HUVect](repeating: HTrans.identity, count: 6)
     
     /// the frames at the initial point of each side, pointing forward
-    var start: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
+    var start: [HUVect] = [HUVect](repeating: HTrans.identity, count: 6)
     
     /// the frames at the feet, pointing forward
-    var middle: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
+    var middle: [HUVect] = [HUVect](repeating: HTrans.identity, count: 6)
     
     /// the frames at the end of the sides, pointing forward
-    var end: [HUVect] = [HUVect](count: 6, repeatedValue: HTrans.identity)
+    var end: [HUVect] = [HUVect](repeating: HTrans.identity, count: 6)
     
     /// A point which we hope will aways be in the interior of the hexagon
     var centerpoint: HPoint = HPoint()
@@ -145,7 +145,7 @@ class Hexagon {
     // MARK: - Moving to adjacent hexagons
     
     /// The neighbors to the hexagon after the connections are formed
-    var neighbor: [HexagonEntry] = Array<HexagonEntry>(count: 6, repeatedValue: HexagonEntry.placeholder)
+    var neighbor: [HexagonEntry] = Array<HexagonEntry>(repeating: HexagonEntry.placeholder, count: 6)
     
     /// The six forward states that we can arrive at from the given hexagon
     var forwardStates: [ForwardState] {
@@ -173,7 +173,7 @@ class Hexagon {
      - returns: The rotation state in the new hexagon, or nil if this exit is forbidden *for any reason*
      - remark: We assume that the hexagon sides are numbered ***clockwise*** for the purposes of RotationState.left and .right
      */
-    func newRotationState(old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
+    func newRotationState(_ old: RotationState, entrance: Int,  exit: Int) -> RotationState? {
         // If the exit index is even, the transition is allowed if there is an actual cuff at this index, and we are not entering from an adjacent side
         if exit % 2 == 0 {
             guard isCuffIndex(exit) else { return nil }
@@ -232,7 +232,7 @@ class Hexagon {
     /**
      - returns: All elements of the groupoid starting at **self** within **cutoffDistance**
      */
-    func groupoidForDistance(cutoffDistance: Double) -> [EndState] {
+    func groupoidForDistance(_ cutoffDistance: Double) -> [EndState] {
         let base = forwardStates
         // For better or for worse, this takes us one step past the cutoffDistance
         let cutoffAbs = distanceToAbs(cutoffDistance)
@@ -268,11 +268,11 @@ class Hexagon {
     
     /// (Re)compute the geometry from the alternating side lengths
     /// Should work as a recomputation, when we just change the lengths of the cuffs
-    func setAlternatingSideLengths(alternatingSideLengths: [Complex64]) {
+    func setAlternatingSideLengths(_ alternatingSideLengths: [Complex64]) {
         for i in 0..<3 {
             sideLengths[2 * i] = alternatingSideLengths[i]
         }
-        for i in 1.stride(through: 5, by: 2) {
+        for i in stride(from: 1, through: 5, by: 2) {
             let (A, B, C) = (sideLengths[(i + 3) %% 6], sideLengths[(i - 1) %% 6], sideLengths[(i + 1) %% 6])
             let num = cosh(B) * cosh(C) + cosh(A)
             let denom = sinh(B) * sinh(C)

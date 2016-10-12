@@ -9,13 +9,13 @@
 import Foundation
 
 // We require that we have i in 1...n, and then j in 0..<i
-func bestSequenceTo(n: Int, toMinimizeSumOf f: (Int, Int) -> Int, withConstraint allowed: (Int, Int) -> Bool) -> [Int] {
+func bestSequenceTo(_ n: Int, toMinimizeSumOf f: (Int, Int) -> Int, withConstraint allowed: (Int, Int) -> Bool) -> [Int] {
     
-    var bestSequenceTo : [[Int]] = [[Int]](count: n+1, repeatedValue: [])
+    var bestSequenceTo : [[Int]] = [[Int]](repeating: [], count: n+1)
     bestSequenceTo[0] = [0]
     if n == 0 { return bestSequenceTo[0] }
     
-    var minimalSumTo : [Int] = [Int](count: n+1, repeatedValue: 0)
+    var minimalSumTo : [Int] = [Int](repeating: 0, count: n+1)
     
     // This uses storage that is quadratic in n, which is lazy
     for i in 1...n {
@@ -38,7 +38,7 @@ func bestSequenceTo(n: Int, toMinimizeSumOf f: (Int, Int) -> Int, withConstraint
     return bestSequenceTo[n]
 }
 
-func subsequenceOf<T>(a: [T], withIndices indices: [Int]) -> [T] {
+func subsequenceOf<T>(_ a: [T], withIndices indices: [Int]) -> [T] {
     var b: [T] = []
     for i in indices {
         b.append(a[i])

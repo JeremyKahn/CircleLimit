@@ -32,7 +32,7 @@ extension CircleViewController {
             (generators, guidelines) = pqrGeneratorsAndGuidelines(3, q: 3, r: 4)
             for object in guidelines {
                 object.intrinsicLineWidth = 0.005
-                object.lineColor = UIColor.grayColor()
+                object.lineColor = UIColor.gray
                 object.useFillColorTable = false
             }
             
@@ -72,7 +72,7 @@ extension CircleViewController {
         
         surface.setUpHexagonsAndGuidelines()
         if let i = cuffEditIndex {
-            surface.cuffGuidelines[i].lineColor = UIColor.redColor()
+            surface.cuffGuidelines[i].lineColor = UIColor.red
         }
         generalGuidelines = surface.generalGuidelines
  

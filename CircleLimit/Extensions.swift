@@ -9,7 +9,7 @@
 import UIKit
 
 // MARK: Arithmetic and mathematical functions
-infix operator %% {associativity left precedence 150}
+infix operator %%: MultiplicationPrecedence
 
 /**
  - returns: lhs reduced modulo the absolute value of rhs
@@ -25,23 +25,23 @@ func %%(left: Int, right: Int) -> Int {
 func %%(left: Double, right: Double) -> Double {
     if (right == 0) {return 0}
     if (right < 0) {return left %% (-right) }
-    if (left >= 0) {return left % right}
-    return left % right + right
+    if (left >= 0) {return left.truncatingRemainder(dividingBy: right)}
+    return left.truncatingRemainder(dividingBy: right) + right
 }
 
-func coth(x: Double) -> Double {
+func coth(_ x: Double) -> Double {
     return 1/tanh(x)
 }
 
-func acoth(y: Double) -> Double {
+func acoth(_ y: Double) -> Double {
     return atanh(1/y)
 }
 
-func coth<T>(z: Complex<T>) -> Complex<T> {
+func coth<T>(_ z: Complex<T>) -> Complex<T> {
     return tanh(z).inverse
 }
 
-func acoth<T>(z: Complex<T>) -> Complex<T> {
+func acoth<T>(_ z: Complex<T>) -> Complex<T> {
     return atanh(z.inverse)
 }
 
@@ -53,13 +53,13 @@ extension Complex {
 }
 
 // MARK: Timing
-extension NSTimer {
+extension Timer {
     
 
     
 }
 
-extension NSDate {
+extension Date {
     
     var millisecondsToPresent: Int {
         return timeInMillisecondsSince(self)
@@ -67,16 +67,16 @@ extension NSDate {
     
 }
 
-func timeInMillisecondsSince(date: NSDate) -> Int {
-    return (1000 * NSDate().timeIntervalSinceDate(date)).int
+func timeInMillisecondsSince(_ date: Date) -> Int {
+    return (1000 * Date().timeIntervalSince(date)).int
 }
 
-func secondsSince(date: NSDate) -> Double {
-    return NSDate().timeIntervalSinceDate(date)
+func secondsSince(_ date: Date) -> Double {
+    return Date().timeIntervalSince(date)
 }
 
 // MARK: Printing
-func print(s: String, when condition: Bool) {
+func print(_ s: String, when condition: Bool) {
     if condition {
         print(s)
     }
@@ -98,7 +98,7 @@ extension CGFloat: NicelyPrinting {
 
 func randomDouble() -> Double {
     let n = 1000000
-    return Double(random() % n) / Double(n)
+    return Double(Int(arc4random()) % n) / Double(n)
 }
 
 
@@ -127,7 +127,7 @@ extension Complex where T : NicelyPrinting {
 
 extension Dictionary {
     
-    func valuesForKeys(keys: [Key]) -> [Value] {
+    func valuesForKeys(_ keys: [Key]) -> [Value] {
         var result: [Value] = []
         for key in keys {
             if let value = self[key] {
@@ -141,29 +141,29 @@ extension Dictionary {
 
 extension Array {
     
-    mutating func insertAtIndices(instructions: [(Int, Element)]) {
-        let sorted = instructions.sort() { $0.0 < $1.0  }
+    mutating func insertAtIndices(_ instructions: [(Int, Element)]) {
+        let sorted = instructions.sorted() { $0.0 < $1.0  }
         for i in 0..<sorted.count {
             let (j, a) = sorted[i]
-            insert(a, atIndex: j + i)
+            insert(a, at: j + i)
         }
     }
     
-    mutating func insertAfterIndices(instructions: [(Int, Element)]) {
+    mutating func insertAfterIndices(_ instructions: [(Int, Element)]) {
         let incremented = instructions.map { ($0.0 + 1, $0.1) }
         insertAtIndices(incremented)
     }
 
-    func at(indices: [Int]) -> [Element] {
+    func at(_ indices: [Int]) -> [Element] {
         return indices.map({self[$0]})
     }
     
-    func leastElementFor<U: Comparable>(f: Element -> U) -> Element? {
-        return minElement({f($0) < f($1)})
+    func leastElementFor<U: Comparable>(_ f: (Element) -> U) -> Element? {
+        return min(by: {f($0) < f($1)})
     }
     
-    func sortByFunction<U: Comparable>(f: Element -> U) -> [Element] {
-        return sort({f($0) < f($1)})
+    func sortByFunction<U: Comparable>(_ f: (Element) -> U) -> [Element] {
+        return sorted(by: {f($0) < f($1)})
     }
 
 }

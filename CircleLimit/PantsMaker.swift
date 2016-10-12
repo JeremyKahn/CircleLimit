@@ -80,14 +80,14 @@ enum NumberCuff {
     
     var cuffRotation: CuffRotation {
         switch  self {
-        case number(let n):
+        case .number(let n):
             return CuffRotation.rotation(n)
         default:
             return CuffRotation.cuff(self.cuff!.halfLength)
         }
     }
     
-    func enterPantsCuff(pants pants: [Pants], index: [Int]) {
+    func enterPantsCuff(pants: [Pants], index: [Int]) {
         var pants = pants
         var index = index
         switch self {
@@ -186,7 +186,7 @@ class PantsPlaceholder {
         case .whole:
             let cuffRotations = cuffArray.map() {$0.cuffRotation}
             let p0 = Pants(cuffHalfLengths: cuffRotations)
-            let p1 = Pants(cuffHalfLengths: cuffRotations.reverse())
+            let p1 = Pants(cuffHalfLengths: cuffRotations.reversed())
             pants = [p0, p1]
             for cuffIndex in 0..<3 {
                 cuffArray[cuffIndex].enterPantsCuff(pants: [p0, p1], index: [cuffIndex, 2-cuffIndex])
@@ -219,8 +219,8 @@ class PantsPlaceholder {
 }
 
 // At some point we should check that we have a valid pants, with 1/p + 1/q + 1/r < 1 (and actual cuffs count as infinity)
-func surfaceFromPlaceholders(pantsPlaceholders: [PantsPlaceholder], cuffPlaceholders: [CuffPlaceholder]) -> Surface {
-    let hasReflection = pantsPlaceholders.reduce(false, combine: {$0 || $1.hasReflection})
+func surfaceFromPlaceholders(_ pantsPlaceholders: [PantsPlaceholder], cuffPlaceholders: [CuffPlaceholder]) -> Surface {
+    let hasReflection = pantsPlaceholders.reduce(false, {$0 || $1.hasReflection})
     var pantsArray: [Pants]
     var cuffArray: [Cuff]
     if hasReflection {

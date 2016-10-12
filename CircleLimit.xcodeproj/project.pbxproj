@@ -99,6 +99,7 @@
 		1BE3B6541D6DF39500213F23 /* HyperbolicPolygon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6EB4721CAD724900B08F09 /* HyperbolicPolygon.swift */; };
 		1BE3B6551D6DF39500213F23 /* HyperbolicDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6EB46D1CAD711D00B08F09 /* HyperbolicDot.swift */; };
 		1BE3B6561D6DF40600213F23 /* PoincareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD08E1B5C43590057B710 /* PoincareView.swift */; };
+		241EF0A81DA92EE400A6A95E /* EnterGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241EF0A71DA92EE400A6A95E /* EnterGroupViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -181,6 +182,7 @@
 		1BE3B6291D6DF2D700213F23 /* CircleLimitIOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CircleLimitIOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BE3B62B1D6DF2D700213F23 /* CircleLimitIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CircleLimitIOS.h; sourceTree = "<group>"; };
 		1BE3B62D1D6DF2D700213F23 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		241EF0A71DA92EE400A6A95E /* EnterGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnterGroupViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +218,7 @@
 				1BDBD0811B5C21BE0057B710 /* CircleViewController.swift */,
 				1B2609ED1CD947F600B1172F /* CircleVCConfigurations.swift */,
 				1B2F23581D89A687004622F6 /* TestType.swift */,
+				241EF0A71DA92EE400A6A95E /* EnterGroupViewController.swift */,
 			);
 			name = "Views and View Controllers";
 			sourceTree = "<group>";
@@ -428,20 +431,24 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Jeremy Kahn";
 				TargetAttributes = {
 					1BDBD0581B5C21370057B710 = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = ZAM623LJPU;
+						LastSwiftMigration = 0800;
 					};
 					1BDBD0701B5C21370057B710 = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = ZAM623LJPU;
+						LastSwiftMigration = 0800;
 						TestTargetID = 1BDBD0581B5C21370057B710;
 					};
 					1BE3B6281D6DF2D700213F23 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = ZAM623LJPU;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -527,6 +534,7 @@
 				1B5979F61CBB17A400CEAEA7 /* GradientColorTriangle.swift in Sources */,
 				1BDBD08A1B5C2BEA0057B710 /* Complex.swift in Sources */,
 				1B1754691CF5E2BC00959DA3 /* Cuff.swift in Sources */,
+				241EF0A81DA92EE400A6A95E /* EnterGroupViewController.swift in Sources */,
 				1B2609EE1CD947F600B1172F /* CircleVCConfigurations.swift in Sources */,
 				1B3643181CF0BE6100F9D6AD /* Flags.swift in Sources */,
 				1B5979FC1CBB17A400CEAEA7 /* TriangleViewController.swift in Sources */,
@@ -656,8 +664,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -680,7 +690,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -701,8 +711,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -718,7 +730,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -729,10 +741,10 @@
 		1BDBD07C1B5C21370057B710 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Blown-up-crosses";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = CircleLimit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -741,6 +753,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -748,10 +761,10 @@
 		1BDBD07D1B5C21370057B710 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Blown-up-crosses";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = CircleLimit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -759,7 +772,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.cuny.gc.jkahn.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -767,6 +781,7 @@
 		1BDBD07F1B5C21370057B710 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZAM623LJPU;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -776,6 +791,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.cuny.gc.jkahn.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				"TEST_HOST[sdk=iphoneos9.3]" = "";
 			};
 			name = Debug;
@@ -783,11 +799,13 @@
 		1BDBD0801B5C21370057B710 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZAM623LJPU;
 				INFOPLIST_FILE = CircleLimitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.cuny.gc.jkahn.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -796,7 +814,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
@@ -809,6 +827,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cuny.gc.jkahn.CircleLimitIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -820,7 +839,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -832,6 +851,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cuny.gc.jkahn.CircleLimitIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

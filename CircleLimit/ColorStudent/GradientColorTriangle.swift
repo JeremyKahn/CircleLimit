@@ -18,14 +18,14 @@ class ColorTriangle  {
         self.spatialVertices = spatialVertices
     }
     
-    func weightedAverageVertex(x: CGFloat, _ y: CGFloat) -> CGPoint {
+    func weightedAverageVertex(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
         let a = x * spatialVertices[0]
         let b = y * spatialVertices[1]
         let c = (1 - x - y) * spatialVertices[2]
         return a + b + c
     }
     
-    func weightedAverageColor(x: CGFloat, _ y: CGFloat) -> UIColor {
+    func weightedAverageColor(_ x: CGFloat, _ y: CGFloat) -> UIColor {
         let weights = [x, y, 1 - x - y]
         return weightedColor(weights, colors: colorVertices)
     }
@@ -39,34 +39,34 @@ func drawColorBar(fromPoint startPoint: CGPoint, toPoint endPoint: CGPoint, with
 func drawGradient(fromPoint startPoint: CGPoint, toPoint endPoint: CGPoint, fromColor: UIColor, toColor: UIColor) {
     let context = UIGraphicsGetCurrentContext()
     
-    let color0 = fromColor.CGColor
-    let color1 = toColor.CGColor
+    let color0 = fromColor.cgColor
+    let color1 = toColor.cgColor
     
     let colorspace = CGColorSpaceCreateDeviceRGB()
     
-    let gradient = CGGradientCreateWithColors(colorspace,
-        [color0, color1], nil)
+    let gradient = CGGradient(colorsSpace: colorspace,
+        colors: [color0, color1] as CFArray, locations: nil)
     
-    CGContextDrawLinearGradient(context, gradient,
-        startPoint, endPoint, CGGradientDrawingOptions(rawValue: 0))
+    context?.drawLinearGradient(gradient!,
+        start: startPoint, end: endPoint, options: CGGradientDrawingOptions(rawValue: 0))
 }
 
 
 class GradientColorTriangle: ColorTriangle {
     
-    func addClipToTriangle(vertices: [CGPoint]) {
+    func addClipToTriangle(_ vertices: [CGPoint]) {
         let path = UIBezierPath()
-        path.moveToPoint(vertices.first!)
+        path.move(to: vertices.first!)
         for v in vertices[1..<vertices.count] {
-            path.addLineToPoint(v)
+            path.addLine(to: v)
         }
-        path.closePath()
+        path.close()
         path.lineWidth = 0
         path.addClip()
     }
     
     // Returns c parallel to the line through a and b to c', so that a, b, and c' form a right triangle with a right angle at a.
-    func toRightTriangle(a: CGPoint, _ b: CGPoint, _ c: CGPoint) -> CGPoint {
+    func toRightTriangle(_ a: CGPoint, _ b: CGPoint, _ c: CGPoint) -> CGPoint {
         let e = b - a
         let ee = dotProduct(c - a, e) / e.abs2
         return c - ee * e
@@ -74,23 +74,23 @@ class GradientColorTriangle: ColorTriangle {
     }
         
     // Draws a gradient from the side through ab to c, with axis orthogonal to ab, clipped to lie only in abc
-    func drawTriangleGradient(a: CGPoint, b: CGPoint, c: CGPoint, abColor: UIColor, cColor: UIColor) {
+    func drawTriangleGradient(_ a: CGPoint, b: CGPoint, c: CGPoint, abColor: UIColor, cColor: UIColor) {
         let context = UIGraphicsGetCurrentContext()
-        CGContextSaveGState(context)
+        context?.saveGState()
         addClipToTriangle([a, b, c])
         drawGradient(fromPoint: a, toPoint: toRightTriangle(a, b, c), fromColor: abColor, toColor: cColor)
-        CGContextRestoreGState(context)
+        context?.restoreGState()
     }
     
-    func drawTriangleGradientFromZeroToOneAndTwo(v: [CGPoint], fromColor: UIColor, toColor: UIColor) {
+    func drawTriangleGradientFromZeroToOneAndTwo(_ v: [CGPoint], fromColor: UIColor, toColor: UIColor) {
         let (c, a, b) = (v[0], v[1], v[2])
         drawTriangleGradient(a, b: b, c: c, abColor: toColor, cColor: fromColor)
     }
     
     // works by dividing the triangle into 4 smaller triangles (by the lines throught the midpoints) and then drawing each in turn
     func draw() {
-        var centerVertices: Array<CGPoint> = Array<CGPoint>(count: 3, repeatedValue: CGPoint())
-        var centerColors: Array<UIColor> = Array<UIColor>(count: 3, repeatedValue: UIColor())
+        var centerVertices: Array<CGPoint> = Array<CGPoint>(repeating: CGPoint(), count: 3)
+        var centerColors: Array<UIColor> = Array<UIColor>(repeating: UIColor(), count: 3)
         for i in 0...2 {
             let x:CGFloat = (i == 0) ? 0 : 0.5
             let y:CGFloat = (i == 1) ? 0 : 0.5
@@ -127,7 +127,7 @@ class GradientColorTriangle: ColorTriangle {
 // This class draws a color triangle by doubling colors 1 and 2 out from color 0 and then drawing two (linear) triangle gradients and averaging them
 class GradientColorTriangle2 : GradientColorTriangle {
     
-    func thisColorTimesTwo(color: UIColor) -> UIColor {
+    func thisColorTimesTwo(_ color: UIColor) -> UIColor {
         let (r, g, b, a) = color.rgba
         let (r0, g0, b0, _) = center.rgba
         let (r1, g1, b1) = (2 * r - r0, 2 * g - g0, 2 * b - b0)

@@ -105,7 +105,7 @@ struct ForwardState {
         let end = newMotion.appliedTo(entry.hexagon!.centerpoint)
         //        let line = HyperbolicDot(center: end, radius: 0.025)
         let line = HyperbolicPolyline([start, end])
-        line.lineColor = UIColor.redColor()
+        line.lineColor = UIColor.red
         return line
     }
     
@@ -130,7 +130,7 @@ struct EndState {
 /**
  - returns: The forward states that can be reached in one step from **s**
  */
-func nextForwardStates(s: ForwardState) -> [ForwardState] {
+func nextForwardStates(_ s: ForwardState) -> [ForwardState] {
     guard let hexagon = s.entry.hexagon else {return []}
     let exitStates = s.state.exitStates(entrance: s.entry.entryIndex, hexagon: hexagon)
     return exitStates.map() {
@@ -139,10 +139,10 @@ func nextForwardStates(s: ForwardState) -> [ForwardState] {
     }
 }
 
-func project(f: ForwardState) -> EndState {
+func project(_ f: ForwardState) -> EndState {
     return f.endState
 }
 
-func groupFromEndStates(endStates: [EndState], for baseHexagon: Hexagon) -> [HTrans] {
+func groupFromEndStates(_ endStates: [EndState], for baseHexagon: Hexagon) -> [HTrans] {
     return endStates.filter({$0.hexagon === baseHexagon}).map({$0.motion})
 }

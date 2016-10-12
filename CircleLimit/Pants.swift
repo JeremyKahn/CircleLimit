@@ -9,7 +9,7 @@
 import UIKit
 
 
-func weightedColor(weights: [CGFloat], colors: [UIColor]) -> UIColor {
+func weightedColor(_ weights: [CGFloat], colors: [UIColor]) -> UIColor {
     let n = min(weights.count, colors.count)
     var red: CGFloat = 0
     var blue: CGFloat = 0
@@ -39,17 +39,17 @@ class Pants {
     var cuffHalfLengths: [Complex64] {
         didSet {
             hexagons[0].setAlternatingSideLengths(cuffHalfLengths)
-            hexagons[1].setAlternatingSideLengths(cuffHalfLengths.reverse())
+            hexagons[1].setAlternatingSideLengths(cuffHalfLengths.reversed())
             updateSelfAndNeighbors()
         }
     }
     
     var hexagons: [Hexagon]
     
-    var color = UIColor.clearColor() {
+    var color = UIColor.clear {
         didSet {
             hexagons[0].color = color
-            hexagons[1].color = weightedColor([0.5, 0.5], colors: [color, UIColor.grayColor()])
+            hexagons[1].color = weightedColor([0.5, 0.5], colors: [color, UIColor.gray])
             for h in hexagons {
                 h.hexagonGuideline.fillColor = h.color
             }
@@ -58,7 +58,7 @@ class Pants {
     
     var localGroupoidGenerators: [GroupoidElement] = []
     
-    var groupoidEltsToAdjacentPants: [GroupoidElement?] = [GroupoidElement?](count: 3, repeatedValue: nil)
+    var groupoidEltsToAdjacentPants: [GroupoidElement?] = [GroupoidElement?](repeating: nil, count: 3)
     
     var definedGroupoidEltsToAdjacentPants: [GroupoidElement] {
         var result: [GroupoidElement] = []
@@ -74,7 +74,7 @@ class Pants {
         return localGroupoidGenerators + definedGroupoidEltsToAdjacentPants
     }
     
-    var adjacenciesAndTwists = Array<(Pants, Int, Double)?>(count: 3, repeatedValue: nil)
+    var adjacenciesAndTwists = Array<(Pants, Int, Double)?>(repeating: nil, count: 3)
     
     var id: Int
     
@@ -99,7 +99,7 @@ class Pants {
     }
     
     /// An array of size three, with a guideline for each actual cuff, and nil at rotation indices
-    var cuffGuidelines: [HDrawable?] = Array(count: 3, repeatedValue: nil)
+    var cuffGuidelines: [HDrawable?] = Array(repeating: nil, count: 3)
     
     var orthoGuidelines: [HDrawable] = []
     
@@ -110,7 +110,7 @@ class Pants {
         Pants.nextId += 1
         self.cuffHalfLengths = cuffHalfLengths
         hexagons = [Hexagon(alternatingSideLengths: cuffHalfLengths),
-                    Hexagon(alternatingSideLengths: cuffHalfLengths.reverse())]
+                    Hexagon(alternatingSideLengths: cuffHalfLengths.reversed())]
         setUpGuidelines()
         setUpLocalGroupoid()
     }
@@ -136,7 +136,7 @@ class Pants {
             let firstPoint = walker.appliedToOrigin
             let oppositePoint = hexagons[0].start[(sideIndex - 1) %% 6].appliedToOrigin
             let orthoGuideline = HyperbolicPolyline([firstPoint, oppositePoint])
-            orthoGuideline.lineColor = UIColor.grayColor()
+            orthoGuideline.lineColor = UIColor.gray
             orthoGuidelines.append(orthoGuideline)
             if hexagons[0].isCuffIndex(sideIndex) {
                 let secondPoint = walker.goForward(cuffHalfLengths[i].re * 2).appliedToOrigin
@@ -149,7 +149,7 @@ class Pants {
         for i in 0...1 {
             let start = hexagons[i]
             let end = hexagons[1-i]
-            for j in 1.stride(through: 5, by: 2) {
+            for j in stride(from: 1, through: 5, by: 2) {
                 let k = (10 - j) % 6
                 let instruction = start.start[j].turnAround.following((end.end[k]).inverse)
                 
@@ -168,7 +168,7 @@ class Pants {
     /**
      - returns: The side index of hexagons[**hexagonIndex**] for cuff **cuffIndex**
      */
-    func sideIndexForCuffIndex(cuffIndex: Int, AndHexagonIndex hexagonIndex: Int) -> Int {
+    func sideIndexForCuffIndex(_ cuffIndex: Int, AndHexagonIndex hexagonIndex: Int) -> Int {
         return hexagonIndex == 0 ? 2 * cuffIndex : 4 - 2 * cuffIndex
     }
     
@@ -189,7 +189,7 @@ class Pants {
     }
     
     // Here we're assuming that cuffHalfLength[k] is real
-    func setUpGroupoidElementToAdjacentPantsForIndex(k: Int, updateNeighbor: Bool) {
+    func setUpGroupoidElementToAdjacentPantsForIndex(_ k: Int, updateNeighbor: Bool) {
         guard let (adjPants, neighborCuffIndex, twist) = adjacenciesAndTwists[k] else {return}
         let halfLength = cuffHalfLengths[k].re
         let wholeLength = 2 * halfLength

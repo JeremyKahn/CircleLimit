@@ -14,7 +14,7 @@ struct PantsCuff {
     var pants: Pants
     var index: Int
     
-    func setLength(newLength: Double) {
+    func setLength(_ newLength: Double) {
         pants.cuffHalfLengths[index] = newLength + 0.i
     }
     
@@ -25,15 +25,15 @@ class Cuff {
     
     // The point at the middle of the selected cuff segment
     var baseMask: HTrans {
-        let pants = pantsCuffs[0].pants
-        let index = pantsCuffs[0].index
+        let pants = pantsCuffs[0]!.pants
+        let index = pantsCuffs[0]!.index
         let sideIndex = pants.sideIndexForCuffIndex(index, AndHexagonIndex: 0)
         return pants.baseMask.following(pants.hexagons[0].end[sideIndex])
     }
     
     var guidelineCenterpoint: HTrans {
-        let pants = pantsCuffs[0].pants
-        let sideIndex = pants.sideIndexForCuffIndex(pantsCuffs[0].index, AndHexagonIndex: 0)
+        let pants = pantsCuffs[0]!.pants
+        let sideIndex = pants.sideIndexForCuffIndex(pantsCuffs[0]!.index, AndHexagonIndex: 0)
         return pants.baseMask.appliedTo(pants.hexagons[0].end[sideIndex])
     }
     
@@ -46,30 +46,30 @@ class Cuff {
     // Tells the two pants to set up the groupoid elements between the two pants
     func setUpTwistsAndGroupoidElementsForThisCuff() {
         for i in 0...1 {
-            let pantsCuff = pantsCuffs[i]
-            let otherPantsCuff = pantsCuffs[1-i]
+            let pantsCuff = pantsCuffs[i]!
+            let otherPantsCuff = pantsCuffs[1-i]!
             pantsCuff.pants.adjacenciesAndTwists[pantsCuff.index] = (otherPantsCuff.pants, otherPantsCuff.index, twist)
         }
         for pantsCuff in pantsCuffs {
-            pantsCuff.pants.setUpGroupoidElementToAdjacentPantsForIndex(pantsCuff.index, updateNeighbor: false)
+            pantsCuff!.pants.setUpGroupoidElementToAdjacentPantsForIndex(pantsCuff!.index, updateNeighbor: false)
         }
     }
     
     var length: Double {
         didSet {
             for pantsCuff in pantsCuffs {
-                pantsCuff.setLength(length)
+                pantsCuff?.setLength(length)
             }
         }
     }
-    var pantsCuffs: [PantsCuff!] = [nil, nil]
+    var pantsCuffs: [PantsCuff?] = [nil, nil]
     
     var guideline: HDrawable {
-        return pantsCuffs[0].pants.cuffGuidelines[pantsCuffs[0].index]!
+        return pantsCuffs[0]!.pants.cuffGuidelines[pantsCuffs[0]!.index]!
     }
     
     var transformedGuideline: HDrawable {
-        return guideline.transformedBy(pantsCuffs[0].pants.baseMask)
+        return guideline.transformedBy(pantsCuffs[0]!.pants.baseMask)
     }
     
     

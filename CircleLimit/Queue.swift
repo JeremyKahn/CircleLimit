@@ -14,7 +14,7 @@ protocol Queue {
     
     var getNext: Element? {get}
     
-    func add(e: Element)
+    func add(_ e: Element)
     
     var hasNext: Bool {get}
     
@@ -26,13 +26,13 @@ protocol Queue {
 // This is a fast, somewhat silly implementation of a queue
 class FastQueue<Element> : Queue {
     
-    private var resetPoint: Int {
+    fileprivate var resetPoint: Int {
         return elements.count / 2
     }
     
-    private var elements: [Element] = []
+    fileprivate var elements: [Element] = []
     
-    private var head: Int = 0
+    fileprivate var head: Int = 0
     
     var hasNext: Bool {
         return head < elements.count
@@ -50,7 +50,7 @@ class FastQueue<Element> : Queue {
         return result
     }
     
-    func add(e: Element) {
+    func add(_ e: Element) {
         elements.append(e)
     }
     

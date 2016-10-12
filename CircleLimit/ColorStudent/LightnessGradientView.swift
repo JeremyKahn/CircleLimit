@@ -32,9 +32,9 @@ class LightnessGradientView: UIView {
     }
     
     var currentTransform: CGAffineTransform {
-        let innerTranslation = CGAffineTransformMakeTranslation(-lightness, 0)
-        let rescaling = CGAffineTransformMakeScale(size, 1)
-        let outerTranslation = CGAffineTransformMakeTranslation(bounds.width/2, 0)
+        let innerTranslation = CGAffineTransform(translationX: -lightness, y: 0)
+        let rescaling = CGAffineTransform(scaleX: size, y: 1)
+        let outerTranslation = CGAffineTransform(translationX: bounds.width/2, y: 0)
         return innerTranslation * rescaling * outerTranslation
     }
     
@@ -55,17 +55,17 @@ class LightnessGradientView: UIView {
     }
     
     var startColor: UIColor {
-        return colorChoice.colorWithCenterColor(UIColor.blackColor())
+        return colorChoice.colorWithCenterColor(UIColor.black)
     }
     
     var endColor: UIColor {
-        return colorChoice.colorWithCenterColor(UIColor.whiteColor())
+        return colorChoice.colorWithCenterColor(UIColor.white)
     }
     
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let currentContext = UIGraphicsGetCurrentContext()
-        CGContextConcatCTM(currentContext, currentTransform)
+        currentContext?.concatenate(currentTransform)
         drawGradient(fromPoint: startPoint, toPoint: endPoint, fromColor: startColor, toColor: endColor)
         // Cheesy way to complete the gradient at the two ends
         drawColorBar(fromPoint: endPoint, toPoint: farEndPoint, withColor: endColor)

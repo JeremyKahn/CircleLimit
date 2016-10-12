@@ -12,7 +12,7 @@ protocol ColorPickerPreviewSource {
     
     var preview: UIView { get }
     
-    func applyColorToPreview(color: UIColor)
+    func applyColorToPreview(_ color: UIColor)
     
 }
 
@@ -20,7 +20,7 @@ protocol ColorPickerDelegate {
     
     var colorToStartWith: UIColor { get }
     
-    func applyColorAndReturn(color: UIColor)
+    func applyColorAndReturn(_ color: UIColor)
     
 }
 
@@ -34,7 +34,7 @@ class DefaultColorPickerPreviewSource: ColorPickerPreviewSource {
     
     var preview = UIView()
     
-    func applyColorToPreview(color: UIColor) {
+    func applyColorToPreview(_ color: UIColor) {
         preview.backgroundColor = color
     }
     
@@ -42,9 +42,9 @@ class DefaultColorPickerPreviewSource: ColorPickerPreviewSource {
 
 class DefaultColorPickerDelegate: ColorPickerDelegate {
     
-    var colorToStartWith = UIColor.whiteColor()
+    var colorToStartWith = UIColor.white
     
-    func applyColorAndReturn(color: UIColor) {
+    func applyColorAndReturn(_ color: UIColor) {
         print("Chosen color \(color)")
     }
     

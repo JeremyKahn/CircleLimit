@@ -22,8 +22,8 @@ enum TestType {
         switch self {
         case .triangle: return 15
         case .reflectedTriangle, .angelsAndDevils: return 10
-        case pants: return 5
-        case orbiFour, .t2223, .reflectedT2223: return 10
+        case .pants: return 5
+        case .orbiFour, .t2223, .reflectedT2223: return 10
         case .orbiTorus: return 7
         }
     }
@@ -32,8 +32,8 @@ enum TestType {
         switch self {
         case .triangle: return 7.0
         case .reflectedTriangle, .angelsAndDevils: return 7.0
-        case orbiFour, .t2223, .reflectedT2223: return 7.0
-        case orbiTorus, pants: return 10.0
+        case .orbiFour, .t2223, .reflectedT2223: return 7.0
+        case .orbiTorus, .pants: return 10.0
         }
     }
     
@@ -82,8 +82,8 @@ enum TestType {
     var surface: Surface {
         let (pantsPlaceholders, cuffPlaceholders) = pantsAndCuffPlaceholders
         let result = surfaceFromPlaceholders(pantsPlaceholders, cuffPlaceholders: cuffPlaceholders)
-        if result.pantsArray.count >= 1 { result.pantsArray[0].color = UIColor.greenColor() }
-        if result.pantsArray.count >= 2 { result.pantsArray[1].color = UIColor.blueColor() }
+        if result.pantsArray.count >= 1 { result.pantsArray[0].color = UIColor.green }
+        if result.pantsArray.count >= 2 { result.pantsArray[1].color = UIColor.blue }
         return result
     }
     

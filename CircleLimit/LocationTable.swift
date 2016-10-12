@@ -26,13 +26,13 @@ public protocol MyHashable {
     
 }
 
-public class IntArray: Hashable {
+open class IntArray: Hashable {
     
     static var multiplier = 23905823
     
     var values: [Int]
     
-    public var hashValue: Int {
+    open var hashValue: Int {
         var result = 0
         for value in values {
             result = result * IntArray.multiplier + value
@@ -44,7 +44,7 @@ public class IntArray: Hashable {
         self.values = values
     }
     
-    public var neighbors: [IntArray] {
+    open var neighbors: [IntArray] {
         var preResult: [[Int]] = [[]]
         for value in values {
             var t: [[Int]] = []
@@ -72,14 +72,14 @@ public func ==(lhs: IntArray, rhs: IntArray) -> Bool {
 
 public protocol Matchable {
  
-    func matches(y: Self) -> Bool
+    func matches(_ y: Self) -> Bool
     
 }
 
 
 // You can look up a Locatable object in a LocationTable, and it will only search for it in its Location or neighboring Location's
 // This works well for a dictionary where the keys are points in a manifold, and there may have been slight errors in the keys introduced by computation
-public class LocationTable<T: Locatable> {
+open class LocationTable<T: Locatable> {
     
     var table : Dictionary<T.Location, Array<T>> = Dictionary()
     
@@ -91,14 +91,14 @@ public class LocationTable<T: Locatable> {
         addNonMatchingEntries(entries, match: match)
     }
     
-    public func add(entries: [T]) {
+    open func add(_ entries: [T]) {
         for E in entries {
             add(E)
         }
         count += entries.count
     }
     
-    public func add(E : T) {
+    open func add(_ E : T) {
         let l = E.location
         if var tempArray = table[l] {
             tempArray.append(E)
@@ -109,7 +109,7 @@ public class LocationTable<T: Locatable> {
         count += 1
     }
     
-    public func addIfNotMatching(E: T, match: (T, T) -> Bool) {
+    open func addIfNotMatching(_ E: T, match: (T, T) -> Bool) {
         let potentialMatches = arrayForNearLocation(E.location)
         for potentialMatch in potentialMatches {
             if match(E, potentialMatch) {
@@ -119,13 +119,13 @@ public class LocationTable<T: Locatable> {
         add(E)
     }
     
-    public func addNonMatchingEntries(entries: [T], match: (T, T) -> Bool) {
+    open func addNonMatchingEntries(_ entries: [T], match: (T, T) -> Bool) {
         for E in entries {
             addIfNotMatching(E, match: match)
         }
     }
     
-    public func arrayForNearLocation(l: T.Location) -> [T] {
+    open func arrayForNearLocation(_ l: T.Location) -> [T] {
         var array : [T] = []
         for l in  T.neighbors(l) {
             if let newArray = table[l] {
@@ -135,7 +135,7 @@ public class LocationTable<T: Locatable> {
         return array
     }
     
-    public var arrayForm : [T] {
+    open var arrayForm : [T] {
         var array : [T] = []
         for (_, list) in table {
             array += list
@@ -146,18 +146,18 @@ public class LocationTable<T: Locatable> {
 }
 
 // Returns an array of values for a given key--you can't get rid of things or replace them
-public class WeakLocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
+open class WeakLocationDictionary<Key: Locatable & Matchable, Value> {
     
-    private var dictionary: Dictionary<Key.Location, Array<(Key, Value)>> = Dictionary()
+    fileprivate var dictionary: Dictionary<Key.Location, Array<(Key, Value)>> = Dictionary()
     
     var keys: [Key] {
-        let keyValuePairs = dictionary.map({$0.1}).flatten()
+        let keyValuePairs = dictionary.map({$0.1}).joined()
         return keyValuePairs.map({$0.0})
     }
     
     subscript (key: Key) -> [Value] {
         let neighbors = Key.neighbors(key.location)
-        let potentialMatches = dictionary.valuesForKeys(neighbors).flatten()
+        let potentialMatches = dictionary.valuesForKeys(neighbors).joined()
         var result: [Value] = []
         for (enteredKey, value) in potentialMatches {
             if enteredKey.matches(key) {
@@ -167,7 +167,7 @@ public class WeakLocationDictionary<Key: protocol<Locatable, Matchable>, Value> 
         return result
     }
     
-    func addValue(value: Value, forKey key: Key)  {
+    func addValue(_ value: Value, forKey key: Key)  {
         let l = key.location
         if dictionary[l] != nil {
             dictionary[l]!.append((key, value))
@@ -179,11 +179,11 @@ public class WeakLocationDictionary<Key: protocol<Locatable, Matchable>, Value> 
 }
 
 // this requires that a is neighbor of b whenever a.matches(b)
-public class LocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
+open class LocationDictionary<Key: Locatable & Matchable, Value> {
     
-    private var dictionary: Dictionary<Key.Location, Array<(Key, Value)>> = Dictionary()
+    fileprivate var dictionary: Dictionary<Key.Location, Array<(Key, Value)>> = Dictionary()
     
-    public var keyValuePairs: [(Key, Value)] {
+    open var keyValuePairs: [(Key, Value)] {
         var result: [(Key, Value)] = []
         for k in dictionary.keys {
             result += dictionary[k]!
@@ -191,17 +191,17 @@ public class LocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
         return result
     }
     
-    public var values: [Value] {
+    open var values: [Value] {
         return keyValuePairs.map() {$0.1}
     }
     
-    public var keys: [Key] {
+    open var keys: [Key] {
         return keyValuePairs.map() {$0.0}
     }
     
-    public subscript (key: Key) -> Value? {
+    open subscript (key: Key) -> Value? {
         let neighbors = Key.neighbors(key.location)
-        let potentialMatches = dictionary.valuesForKeys(neighbors).flatten()
+        let potentialMatches = dictionary.valuesForKeys(neighbors).joined()
         for (enteredKey, value) in potentialMatches {
             if enteredKey.matches(key) {
                 return value
@@ -211,7 +211,7 @@ public class LocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
     }
     
     
-    public func updateValue(value: Value, forKey key: Key)  -> Value? {
+    open func updateValue(_ value: Value, forKey key: Key)  -> Value? {
         let neighbors = Key.neighbors(key.location)
         for neighbor in neighbors {
             if let list = dictionary[neighbor] {
@@ -235,19 +235,19 @@ public class LocationDictionary<Key: protocol<Locatable, Matchable>, Value> {
     
 }
 
-public func leastFixedPoint<T: Locatable>(base: [T], map: T -> [T], match: (T, T) -> Bool) -> [T] {
+public func leastFixedPoint<T: Locatable>(_ base: [T], map: (T) -> [T], match: (T, T) -> Bool) -> [T] {
     return leastFixedPoint(base, map: map, match: match, maxTime: 1.0)
 }
 
-public func leastFixedPoint<T: Locatable>(base: [T], map: T -> [T], match: (T, T) -> Bool, maxTime: Double) -> [T] {
+public func leastFixedPoint<T: Locatable>(_ base: [T], map: (T) -> [T], match: (T, T) -> Bool, maxTime: Double) -> [T] {
     print("LFP time allotted: " + maxTime.nice)
-    let startTime = NSDate()
+    let startTime = Date()
     let table = LocationTable<T>()
     table.add(base)
     var frontier = base
     while frontier.count > 0 && secondsSince(startTime) < maxTime {
         print("LFP new frontier time elapsed: " + secondsSince(startTime).nice)
-        let potentialNewFrontier: [T] = frontier.reduce([], combine: {$0 + map($1)})
+        let potentialNewFrontier: [T] = frontier.reduce([], {$0 + map($1)})
         // frontier is the new frontier
         frontier = []
         filter: for x in potentialNewFrontier {
@@ -268,7 +268,7 @@ public func leastFixedPoint<T: Locatable>(base: [T], map: T -> [T], match: (T, T
 
 
 // This works when equivalent(A, B) implies that A is a neighbor to B
-public func minimumRepresentatives<T, U: protocol<Locatable, Matchable>>(list: [T], lessThan: (T, T) -> Bool, projection: T -> U) -> [T] {
+public func minimumRepresentatives<T, U: Locatable & Matchable>(_ list: [T], lessThan: (T, T) -> Bool, projection: (T) -> U) -> [T] {
     let d = WeakLocationDictionary<U, T>()
     for x in list {
         d.addValue(x, forKey: projection(x))
@@ -276,7 +276,7 @@ public func minimumRepresentatives<T, U: protocol<Locatable, Matchable>>(list: [
     var result: [T] = []
     for x in d.keys {
         let values = d[x]
-        let minValue = values.reduce(values.first!, combine: {lessThan($0, $1) ? $0 : $1})
+        let minValue = values.reduce(values.first!, {lessThan($0, $1) ? $0 : $1})
         result.append(minValue)
     }
     return result

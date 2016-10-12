@@ -15,15 +15,15 @@ struct GroupoidElement : Locatable {
     unowned var start: AnyObject
     unowned var end: AnyObject
     
-    func sameAs(t: GroupoidElement) -> Bool {
+    func sameAs(_ t: GroupoidElement) -> Bool {
         return start === t.start && end === t.end && M.nearTo(t.M)
     }
     
-    func canFollow(t: GroupoidElement) -> Bool {
+    func canFollow(_ t: GroupoidElement) -> Bool {
         return end === t.start
     }
     
-    func following(t: GroupoidElement) -> GroupoidElement {
+    func following(_ t: GroupoidElement) -> GroupoidElement {
         assert(canFollow(t))
         return GroupoidElement(M: M.following(t.M), start: start, end: t.end)
     }
@@ -32,17 +32,17 @@ struct GroupoidElement : Locatable {
         return M.location
     }
     
-    static func neighbors(t: Int) -> [Int] {
+    static func neighbors(_ t: Int) -> [Int] {
         return [t-1, t, t+1]
     }
     
-    static func identity(home: AnyObject) -> GroupoidElement {
+    static func identity(_ home: AnyObject) -> GroupoidElement {
         return GroupoidElement(M: HTrans.identity, start: home, end: home)
     }
     
 }
 
-func generatedGroupoid(base: [GroupoidElement], generators: [GroupoidElement], withinBounds: GroupoidElement -> Bool, maxTime: Double) -> [GroupoidElement] {
+func generatedGroupoid(_ base: [GroupoidElement], generators: [GroupoidElement], withinBounds: @escaping (GroupoidElement) -> Bool, maxTime: Double) -> [GroupoidElement] {
     let rightMultiplyByGenerators = {
         [withinBounds]
         (t: GroupoidElement) -> [GroupoidElement] in
@@ -55,12 +55,12 @@ func generatedGroupoid(base: [GroupoidElement], generators: [GroupoidElement], w
     return result
 }
 
-func groupFromGroupoid(groupoid: [GroupoidElement], startingAndEndingAt home: AnyObject) -> [HTrans] {
+func groupFromGroupoid(_ groupoid: [GroupoidElement], startingAndEndingAt home: AnyObject) -> [HTrans] {
     let result = groupoid.filter({$0.start === home && $0.end === home}).map({$0.M})
     return result
 }
 
-func leastElementOfGroupoid(groupoid: [GroupoidElement], toGoFrom start: AnyObject, to end: AnyObject) -> GroupoidElement? {
+func leastElementOfGroupoid(_ groupoid: [GroupoidElement], toGoFrom start: AnyObject, to end: AnyObject) -> GroupoidElement? {
     let candidates = groupoid.filter({$0.start === start && $0.end === end})
     guard candidates.count > 0 else {return nil}
     var bestCandidate = candidates.first!
@@ -73,12 +73,12 @@ func leastElementOfGroupoid(groupoid: [GroupoidElement], toGoFrom start: AnyObje
 }
 
 // Grows the list without checking for repetition
-func fastLeastFixedPoint<T, U>(base: [T], expand: T -> [T], good: T -> Bool, project: T -> U) -> [U] {
-    let startTime = NSDate()
+func fastLeastFixedPoint<T, U>(_ base: [T], expand: (T) -> [T], good: (T) -> Bool, project: (T) -> U) -> [U] {
+    let startTime = Date()
     var result = base
     var frontier = base
     while frontier.count > 0 {
-        frontier = frontier.map(expand).flatten().filter(good)
+        frontier = frontier.map(expand).joined().filter(good)
         result += frontier
         print("Fast least fixed point time elapsed: \(startTime.millisecondsToPresent)")
     }

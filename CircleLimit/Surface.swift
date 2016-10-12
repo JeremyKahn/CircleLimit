@@ -30,7 +30,7 @@ class Surface {
         baseHexagon = pantsArray[0].hexagons[0]
     }
     
-    func setupGroupoidAndGroupForDistance(distance: Double) {
+    func setupGroupoidAndGroupForDistance(_ distance: Double) {
         groupoid = baseHexagon.groupoidForDistance(distance)
         group = groupFromEndStates(groupoid, for: baseHexagon)
         if let shadowHexagon = shadowHexagon {
@@ -41,15 +41,15 @@ class Surface {
         
     }
     
-    func setupGroupoidAndGroupForSteps(numberOfSteps: Int) {
+    func setupGroupoidAndGroupForSteps(_ numberOfSteps: Int) {
         //        drawOnlyHexagonTesselation = true
         var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
         for i in 0..<numberOfSteps {
             steppedStates.append(steppedStates.last!.flatMap(nextForwardStates))
-            print("At stage \(i) in adding new states for a total of \(steppedStates.flatten().count) states")
+            print("At stage \(i) in adding new states for a total of \(steppedStates.joined().count) states")
         }
-        groupoid = steppedStates.flatten().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
-        hexagonTesselation = steppedStates.flatten().map() { $0.lineToDraw }
+        groupoid = steppedStates.joined().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
+        hexagonTesselation = steppedStates.joined().map() { $0.lineToDraw }
     }
     
     func setUpHexagonsAndGuidelines() {

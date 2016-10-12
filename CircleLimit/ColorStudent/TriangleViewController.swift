@@ -11,7 +11,7 @@ import GameplayKit
 
 class TriangleViewController: UIViewController {
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
     
@@ -26,7 +26,7 @@ class TriangleViewController: UIViewController {
         (centerX, centerY) = (centerToStartWith.x, centerToStartWith.y)
         lightness = lightnessToStartWith
                 
-        previewSource.preview.frame = CGRect(origin: CGPointZero, size: previewContainer.frame.size)
+        previewSource.preview.frame = CGRect(origin: CGPoint.zero, size: previewContainer.frame.size)
         previewContainer.addSubview(previewSource.preview)
         previewSource.applyColorToPreview(chosenFuckingColor)
     }
@@ -75,8 +75,8 @@ class TriangleViewController: UIViewController {
         }
     }
     
-    func zoomTriangleView(gesture: UIPinchGestureRecognizer) {
-        if gesture.state == .Changed {
+    func zoomTriangleView(_ gesture: UIPinchGestureRecognizer) {
+        if gesture.state == .changed {
             dynamicSizeMultiplier *= gesture.scale
             dynamicSizeMultiplier = dynamicSizeMultiplier.controlledToInterval(1, maximumSizeMultiplier)
             gesture.scale = 1
@@ -84,10 +84,10 @@ class TriangleViewController: UIViewController {
         }
     }
     
-    func moveTriangleView(gesture: UIPanGestureRecognizer) {
-        if gesture.state == .Changed   {
-            var translation = gesture.translationInView(triangleView) / triangleView.size
-            gesture.setTranslation(CGPointZero, inView: triangleView)
+    func moveTriangleView(_ gesture: UIPanGestureRecognizer) {
+        if gesture.state == .changed   {
+            var translation = gesture.translation(in: triangleView) / triangleView.size
+            gesture.setTranslation(CGPoint.zero, in: triangleView)
             let oldCenter = CGPoint(x: centerX, y: centerY)
             centerX += -translation.x
             centerY += -translation.y
@@ -119,21 +119,21 @@ class TriangleViewController: UIViewController {
         }
     }
     
-    @IBAction func changeLightnessCenter(gesture: UIPanGestureRecognizer) {
-        if gesture.state == .Changed {
-            let translation = gesture.translationInView(lightnessGradientView)
-            gesture.setTranslation(CGPointZero, inView: lightnessGradientView)
+    @IBAction func changeLightnessCenter(_ gesture: UIPanGestureRecognizer) {
+        if gesture.state == .changed {
+            let translation = gesture.translation(in: lightnessGradientView)
+            gesture.setTranslation(CGPoint.zero, in: lightnessGradientView)
             lightness += -translation.x / lightnessGradientView.size
             lightness = lightness.controlledToInterval(0, 1)
             updateViews()
         }
     }
     
-    @IBAction func cancelChosenColor(sender: UITapGestureRecognizer) {
+    @IBAction func cancelChosenColor(_ sender: UITapGestureRecognizer) {
         delegate.applyColorAndReturn(delegate.colorToStartWith)
     }
     
-    @IBAction func sendChosenColor(sender: UILongPressGestureRecognizer) {
+    @IBAction func sendChosenColor(_ sender: UILongPressGestureRecognizer) {
         delegate.applyColorAndReturn(chosenFuckingColor)
     }
     

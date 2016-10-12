@@ -51,45 +51,45 @@ class HPoint : Equatable, CustomStringConvertible {
         return HyperbolicTransformation(a: self)
     }()
     
-    func distanceTo(z: HPoint) -> Double {
+    func distanceTo(_ z: HPoint) -> Double {
         return moveSelfToOrigin.appliedTo(z).distanceToOrigin
     }
     
     
     /// The point at distance x from the origin, on the positive real axis
-    static func pointAtDistance(x: Double) -> HPoint {
+    static func pointAtDistance(_ x: Double) -> HPoint {
         return HPoint(distanceToAbs(x) + 0.i)
     }
     
-    func pointAtDistance(x: Double, toPoint otherPoint: HPoint) -> HPoint {
+    func pointAtDistance(_ x: Double, toPoint otherPoint: HPoint) -> HPoint {
         let translatedOther = moveSelfToOrigin.appliedTo(otherPoint)
         let translatedResult = HPoint(Complex64(abs: distanceToAbs(x), arg: translatedOther.arg))
         return moveSelfToOrigin.inverse.appliedTo(translatedResult)
     }
     
-    func midpointTo(p: HPoint) -> HPoint {
+    func midpointTo(_ p: HPoint) -> HPoint {
         return pointAtDistance(distanceTo(p)/2, toPoint: p)
     }
     
-    func liesWithin(cutoff: Double) -> (HPoint -> Bool) {
+    func liesWithin(_ cutoff: Double) -> ((HPoint) -> Bool) {
         let absCutoff = distanceToAbs(cutoff)
         let M = moveSelfToOrigin
         return { return M.appliedTo($0).abs < absCutoff }
     }
     
-    func distanceToLineThroughOriginAnd(b: HPoint) -> Double {
+    func distanceToLineThroughOriginAnd(_ b: HPoint) -> Double {
         let theta = b.arg - self.arg
         let sinhH = sin(theta) * absToSinhDistance(abs)
         return asinh(sinhH.abs)
     }
     
-    func distanceToLineThrough(a: HPoint, _ b: HPoint) -> Double {
+    func distanceToLineThrough(_ a: HPoint, _ b: HPoint) -> Double {
         let newB = a.moveSelfToOrigin.appliedTo(b)
         let newSelf = a.moveSelfToOrigin.appliedTo(self)
         return newSelf.distanceToLineThroughOriginAnd(newB)
     }
     
-    func distanceToArcThrough(a: HPoint, _ b: HPoint) -> Double {
+    func distanceToArcThrough(_ a: HPoint, _ b: HPoint) -> Double {
         let accuracy = 0.000001
         if a.distanceTo(b) < accuracy {
             return distanceTo(a)
@@ -102,7 +102,7 @@ class HPoint : Equatable, CustomStringConvertible {
         return distanceToLineThrough(a, b)
     }
     
-    func angleBetween(a: HPoint, _ b: HPoint) -> Double {
+    func angleBetween(_ a: HPoint, _ b: HPoint) -> Double {
         let newA = moveSelfToOrigin.appliedTo(a)
         let newB = moveSelfToOrigin.appliedTo(b)
         return angleAtOriginBetween(newA, newB)
@@ -124,27 +124,27 @@ func ==(lhs: HPoint, rhs: HPoint) -> Bool {
     return lhs.z == rhs.z
 }
 
-func angleAtOriginBetween(a: HPoint, _ b: HPoint) -> Double {
+func angleAtOriginBetween(_ a: HPoint, _ b: HPoint) -> Double {
     var theta = a.arg - b.arg
     theta = theta > Double.PI ? theta - 2 * Double.PI : theta
     theta = theta < -Double.PI ? theta + 2 * Double.PI : theta
     return theta
 }
 
-func absToSinhDistance(a: Double) -> Double {
+func absToSinhDistance(_ a: Double) -> Double {
     return 2 * a / (1 - a * a)
 }
 
-func absToDistance(a: Double) -> Double {
+func absToDistance(_ a: Double) -> Double {
     return log((1 + a)/(1 - a))
 }
 
-func distanceToAbs(d: Double) -> Double {
+func distanceToAbs(_ d: Double) -> Double {
     let e = exp(d)
     return (e-1)/(e+1)
 }
 
-func isocelesAltitudeFromSideLength(l: Double, andAngle angle: Double) -> Double {
+func isocelesAltitudeFromSideLength(_ l: Double, andAngle angle: Double) -> Double {
     // u is sinh the half-length of opposite side
     let shL = sinh(l)
     let (c, s) = (cos(angle/2), sin(angle/2))
@@ -186,7 +186,7 @@ struct HeuristicGeodesic: Locatable, Matchable {
     
     static let tolerance: Double = pow(2, -15)
     
-    private var sumOfEndpoints: Complex64
+    fileprivate var sumOfEndpoints: Complex64
     
     var endPoints: (Complex64, Complex64)
     
@@ -195,7 +195,7 @@ struct HeuristicGeodesic: Locatable, Matchable {
         return IntArray(values: a.map() {Int($0 * HeuristicGeodesic.multiplier)})
     }
     
-    static func neighbors(place: Location) -> [Location] {
+    static func neighbors(_ place: Location) -> [Location] {
         return place.neighbors
     }
     
@@ -214,11 +214,11 @@ struct HeuristicGeodesic: Locatable, Matchable {
         self.init(v.appliedToOrigin, w.appliedToOrigin)
     }
     
-    func matches(y: HeuristicGeodesic) -> Bool {
+    func matches(_ y: HeuristicGeodesic) -> Bool {
         return (sumOfEndpoints - y.sumOfEndpoints).abs < HeuristicGeodesic.tolerance
     }
     
-    func transformedBy(M: HTrans) -> HeuristicGeodesic {
+    func transformedBy(_ M: HTrans) -> HeuristicGeodesic {
         let (a, b) = endPoints
         return HeuristicGeodesic(M.appliedTo(a), M.appliedTo(b))
     }
@@ -229,7 +229,7 @@ struct HeuristicGeodesic: Locatable, Matchable {
 }
 
 
-func endPointsOfGeodesicThrough(a: HPoint, _ b:HPoint) -> (Complex64, Complex64) {
+func endPointsOfGeodesicThrough(_ a: HPoint, _ b:HPoint) -> (Complex64, Complex64) {
     let M = HyperbolicTransformation(a: a)
     let M_inverse = M.inverse
     let bPrime = M.appliedTo(b)
@@ -238,7 +238,7 @@ func endPointsOfGeodesicThrough(a: HPoint, _ b:HPoint) -> (Complex64, Complex64)
     return (u, v)
 }
 
-func geodesicArcCenterRadiusStartEnd(a: HPoint, b: HPoint) -> (Complex64, Double, Double, Double, Bool) {
+func geodesicArcCenterRadiusStartEnd(_ a: HPoint, b: HPoint) -> (Complex64, Double, Double, Double, Bool) {
     var (u, v) = endPointsOfGeodesicThrough(a, b)
     var theta = 0.5 * (v/u).arg
     var (aa, bb) = (a, b)
@@ -256,7 +256,7 @@ func geodesicArcCenterRadiusStartEnd(a: HPoint, b: HPoint) -> (Complex64, Double
     return (center, radius, start, end, swapped)
 }
 
-func approximatingCubicBezierToCircularArc(center: Complex64, radius: Double, start: Double, end: Double, swapped: Bool) -> (Complex64, Complex64) {
+func approximatingCubicBezierToCircularArc(_ center: Complex64, radius: Double, start: Double, end: Double, swapped: Bool) -> (Complex64, Complex64) {
     var theta = (end - start).abs
     if theta > Double.PI {
         theta = 2 * Double.PI - theta
@@ -270,13 +270,13 @@ func approximatingCubicBezierToCircularArc(center: Complex64, radius: Double, st
 }
 
 // THIS FAILS when a == 0 or b == 0
-func controlPointsForApproximatingCubicBezierToGeodesic(a: HPoint, b: HPoint) -> (Complex64, Complex64) {
+func controlPointsForApproximatingCubicBezierToGeodesic(_ a: HPoint, b: HPoint) -> (Complex64, Complex64) {
     let (center, radius, start, end, swapped) = geodesicArcCenterRadiusStartEnd(a, b: b)
     let (startControl, endControl) = approximatingCubicBezierToCircularArc(center, radius: radius, start: start, end: end, swapped: swapped)
     return (startControl, endControl)
 }
 
-func addGeodesicFrom(a: HPoint, to b: HPoint) -> (UIBezierPath -> ()) {
+func addGeodesicFrom(_ a: HPoint, to b: HPoint) -> ((UIBezierPath) -> ()) {
     let threshhold = 0.001
     var makeLine = false
     if a.abs < threshhold || b.abs < threshhold {
@@ -287,19 +287,19 @@ func addGeodesicFrom(a: HPoint, to b: HPoint) -> (UIBezierPath -> ()) {
         makeLine = ((rr - 1).abs) < threshhold || ((rr + 1).abs < threshhold)
     }
     if makeLine {
-        return { $0.addLineToPoint(b.cgPoint) }
+        return { $0.addLine(to: b.cgPoint) }
     } else {
         let (startControl, endControl) = controlPointsForApproximatingCubicBezierToGeodesic(a, b: b)
         let (startHControl, endHControl) = (pointForComplex(startControl), pointForComplex(endControl))
-        return { $0.addCurveToPoint(b.cgPoint, controlPoint1: startHControl, controlPoint2: endHControl) }
+        return { $0.addCurve(to: b.cgPoint, controlPoint1: startHControl, controlPoint2: endHControl) }
     }
 }
 
-func magicNumber(theta: Double) -> Double {
+func magicNumber(_ theta: Double) -> Double {
     return (4.0/3.0) * tan(theta / 4)
 }
 
-func pointForComplex(z: Complex64) -> CGPoint {
+func pointForComplex(_ z: Complex64) -> CGPoint {
     return CGPoint(x: z.re, y: z.im)
 }
 

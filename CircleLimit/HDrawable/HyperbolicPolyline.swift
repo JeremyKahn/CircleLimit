@@ -31,15 +31,15 @@ class HyperbolicPolyline : HDrawable {
     
     var intrinsicLineWidth = 0.015
     
-    var lineColor: UIColor = UIColor.blackColor()
+    var lineColor: UIColor = UIColor.black
     
     // Feels a little weird to include these in Hyperbolic Polyline: right now they're just included in order to comform to HDrawable
     // TODO: Put these in a separate protocol?
-    var fillColorTable: ColorTable = [1: UIColor.blueColor(), 2: UIColor.greenColor(), 3: UIColor.redColor(), 4: UIColor.yellowColor()]
+    var fillColorTable: ColorTable = [1: UIColor.blue, 2: UIColor.green, 3: UIColor.red, 4: UIColor.yellow]
     
     var fillColorBaseNumber = ColorNumber.baseNumber
     
-    var fillColor: UIColor = UIColor.clearColor()
+    var fillColor: UIColor = UIColor.clear
     
     var useFillColorTable = true
     
@@ -74,26 +74,26 @@ class HyperbolicPolyline : HDrawable {
     }
     
     // MARK: Modifiers
-    func addPoint(p: HPoint) {
+    func addPoint(_ p: HPoint) {
         assert(p.abs <= 1)
         points.append(p)
         updateAndComplete()
     }
     
-    func movePointAtIndex(i: Int, to p: HPoint) {
+    func movePointAtIndex(_ i: Int, to p: HPoint) {
         assert(p.abs <= 1)
         points[i] = p
         updateAndComplete()
     }
     
-    func insertPointAfterIndex(i: Int, point: HPoint) {
+    func insertPointAfterIndex(_ i: Int, point: HPoint) {
         assert(point.abs <= 1)
         assert(points.count > i)
-        points.insert(point, atIndex: i + 1)
+        points.insert(point, at: i + 1)
         updateAndComplete()
     }
     
-    func insertPointsAfterIndices(instructions: [(Int, HPoint)]) {
+    func insertPointsAfterIndices(_ instructions: [(Int, HPoint)]) {
         points.insertAfterIndices(instructions)
         updateAndComplete()
     }
@@ -113,7 +113,7 @@ class HyperbolicPolyline : HDrawable {
         var i = 0
         while i < points.count - 1 {
             if points[i] == points[i + 1] {
-                points.removeAtIndex(i + 1)
+                points.remove(at: i + 1)
             } else {
                 i += 1
             }
@@ -129,7 +129,7 @@ class HyperbolicPolyline : HDrawable {
     var touchable = true
     
     // Actually returns the indices of the nearby points
-    func pointsNear(point: HPoint, withMask mask: HyperbolicTransformation, withinDistance distance: Double) -> [Int] {
+    func pointsNear(_ point: HPoint, withMask mask: HyperbolicTransformation, withinDistance distance: Double) -> [Int] {
         guard touchable else { return [] }
         let maskedPoints = points.map { mask.appliedTo($0) }
         let indexArray = [Int](0..<points.count)
@@ -138,7 +138,7 @@ class HyperbolicPolyline : HDrawable {
     }
     
     
-    func sidesNear(point: HPoint, withMask mask: HyperbolicTransformation, withinDistance distance: Double) -> [Int] {
+    func sidesNear(_ point: HPoint, withMask mask: HyperbolicTransformation, withinDistance distance: Double) -> [Int] {
         guard touchable else { return [] }
         let maskedPoints = points.map { mask.appliedTo($0) }
         let indexArray = [Int](0..<points.count - 1)
@@ -152,7 +152,7 @@ class HyperbolicPolyline : HDrawable {
     var maxRadius = 1000.0
     
     // For the ambitious: make this a filled region between two circular arcs
-    func geodesicArc(a: HPoint, _ b: HPoint) -> UIBezierPath {
+    func geodesicArc(_ a: HPoint, _ b: HPoint) -> UIBezierPath {
         assert(a.abs <= 1 && b.abs <= 1)
         //        println("Drawing geodesic arc from \(a) to \(b)")
         let (center, radius, start, end,_) = geodesicArcCenterRadiusStartEnd(a, b: b)//
@@ -160,8 +160,8 @@ class HyperbolicPolyline : HDrawable {
         var path : UIBezierPath
         if radius > maxRadius || radius.isNaN {
             path = UIBezierPath()
-            path.moveToPoint(CGPoint(x: a.re, y: a.im))
-            path.addLineToPoint(CGPoint(x: b.re, y: b.im))
+            path.move(to: CGPoint(x: a.re, y: a.im))
+            path.addLine(to: CGPoint(x: b.re, y: b.im))
         } else {
             path = UIBezierPath(arcCenter: CGPoint(x: center.re, y: center.im),
                                 radius: CGFloat(radius),
@@ -174,7 +174,7 @@ class HyperbolicPolyline : HDrawable {
     }
     
     // This is a tricky problem...really the line width should vary
-    func suitableLineWidth(a: HPoint, _ b: HPoint) -> CGFloat {
+    func suitableLineWidth(_ a: HPoint, _ b: HPoint) -> CGFloat {
         let t = ((a.z + b.z)/2).abs
         return CGFloat(intrinsicLineWidth * (1.0 - t * t) / 2)
     }
@@ -189,18 +189,18 @@ class HyperbolicPolyline : HDrawable {
         }
         for i in 0..<(points.count - 1) {
             let path = geodesicArc(points[i], points[i+1])
-            path.lineCapStyle = CGLineCap.Round
+            path.lineCapStyle = CGLineCap.round
             path.stroke()
         }
     }
     
-    func transformedBy(M: HyperbolicTransformation) -> HDrawable {
+    func transformedBy(_ M: HyperbolicTransformation) -> HDrawable {
         let new = self.copy()
         (new as! HyperbolicPolyline).transformBy(M)
         return new
     }
     
-    func transformBy(M: HyperbolicTransformation) {
+    func transformBy(_ M: HyperbolicTransformation) {
         for i in 0...(points.count-1) {
             points[i] = M.appliedTo(points[i])
             assert(points[i].abs <= 1)
@@ -246,7 +246,7 @@ class HyperbolicPolyline : HDrawable {
     var scaleIndex : Int = 0
     
     /// The subsequence of points to use at each scale
-    var subsequenceTable : [[Int]] = [[Int]](count: maxScaleIndex + 1, repeatedValue: [])
+    var subsequenceTable : [[Int]] = [[Int]](repeating: [], count: maxScaleIndex + 1)
     
     struct radialDistanceCache {
         var sinTheta : Double
@@ -270,20 +270,20 @@ class HyperbolicPolyline : HDrawable {
             }
         }
         
-        func sinAngleTo(y: radialDistanceCache) -> Double {
+        func sinAngleTo(_ y: radialDistanceCache) -> Double {
             return sinTheta * y.cosTheta - cosTheta * y.sinTheta
         }
         
-        func cosAngleTo(y: radialDistanceCache) -> Double {
+        func cosAngleTo(_ y: radialDistanceCache) -> Double {
             return cosTheta * y.cosTheta + sinTheta * y.sinTheta
         }
         
-        func coshDistanceTo(y: radialDistanceCache) -> Double {
+        func coshDistanceTo(_ y: radialDistanceCache) -> Double {
             let cosDeltaTheta = cosAngleTo(y)
             return coshDistanceToOrigin * y.coshDistanceToOrigin - sinhDistanceToOrigin * y.sinhDistanceToOrigin * cosDeltaTheta
         }
         
-        func distanceFromRadialLineTo(y: radialDistanceCache) -> Double {
+        func distanceFromRadialLineTo(_ y: radialDistanceCache) -> Double {
             let sinDeltaTheta = sinAngleTo(y)
             let sinhAltitude = y.sinhDistanceToOrigin * sinDeltaTheta.abs
             let coshDistanceToY = coshDistanceTo(y)
@@ -299,7 +299,7 @@ class HyperbolicPolyline : HDrawable {
     var canReplaceWithStraightLineCache : [Bool] = []
     
     // this whole trick relies on the particular implemetation of bestSequenceTo
-    func canReplaceWithStraightLine(i: Int, _ j: Int) -> Bool {
+    func canReplaceWithStraightLine(_ i: Int, _ j: Int) -> Bool {
         if canReplaceWithStraightLineCache.count == j {
             return canReplaceWithStraightLineCache[i]
         }
@@ -311,7 +311,7 @@ class HyperbolicPolyline : HDrawable {
                 normalizedPoints.append(rDC)
             }
             // the next line is an idiom to make the array the correct size
-            canReplaceWithStraightLineCache = [Bool](count: j, repeatedValue: true)
+            canReplaceWithStraightLineCache = [Bool](repeating: true, count: j)
             for k in 0..<j {
                 var canReplaceWithStraightLine = true
                 for l in (k+1)..<j {

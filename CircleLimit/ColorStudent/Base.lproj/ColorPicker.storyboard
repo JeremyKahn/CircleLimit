@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="eRu-5p-QEF">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="eRu-5p-QEF">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Color View Controller-->
@@ -20,15 +21,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uri-TI-j4Z" customClass="ColorView" customModule="CircleLimit" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="lhR-dK-Epb" appends="YES" id="Voy-2Q-aAS"/>
                                 </connections>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="Uri-TI-j4Z" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="0X6-O8-30a"/>
@@ -40,7 +40,6 @@
                             <outletCollection property="gestureRecognizers" destination="lhR-dK-Epb" appends="YES" id="yE7-js-aFp"/>
                         </connections>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="colorView" destination="Uri-TI-j4Z" id="HtT-pw-fR3"/>
                     </connections>
@@ -52,7 +51,7 @@
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="947.5" y="363.5"/>
+            <point key="canvasLocation" x="807" y="246"/>
         </scene>
         <!--Gradient View Controller-->
         <scene sceneID="mtH-cD-Osa">
@@ -67,19 +66,17 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HDr-8t-hfi">
-                                <rect key="frame" x="54" y="45" width="276" height="258"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="258" id="9gG-aP-48k"/>
                                 </constraints>
                             </view>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="lJ8-ah-hse">
-                                <rect key="frame" x="52" y="361" width="280" height="31"/>
                                 <connections>
                                     <action selector="adjustBrightness:" destination="cE9-vf-sdA" eventType="valueChanged" id="FDU-H6-EGZ"/>
                                 </connections>
                             </slider>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="HDr-8t-hfi" firstAttribute="top" secondItem="ji1-cZ-SgA" secondAttribute="bottom" constant="25" id="397-UA-xut"/>
                             <constraint firstItem="lJ8-ah-hse" firstAttribute="leading" secondItem="HDr-8t-hfi" secondAttribute="leading" id="Po9-pa-P8W"/>
@@ -89,14 +86,13 @@
                             <constraint firstAttribute="trailingMargin" secondItem="HDr-8t-hfi" secondAttribute="trailing" constant="29" id="vrc-vl-FLI"/>
                         </constraints>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="gradientView" destination="HDr-8t-hfi" id="OlB-2G-0Dm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="04Q-2P-NiU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1439.5" y="363.5"/>
+            <point key="canvasLocation" x="1532" y="245"/>
         </scene>
         <!--Triangle View Controller-->
         <scene sceneID="dB1-bZ-ig9">
@@ -111,8 +107,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="daU-Ur-wRt" customClass="TriangleView" customModule="CircleLimit" customModuleProvider="target">
-                                <rect key="frame" x="16" y="28" width="343" height="343"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="daU-Ur-wRt" secondAttribute="height" multiplier="1:1" id="xCv-6b-PRT"/>
@@ -124,8 +119,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0zN-4b-rwE" customClass="LightnessGradientView" customModule="CircleLimit" customModuleProvider="target">
-                                <rect key="frame" x="16" y="389" width="343" height="60"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="vAU-5x-hAr"/>
@@ -135,8 +129,7 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rpi-8L-59N">
-                                <rect key="frame" x="12" y="469" width="347" height="178"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="EUT-1s-5xg" appends="YES" id="n8u-p9-X8B"/>
@@ -144,7 +137,7 @@
                                 </connections>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="daU-Ur-wRt" firstAttribute="leading" secondItem="tt6-gS-hRc" secondAttribute="leadingMargin" id="09G-SY-Cob"/>
@@ -159,7 +152,6 @@
                             <constraint firstItem="daU-Ur-wRt" firstAttribute="trailing" secondItem="tt6-gS-hRc" secondAttribute="trailingMargin" id="xlC-e2-69m"/>
                         </constraints>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="lightnessGradientView" destination="0zN-4b-rwE" id="0zy-Zi-kdA"/>
                         <outlet property="previewContainer" destination="Rpi-8L-59N" id="3Ng-2d-SmH"/>
@@ -183,7 +175,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-167.5" y="330.5"/>
+            <point key="canvasLocation" x="127" y="235"/>
         </scene>
     </scenes>
 </document>

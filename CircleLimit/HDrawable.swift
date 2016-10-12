@@ -53,7 +53,7 @@ protocol HDrawable: class, Disked {
 
 class HDrawableCounter {
     
-    private static var _nextId = 0
+    fileprivate static var _nextId = 0
     
     static var nextId: Int {
         defer { _nextId += 1 }
@@ -64,7 +64,7 @@ class HDrawableCounter {
 
 extension HDrawable {
     
-    func filteredGroup(group: [Action], cutoffDistance: Double) -> [Action] {
+    func filteredGroup(_ group: [Action], cutoffDistance: Double) -> [Action] {
         
         let objectCutoffAbs = distanceToAbs(cutoffDistance + radius)
         
@@ -73,12 +73,12 @@ extension HDrawable {
         return objectGroup
     }
     
-    func drawWithMask(mask: HyperbolicTransformation) {
+    func drawWithMask(_ mask: HyperbolicTransformation) {
         self.mask = mask
         draw()
     }
     
-    func drawWithMaskAndAction(A: Action) {
+    func drawWithMaskAndAction(_ A: Action) {
         if useFillColorTable {
             fillColor = fillColorTable[A.action.mapping[fillColorBaseNumber]!]!
         }

@@ -95,11 +95,11 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     // MARK: Instructions
-    static func goForward(distance: Double) -> HyperbolicTransformation {
+    static func goForward(_ distance: Double) -> HyperbolicTransformation {
         return HyperbolicTransformation(hyperbolicTranslation: distance)
     }
     
-    static func rotate(angle: Double) -> HTrans {
+    static func rotate(_ angle: Double) -> HTrans {
         return HTrans(rotationInRadians: angle)
     }
     
@@ -123,11 +123,11 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return following(HTrans.turnAround)
     }
     
-    func rotate(angle: Double) -> HTrans {
+    func rotate(_ angle: Double) -> HTrans {
         return following(HTrans.rotate(angle))
     }
     
-    func goForward(distance: Double) -> HTrans {
+    func goForward(_ distance: Double) -> HTrans {
         return following(HTrans.goForward(distance))
     }
     
@@ -146,22 +146,22 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return appliedToOrigin
     }
     
-    func appliedTo(z: Complex64) -> Complex64 {
+    func appliedTo(_ z: Complex64) -> Complex64 {
         var z = z
         if conjugateInput { z = z.conj }
         let w = (u * z + v) / (v.conj * z + u.conj)
         return w
     }
     
-    func appliedTo(z: HPoint) -> HPoint {
+    func appliedTo(_ z: HPoint) -> HPoint {
         return HPoint(appliedTo(z.z))
     }
     
-    func appliedTo(g: HeuristicGeodesic) -> HeuristicGeodesic {
+    func appliedTo(_ g: HeuristicGeodesic) -> HeuristicGeodesic {
         return g.transformedBy(self)
     }
     
-    func appliedTo(M: HUVect) -> HUVect {
+    func appliedTo(_ M: HUVect) -> HUVect {
         return following(M)
     }
     
@@ -171,14 +171,14 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return HyperbolicTransformation(u: uNew, v: vNew, conjugateInput: conjugateInput)
     }
     
-    func following(B: HyperbolicTransformation) -> HyperbolicTransformation {
+    func following(_ B: HyperbolicTransformation) -> HyperbolicTransformation {
         let (a, b) = conjugateInput ? (B.u.conj, B.v.conj) : (B.u, B.v)
         let r = u * a + v * b.conj
         let s = u * b + v * a.conj
         return HyperbolicTransformation(u: r, v: s, conjugateInput: B.conjugateInput != conjugateInput)
     }
     
-    func toThe(n: Int) -> HyperbolicTransformation {
+    func toThe(_ n: Int) -> HyperbolicTransformation {
         assert(n >= 0)
         var M = HyperbolicTransformation()
         for _ in 0..<n {
@@ -213,7 +213,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return HPoint(z)
     }
     
-    func approximateDistanceOfTranslationAxisTo(p: HPoint) -> Double? {
+    func approximateDistanceOfTranslationAxisTo(_ p: HPoint) -> Double? {
         let tP = HTrans(a: p)
         let mP = tP.following(self).following(tP.inverse)
         return mP.approximateDistanceOfTranslationAxisToOrigin
@@ -241,7 +241,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         return Int(10 * u.abs2)
     }
     
-    static func neighbors(l: Location) -> [Location] {
+    static func neighbors(_ l: Location) -> [Location] {
         return [l-1, l, l+1]
     }
     
@@ -252,15 +252,15 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     // This guarantees that v is about 0 and u is about plus or minus 1
-    func closeToIdentity(tolerance: Double) -> Bool {
+    func closeToIdentity(_ tolerance: Double) -> Bool {
         return v.abs < tolerance && u.im.abs < tolerance && !conjugateInput
     }
     
-    func nearTo(B:HyperbolicTransformation) -> Bool {
+    func nearTo(_ B:HyperbolicTransformation) -> Bool {
         return nearTo(B, tolerance: HyperbolicTransformation.tolerance)
     }
     
-    func nearTo(B:HyperbolicTransformation, tolerance: Double) -> Bool {
+    func nearTo(_ B:HyperbolicTransformation, tolerance: Double) -> Bool {
         let E = self.following(B.inverse)
         return E.closeToIdentity(tolerance)
     }
@@ -274,7 +274,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
         let a = (randomDouble() + randomDouble().i)/sqrt(2)
         let lambda = exp((randomDouble() * Double.PI * 2).i)
         var result = HyperbolicTransformation(a: a, lambda: lambda)
-        let t = random()
+        let t = arc4random()
         if t % 2 == 0 {
             result = result.flip
         }

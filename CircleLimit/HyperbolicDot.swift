@@ -30,11 +30,11 @@ class HyperbolicDot : HDrawable {
     
     var intrinsicLineWidth: Double = 0
     
-    var lineColor: UIColor = UIColor.blackColor()
+    var lineColor: UIColor = UIColor.black
     
-    var fillColorTable: ColorTable = [1: UIColor.blueColor(), 2: UIColor.greenColor(), 3: UIColor.redColor(), 4: UIColor.yellowColor()]
+    var fillColorTable: ColorTable = [1: UIColor.blue, 2: UIColor.green, 3: UIColor.red, 4: UIColor.yellow]
     
-    var fillColor: UIColor = UIColor.purpleColor()
+    var fillColor: UIColor = UIColor.purple
     
     var fillColorBaseNumber = ColorNumber.baseNumber
     
@@ -61,7 +61,7 @@ class HyperbolicDot : HDrawable {
         self.center = center
     }
     
-    func drawWithMask(mask: HyperbolicTransformation) {
+    func drawWithMask(_ mask: HyperbolicTransformation) {
         let dot = self.transformedBy(mask)
         dot.draw()
     }
@@ -91,11 +91,11 @@ class HyperbolicDot : HDrawable {
         return(complexEuclCenter.re, complexEuclCenter.im, euclR)
     }
     
-    func transformBy(M: HyperbolicTransformation) {
+    func transformBy(_ M: HyperbolicTransformation) {
         center = M.appliedTo(center)
     }
     
-    func transformedBy(M: HyperbolicTransformation) -> HDrawable {
+    func transformedBy(_ M: HyperbolicTransformation) -> HDrawable {
         let dot = HyperbolicDot(dot: self)
         dot.transformBy(M)
         return dot

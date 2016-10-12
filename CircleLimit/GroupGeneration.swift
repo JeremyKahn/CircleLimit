@@ -22,7 +22,7 @@ struct Action: Locatable {
         return motion.location
     }
     
-    static func neighbors(location: Location)->  [Location] {
+    static func neighbors(_ location: Location)->  [Location] {
         return HyperbolicTransformation.neighbors(location)
     }
     
@@ -46,7 +46,7 @@ struct Action: Locatable {
         action = ColorNumberPermutation()
     }
     
-    func following(A: Action) -> Action {
+    func following(_ A: Action) -> Action {
         return Action(motion: motion.following(A.motion), action: action.following(A.action))
     }
     
@@ -90,8 +90,8 @@ struct Action: Locatable {
 //    return bigGroup.arrayForm
 //}
 
-func generatedGroup(generators: [Action], bigCutoff: Double) -> [Action] {
-    let startTime = NSDate()
+func generatedGroup(_ generators: [Action], bigCutoff: Double) -> [Action] {
+    let startTime = Date()
     let base = [Action()]
     let rightMultiplyByGenerators = { (A: Action) -> [Action] in
         let list = generators.map() {A.following($0)}
@@ -108,13 +108,13 @@ func generatedGroup(generators: [Action], bigCutoff: Double) -> [Action] {
 
 
 // the hyperbolic length of c in triangle ABC
-func lengthFromAngles(A: Double, B: Double, C:Double) -> Double {
+func lengthFromAngles(_ A: Double, B: Double, C:Double) -> Double {
     return acosh((cos(A) * cos(B) + cos(C)) / (sin(A) * sin(B)))
 }
 
 
 // produces the standard three (redundant) generators for an orientable pqr triangle group
-func pqrGeneratorsAndGuidelines(p: Int, q: Int, r: Int) -> ([HyperbolicTransformation], [HDrawable]) {
+func pqrGeneratorsAndGuidelines(_ p: Int, q: Int, r: Int) -> ([HyperbolicTransformation], [HDrawable]) {
     let pi = Double.PI
     let (pp, qq, rr) = (pi / Double(p), pi / Double(q), pi / Double(r))
     assert(pp + qq + rr < pi)
@@ -145,7 +145,7 @@ func pqrGeneratorsAndGuidelines(p: Int, q: Int, r: Int) -> ([HyperbolicTransform
     return ([A, B, C], g2)
 }
 
-func sideInRightAngledHexagonWithOpposite(c: Double, andAdj a: Double, andAdj b: Double) -> Double {
+func sideInRightAngledHexagonWithOpposite(_ c: Double, andAdj a: Double, andAdj b: Double) -> Double {
     let numerator = cosh(a) * cosh(b) + cosh(c)
     let denominator = sinh(a) * sinh(b)
     return acosh(numerator/denominator)
@@ -153,7 +153,7 @@ func sideInRightAngledHexagonWithOpposite(c: Double, andAdj a: Double, andAdj b:
 
 
 // The a, b, and c are the _half_ lengths of the cuffs
-func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([HyperbolicTransformation], [HDrawable]) {
+func pantsGroupGeneratorsAndGuidelines(a: Double, b: Double, c: Double) -> ([HyperbolicTransformation], [HDrawable]) {
     let C = sideInRightAngledHexagonWithOpposite(c, andAdj: a, andAdj: b)
     let A = sideInRightAngledHexagonWithOpposite(a, andAdj: b, andAdj: c)
 //    let B = sideInRightAngledHexagonWithOpposite(b, andAdj: a, andAdj: b)
@@ -179,8 +179,8 @@ func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([H
                       HyperbolicPolyline([cA.appliedToOrigin, cTrans.following(cA).appliedToOrigin])
         
     ] as [HDrawable]
-    let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
-                  UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
+    let colors = [UIColor.red,UIColor.green,UIColor.blue,
+                  UIColor.cyan,UIColor.magenta,UIColor.yellow]
     for i in 0..<6 {
         guidelines[i].lineColor = colors[i]
     }
@@ -188,22 +188,22 @@ func pantsGroupGeneratorsAndGuidelines(a a: Double, b: Double, c: Double) -> ([H
 }
 
 // This is a rewrite to use arrays to make everything more symmetric
-func pantsGroupGeneratorsAndGuidelines(halfLengths: [Double]) -> ([HyperbolicTransformation], [HDrawable]) {
+func pantsGroupGeneratorsAndGuidelines(_ halfLengths: [Double]) -> ([HyperbolicTransformation], [HDrawable]) {
     guard halfLengths.count == 3 else {return ([], [])}
-    var orthoLengths = Array<Double>(count: 3, repeatedValue: 0.0)
+    var orthoLengths = Array<Double>(repeating: 0.0, count: 3)
     for i in 0..<3 {
         orthoLengths[i] = sideInRightAngledHexagonWithOpposite(halfLengths[i], andAdj: halfLengths[(i+1) % 3], andAdj: halfLengths[(i + 2) % 3])
     }
     let identity = HyperbolicTransformation()
-    var tMinus = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
-    var tPlus = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
+    var tMinus = Array<HyperbolicTransformation>(repeating: identity, count: 3)
+    var tPlus = Array<HyperbolicTransformation>(repeating: identity, count: 3)
     let (left, _) = (HyperbolicTransformation.turnLeft, HyperbolicTransformation.turnRight)
     for i in 0..<3 {
         tPlus[i] = tMinus[i].following(HyperbolicTransformation.goForward(halfLengths[i]))
         tMinus[(i+1)%3] = tPlus[i].following(left).following(HyperbolicTransformation.goForward(orthoLengths[(i+2)%3])).following(left)
     }
     print("This should be the identity: \(tMinus[0])")
-    var generators = Array<HyperbolicTransformation>(count: 3, repeatedValue: identity)
+    var generators = Array<HyperbolicTransformation>(repeating: identity, count: 3)
     for i in 0..<3 {
         generators[i] = tMinus[i].following(HyperbolicTransformation.goForward(2 * halfLengths[i])).following(tMinus[i].inverse)
     }
@@ -218,7 +218,7 @@ func pantsGroupGeneratorsAndGuidelines(halfLengths: [Double]) -> ([HyperbolicTra
 //    let colors = [UIColor.redColor(),UIColor.greenColor(),UIColor.blueColor(),
 //                  UIColor.cyanColor(),UIColor.magentaColor(),UIColor.yellowColor()]
     for i in 0..<6 {
-        guidelines[i].lineColor = UIColor.blackColor()
+        guidelines[i].lineColor = UIColor.black
     }
     return (generators, guidelines)
 }
@@ -278,7 +278,7 @@ class Permutation<Element: HasUniverse>: Equatable {
         self.mapping = mapping
     }
     
-    func following(y: Permutation<Element>) -> Permutation<Element> {
+    func following(_ y: Permutation<Element>) -> Permutation<Element> {
         var newMapping = [Element: Element]()
         for i in Element.universe {
             newMapping[i] = mapping[y.mapping[i]!]!

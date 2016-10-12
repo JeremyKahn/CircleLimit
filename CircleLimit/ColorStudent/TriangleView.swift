@@ -10,14 +10,14 @@ import UIKit
 
 
 struct ColorChoiceParameters {
-    var color1 : UIColor = UIColor.blueColor()
-    var color2 : UIColor = UIColor.cyanColor()
+    var color1 : UIColor = UIColor.blue
+    var color2 : UIColor = UIColor.cyan
     var color1weight : CGFloat = 0
     var color2weight : CGFloat = 0
     
     var outwardNormalVectors: [CGPoint] = []
     
-    func colorWithCenterColor(center: UIColor) -> UIColor {
+    func colorWithCenterColor(_ center: UIColor) -> UIColor {
         let weights = [color1weight, color2weight, centerColorWeight]
         let colors = [color1, color2, center]
         return weightedColor(weights, colors: colors)
@@ -34,9 +34,9 @@ class TriangleView: UIView {
     // We have to use an explicit optional in order to use IBDesignable
     var dataSource: TriangleViewController?
     
-    let colorHexagon = [UIColor.blueColor(), UIColor.cyanColor(), UIColor.greenColor(), UIColor.yellowColor(), UIColor.redColor(), UIColor.magentaColor(), UIColor.blueColor()]
+    let colorHexagon = [UIColor.blue, UIColor.cyan, UIColor.green, UIColor.yellow, UIColor.red, UIColor.magenta, UIColor.blue]
     
-    func hexagonIndicesFromColorIndices(maxI maxI: Int, secondI: Int) -> (Int, Int) {
+    func hexagonIndicesFromColorIndices(maxI: Int, secondI: Int) -> (Int, Int) {
         var pure = 2 * (2 - maxI)
         let mixed = 1 + 2 * ((maxI + secondI) % 3)
         if mixed == 5 && pure == 0 {
@@ -45,8 +45,8 @@ class TriangleView: UIView {
         return (pure, mixed)
     }
     
-    func locationOfColor(color: UIColor) -> (CGPoint, CGFloat) {
-        var rgb = Array<CGFloat>(count: 3, repeatedValue: 1)
+    func locationOfColor(_ color: UIColor) -> (CGPoint, CGFloat) {
+        var rgb = Array<CGFloat>(repeating: 1, count: 3)
         (rgb[0], rgb[1], rgb[2], _) = color.rgba
         var (maximum, second): (CGFloat, CGFloat) = (-1, -1)
         var (maxI, secondI) = (0, 0)
@@ -67,7 +67,7 @@ class TriangleView: UIView {
         let (pureW, mixedW) = (maximum - second, second - third)
         let whiteW = maximum - third == 1 ? 0 : third/(1 - (maximum - third))
         let (pureI, mixedI) = hexagonIndicesFromColorIndices(maxI: maxI, secondI: secondI)
-        let triangle = ColorTriangle(colorVertices: [colorHexagon[pureI], colorHexagon[mixedI], UIColor(white: whiteW, alpha: 1)], spatialVertices:  [geometricHexagon[pureI], geometricHexagon[mixedI], CGPointZero])
+        let triangle = ColorTriangle(colorVertices: [colorHexagon[pureI], colorHexagon[mixedI], UIColor(white: whiteW, alpha: 1)], spatialVertices:  [geometricHexagon[pureI], geometricHexagon[mixedI], CGPoint.zero])
         return (triangle.weightedAverageVertex(pureW, mixedW), whiteW)
     }
         
@@ -93,7 +93,7 @@ class TriangleView: UIView {
     
     lazy var geometricHexagon: [CGPoint] = {
         let piOver3 = M_PI/3
-        var _geometricHexagon = Array<CGPoint>(count: 7, repeatedValue: CGPoint())
+        var _geometricHexagon = Array<CGPoint>(repeating: CGPoint(), count: 7)
         for i in 0...6 {
             _geometricHexagon[i] = CGPoint(x: cos(i.double * piOver3), y: sin(i.double * piOver3))
         }
@@ -144,25 +144,25 @@ class TriangleView: UIView {
     }
     
     var geometricCenter: CGPoint {
-        return CGPointZero
+        return CGPoint.zero
     }
     
     var currentTransform: CGAffineTransform {
-        let innerTranslation = CGAffineTransformMakeTranslation(-centerX, -centerY)
-        let rescale = CGAffineTransformMakeScale(size, size)
-        let outerTranslation = CGAffineTransformMakeTranslation(bounds.width/2, bounds.height/2)
+        let innerTranslation = CGAffineTransform(translationX: -centerX, y: -centerY)
+        let rescale = CGAffineTransform(scaleX: size, y: size)
+        let outerTranslation = CGAffineTransform(translationX: bounds.width/2, y: bounds.height/2)
         return innerTranslation * rescale * outerTranslation
     }
     
-    func colorTriangle(i: Int) -> GradientColorTriangle {
+    func colorTriangle(_ i: Int) -> GradientColorTriangle {
         return GradientColorTriangle(colorVertices: [colorCenter, colorHexagon[i], colorHexagon[i+1]],
             spatialVertices: [geometricCenter, geometricHexagon[i], geometricHexagon[i+1]])
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
 //        let start = NSDate()
         let currentContext = UIGraphicsGetCurrentContext()
-        CGContextConcatCTM(currentContext, currentTransform)
+        currentContext?.concatenate(currentTransform)
         //        print("Drawing:")
         //        print("Now centered at: \(colorChoice.colorWithCenterColor(colorCenter))")
         for i in 0...5 {

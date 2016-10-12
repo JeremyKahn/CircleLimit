@@ -9,7 +9,7 @@
 import UIKit
 
 // MARK: Conversions between numbers
-func controlValueToInterval<T: Comparable>(value: T, min minimum: T, max maximum: T) -> T {
+func controlValueToInterval<T: Comparable>(_ value: T, min minimum: T, max maximum: T) -> T {
     return max(minimum, min(maximum, value))
 }
 
@@ -23,7 +23,7 @@ extension CGFloat {
         return Float(self)
     }
     
-    func controlledToInterval(minimum: CGFloat, _ maximum: CGFloat) -> CGFloat {
+    func controlledToInterval(_ minimum: CGFloat, _ maximum: CGFloat) -> CGFloat {
         return controlValueToInterval(self, min: minimum, max: maximum)
     }
 }
@@ -53,8 +53,8 @@ extension CGPoint {
         return x * x + y * y
     }
     
-    func transformedBy(transform: CGAffineTransform) -> CGPoint {
-        return CGPointApplyAffineTransform(self, transform)
+    func transformedBy(_ transform: CGAffineTransform) -> CGPoint {
+        return self.applying(transform)
     }
 }
 
@@ -75,7 +75,7 @@ extension Double {
 // MARK: Array operations
 
 extension Array {
-    func rotatedBy(k: Int) -> Array<Element> {
+    func rotatedBy(_ k: Int) -> Array<Element> {
         let n = self.count
         var newArray = self
         for i in 0..<n {
@@ -98,12 +98,12 @@ extension UIColor {
         return (r, g, b, a)
     }
     
-    func asIfWithAlpha(alpha: CGFloat) -> UIColor {
+    func asIfWithAlpha(_ alpha: CGFloat) -> UIColor {
         let (r, g, b, _) = rgba
         return UIColor(red: r * alpha, green: g * alpha, blue: b * alpha, alpha: 1)
     }
     
-    func withAlpha(alpha: CGFloat) -> UIColor {
+    func withAlpha(_ alpha: CGFloat) -> UIColor {
         let (r, g, b, _) = rgba
         return UIColor(red: r, green: g, blue: b, alpha: alpha)
     }
@@ -133,7 +133,7 @@ func -(left: CGPoint, right: CGPoint) -> CGPoint {
     return CGPoint(x: left.x - right.x, y: left.y - right.y)
 }
 
-func dotProduct(left: CGPoint, _ right: CGPoint) -> CGFloat {
+func dotProduct(_ left: CGPoint, _ right: CGPoint) -> CGFloat {
     return left.x * right.x + left.y * right.y
 }
 
@@ -141,7 +141,7 @@ func dotProduct(left: CGPoint, _ right: CGPoint) -> CGFloat {
 
 // Returns a transform that first performs 'left' and then 'right'
 func *(left: CGAffineTransform, right: CGAffineTransform) -> CGAffineTransform {
-    return CGAffineTransformConcat(left, right)
+    return left.concatenating(right)
 }
 
 

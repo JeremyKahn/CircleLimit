@@ -8,7 +8,7 @@
 
 import UIKit
 
-func centerPointAndRadius(points: [HPoint], delta: Double, startingAt startPoint: HPoint) -> (HPoint, Double) {
+func centerPointAndRadius(_ points: [HPoint], delta: Double, startingAt startPoint: HPoint) -> (HPoint, Double) {
     guard points.count > 0 else {
         return (HPoint(), 0.0)
     }
@@ -41,7 +41,7 @@ func centerPointAndRadius(points: [HPoint], delta: Double, startingAt startPoint
 
 
 
-func centerPointAndRadius(points: [HPoint], delta: Double) -> (HPoint, Double) {
+func centerPointAndRadius(_ points: [HPoint], delta: Double) -> (HPoint, Double) {
     guard points.count > 0 else {
         return (HPoint(), 0.0)
     }
@@ -49,7 +49,7 @@ func centerPointAndRadius(points: [HPoint], delta: Double) -> (HPoint, Double) {
 }
 
 // Right now our goal is not the optimal algorithm
-func wayToShiftFinishedAndRadius(points: [HPoint], delta: Double) -> (HyperbolicTransformation, Bool, Double) {
+func wayToShiftFinishedAndRadius(_ points: [HPoint], delta: Double) -> (HyperbolicTransformation, Bool, Double) {
     var maxAbs = 0.0
     var indexMax = 0
     for i in 0..<points.count {
@@ -66,7 +66,7 @@ func wayToShiftFinishedAndRadius(points: [HPoint], delta: Double) -> (Hyperbolic
     let cutoff = distanceToAbs(cutoffDistance)
     var closePoints = points.filter() { $0.abs > cutoff }
     let argMax = points[indexMax].arg
-    var shiftedArgs = Array<Double>(count: closePoints.count, repeatedValue: 0)
+    var shiftedArgs = Array<Double>(repeating: 0, count: closePoints.count)
     for i in 0..<closePoints.count {
         var arg = closePoints[i].arg - argMax
         arg = arg < Double.PI ? arg + 2 * Double.PI : arg

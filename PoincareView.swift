@@ -23,7 +23,7 @@ protocol PoincareViewDataSource : class {
 }
 
 
-func circlePath(center: CGPoint, radius: CGFloat) -> UIBezierPath {
+func circlePath(_ center: CGPoint, radius: CGFloat) -> UIBezierPath {
     let path =  UIBezierPath(arcCenter: center, radius: radius, startAngle: 0, endAngle: CGFloat(2 * M_PI), clockwise: false)
     return path
 }
@@ -58,7 +58,7 @@ class PoincareView: UIView {
     // MARK: Basic parameters from the view
     // The point at the center of view, where we'll put the center of the hyperbolic disk
     var viewCenter: CGPoint {
-        return convertPoint(center, fromView: superview)
+        return convert(center, from: superview)
     }
     
     // The radius of the view
@@ -79,11 +79,11 @@ class PoincareView: UIView {
     
     // The color for the boundary circle
     @IBInspectable
-    var circleColor = UIColor.blueColor()
+    var circleColor = UIColor.blue
     
     let cgturn = CGFloat(2 * M_PI)
     
-     func circlePath(center: CGPoint, radius: CGFloat) -> UIBezierPath {
+     func circlePath(_ center: CGPoint, radius: CGFloat) -> UIBezierPath {
         let path =  UIBezierPath(arcCenter: center, radius: radius, startAngle: 0, endAngle: cgturn, clockwise: false)
         path.lineWidth = lineWidth
         return path
@@ -92,27 +92,27 @@ class PoincareView: UIView {
     // MARK: The affine transform for the view
     var tf : CGAffineTransform {
         //        println("Scale is now \(scale)")
-        let t1 = CGAffineTransformMakeTranslation(viewCenter.x, viewCenter.y)
-        let t2 = CGAffineTransformScale(t1, scale, scale)
+        let t1 = CGAffineTransform(translationX: viewCenter.x, y: viewCenter.y)
+        let t2 = t1.scaledBy(x: scale, y: scale)
         return t2
     }
     
     // MARK: The drawing function
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         //        println("entering PoincareView.drawRect with \(objects.count) objects")
  
         if testingIBDesignable { dataSource = nil }
         
         print("\nStarting drawRect", when: tracingDrawRect)
-        let startTime = NSDate()
+        let startTime = Date()
         
         // Center the graphics context at the origin of the disk and scale according to the zoom scale
         let gcontext = UIGraphicsGetCurrentContext()
-        CGContextConcatCTM(gcontext, tf)
+        gcontext?.concatenate(tf)
 
         // Draw the boundary of the hyperbolic disk
         circleColor.set()
-        let boundaryCircle = circlePath(CGPointZero, radius: CGFloat(1.0))
+        let boundaryCircle = circlePath(CGPoint.zero, radius: CGFloat(1.0))
         boundaryCircle.lineWidth = lineWidth
         boundaryCircle.stroke()
    
@@ -129,13 +129,13 @@ class PoincareView: UIView {
         // The view controller is supposed to hand the view the objects that intersect a disk of radius cutoffDistance around the origin
         // This draws the boundary of that disk in red
         if showRedCircle {
-            UIColor.redColor().colorWithAlphaComponent(0.75).set()
-            let cutoffCircle = circlePath(CGPointZero, radius: CGFloat(distanceToAbs(cutoffDistance)))
+            UIColor.red.withAlphaComponent(0.75).set()
+            let cutoffCircle = circlePath(CGPoint.zero, radius: CGFloat(distanceToAbs(cutoffDistance)))
             cutoffCircle.lineWidth = lineWidth/2
             cutoffCircle.stroke()
         }
         
-        let timeToDrawInMilliseconds = NSDate().timeIntervalSinceDate(startTime) * 1000
+        let timeToDrawInMilliseconds = Date().timeIntervalSince(startTime) * 1000
         print("Finished with drawRect.  Time taken: \(timeToDrawInMilliseconds.int) ms", when: tracingDrawRect)
     }
 }
