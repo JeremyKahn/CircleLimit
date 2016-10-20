@@ -59,6 +59,12 @@ extension Timer {
     
 }
 
+extension Character {
+    var int: Int? {
+        return Int(String(self))
+    }
+}
+
 extension Date {
     
     var millisecondsToPresent: Int {

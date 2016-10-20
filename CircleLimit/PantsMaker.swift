@@ -38,10 +38,26 @@ class CuffPlaceholder {
         return result
     }
     
+    var nc: NumberCuff {
+        return NumberCuff(c: self)
+    }
 }
 
 enum CuffType {
     case normal, folded, reflected, glideReflected
+    
+    var defaultCuff: CuffPlaceholder {
+        switch self {
+        case .normal, .folded:
+            return CuffPlaceholder(halfLength: 1.0, twist: 0.1)
+        case .reflected, .glideReflected:
+            return CuffPlaceholder(halfLength: 1.0)
+        }
+    }
+    
+    var numberCuff: NumberCuff {
+        return NumberCuff(c: defaultCuff, type: self)
+    }
 }
 
 
@@ -53,6 +69,10 @@ enum NumberCuff {
     case cuff(CuffPlaceholder, CuffType)
     
     init(n: Int) {
+        if n == -22 {
+            self = .cuff(CuffType.folded.defaultCuff, CuffType.folded)
+            return
+        }
         guard n > 1 else { fatalError() }
         self = .number(n)
     }
