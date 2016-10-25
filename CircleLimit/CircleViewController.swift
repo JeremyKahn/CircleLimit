@@ -46,7 +46,22 @@ struct MatchedPoint {
 class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureRecognizerDelegate, ColorPickerDelegate, EnterGroupDelegate {
     
     var enterGroupString: String = "" {
-        didSet { print("enterGroupString: \(enterGroupString)") }
+        didSet {
+            print("enterGroupString: \(enterGroupString)")
+            do {
+                let newPants = try placeholders(conway: enterGroupString)
+                surface = surfaceFromPlaceholders(newPants)
+                setUpGroupAndGuidelinesForPants()
+                poincareView.setNeedsDisplay()
+            } catch BadConway.badParse {
+                print("Bad Conway string: " + enterGroupString)
+            } catch BadConway.nonNegativeEuler {
+                print("Orbifold must have negative Euler characteristic")
+            } catch {
+                print("Unknown error: \(error)")
+                fatalError()
+            }
+        }
     }
     
     enum Mode {
@@ -876,7 +891,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 }
                 print("Rescaling cuff by " + gesture.scale.nice, when: tracingZoom)
                 // This changes everything
-                cuff.length = cuff.length * gesture.scale.double
+                cuff.halfLength = cuff.halfLength * gesture.scale.double
                 gesture.scale = 1
                 recordChangesForCuff(cuff)
             } else {

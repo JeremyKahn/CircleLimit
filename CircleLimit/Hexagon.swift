@@ -61,7 +61,7 @@ class Hexagon {
     var baseMask: HTrans!
     
     /// The color to be used to draw the hexagon, as a guideline
-    var color = UIColor.purple
+    var color = UIColor.green
     
     /// the lengths of the sides
     var sideLengths = Array<Complex64>(repeating: acosh(2.0 + 0.i), count: 6)

@@ -159,6 +159,8 @@ extension Array {
         let incremented = instructions.map { ($0.0 + 1, $0.1) }
         insertAtIndices(incremented)
     }
+    
+    
 
     func at(_ indices: [Int]) -> [Element] {
         return indices.map({self[$0]})
@@ -171,7 +173,23 @@ extension Array {
     func sortByFunction<U: Comparable>(_ f: (Element) -> U) -> [Element] {
         return sorted(by: {f($0) < f($1)})
     }
+    
+    func sum<T: Summable>(_ f: @escaping (Element) -> T) -> T {
+        return reduce(T.zero, {$0 + f($1)})
+    }
 
+}
+
+extension Double: Summable {
+    
+    static var zero = 0.0
+    
+}
+
+protocol Summable {
+    static func+(lhs: Self, rhs: Self) -> Self
+    
+    static var zero: Self {get}
 }
 
 // MARK: Geometry

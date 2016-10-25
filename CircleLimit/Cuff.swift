@@ -20,8 +20,19 @@ struct PantsCuff {
     
 }
 
+enum CuffInfo {
+    
+    case normal
+    case normalWithPartner(Cuff)
+    case reflected
+    case glideReflected
+
+}
+
 /// A cuff, with two associated pants
 class Cuff {
+    
+    var cuffInfo: CuffInfo = .normal
     
     // The point at the middle of the selected cuff segment
     var baseMask: HTrans {
@@ -37,9 +48,23 @@ class Cuff {
         return pants.baseMask.appliedTo(pants.hexagons[0].end[sideIndex])
     }
     
+    private var signalPartner = true
+    
     var twist: Double  {
         didSet {
-            setUpTwistsAndGroupoidElementsForThisCuff()
+            switch cuffInfo {
+            case .reflected, .glideReflected:
+                twist = oldValue
+            case .normal:
+                setUpTwistsAndGroupoidElementsForThisCuff()
+            case .normalWithPartner(let partner):
+                setUpTwistsAndGroupoidElementsForThisCuff()
+            if signalPartner  {
+                partner.signalPartner = false
+                partner.twist = twist
+                partner.signalPartner = true
+                }
+            }
         }
     }
     
@@ -55,10 +80,24 @@ class Cuff {
         }
     }
     
-    var length: Double {
+    var halfLength: Double {
         didSet {
-            for pantsCuff in pantsCuffs {
-                pantsCuff?.setLength(length)
+            switch cuffInfo {
+            case .normalWithPartner(let partner):
+                if signalPartner {
+                    partner.signalPartner = false
+                    partner.halfLength = halfLength
+                    partner.signalPartner = true
+                }
+                fallthrough
+            case .normal:
+                for pantsCuff in pantsCuffs {
+                    pantsCuff?.setLength(halfLength)
+                }
+            case .glideReflected:
+                twist = halfLength
+            case .reflected:
+                break
             }
         }
     }
@@ -80,11 +119,11 @@ class Cuff {
     
     init(pants0: Pants, index0: Int, pants1: Pants, index1: Int, twist: Double) {
         self.twist = twist
-        self.length = pants0.cuffHalfLengths[index0].re
+        self.halfLength = pants0.cuffHalfLengths[index0].re
         pantsCuffs[0] = PantsCuff(pants: pants0, index: index0)
         pantsCuffs[1] = PantsCuff(pants: pants1, index: index1)
         //        assert((length - pants1.cuffHalfLengths[index1]).abs < Cuff.matchingTolerance)
-        assert(self.length == pants1.cuffHalfLengths[index1])
+        assert(self.halfLength == pants1.cuffHalfLengths[index1])
         setUpTwistsAndGroupoidElementsForThisCuff()
     }
     

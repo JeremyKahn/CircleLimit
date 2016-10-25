@@ -9,7 +9,7 @@
 import UIKit
 
 /// Keeps track of two NumberCuff's that in turn point back here, so that they can find each other
-class CuffPlaceholder {
+class CuffPlaceholder: Hashable {
     
     var pantsCuffArrays: [[PantsCuff]] = [[], []]
     
@@ -41,16 +41,23 @@ class CuffPlaceholder {
     var nc: NumberCuff {
         return NumberCuff(c: self)
     }
+    
+    var hashValue: Int = 0
+}
+
+
+func==(lhs: CuffPlaceholder, rhs: CuffPlaceholder) -> Bool {
+    return lhs === rhs
 }
 
 enum CuffType {
-    case normal, folded, reflected, glideReflected
+    case normal, folded, reflected, glideReflected, bisected
     
     var defaultCuff: CuffPlaceholder {
         switch self {
         case .normal, .folded:
             return CuffPlaceholder(halfLength: 1.0, twist: 0.1)
-        case .reflected, .glideReflected:
+        case .reflected, .glideReflected, .bisected:
             return CuffPlaceholder(halfLength: 1.0)
         }
     }
@@ -70,7 +77,7 @@ enum NumberCuff {
     
     init(n: Int) {
         if n == -22 {
-            self = .cuff(CuffType.folded.defaultCuff, CuffType.folded)
+            self = CuffType.reflected.numberCuff
             return
         }
         guard n > 1 else { fatalError() }
@@ -239,7 +246,18 @@ class PantsPlaceholder {
 }
 
 // At some point we should check that we have a valid pants, with 1/p + 1/q + 1/r < 1 (and actual cuffs count as infinity)
-func surfaceFromPlaceholders(_ pantsPlaceholders: [PantsPlaceholder], cuffPlaceholders: [CuffPlaceholder]) -> Surface {
+func surfaceFromPlaceholders(_ pantsPlaceholders: [PantsPlaceholder]) -> Surface {
+
+    var cpSet = Set<CuffPlaceholder>()
+    for p in pantsPlaceholders {
+        for nc in p.cuffArray {
+            if let c = nc.cuff {
+                cpSet.insert(c)
+            }
+        }
+    }
+    let cuffPlaceholders = Array(cpSet)
+    
     let hasReflection = pantsPlaceholders.reduce(false, {$0 || $1.hasReflection})
     var pantsArray: [Pants]
     var cuffArray: [Cuff]
