@@ -11,20 +11,39 @@ import UIKit
 /// Keeps track of two NumberCuff's that in turn point back here, so that they can find each other
 class CuffPlaceholder: Hashable {
     
+    var type: CuffType
+    
     var pantsCuffArrays: [[PantsCuff]] = [[], []]
     
-    var halfLength = 1.0
+    var halfLength: Double
     
-    var twist = 0.0
+    var twist: Double
     
-    init(halfLength: Double, twist: Double) {
+    init(halfLength: Double, twist: Double, type: CuffType) {
         self.halfLength = halfLength
-        self.twist = twist
+        self.type = type
+        switch type {
+        case .folded, .normal:
+            self.twist = twist
+        case .reflected:
+            self.twist = 0.0
+        case .glideReflected:
+            self.twist = halfLength
+        }
+        
     }
     
     // Should be used for any cuff where there's any kind of reflection
-    init(halfLength: Double) {
-        self.halfLength = halfLength
+    convenience init(halfLength: Double, type: CuffType) {
+        self.init(halfLength: halfLength, twist: 0.0, type:type)
+    }
+    
+    convenience init(halfLength: Double, twist: Double)  {
+        self.init(halfLength: halfLength, twist: twist, type: CuffType.normal)
+    }
+    
+    convenience init(halfLength: Double) {
+        self.init(halfLength: halfLength, twist: 0.0, type: .normal)
     }
 
     /// This should be called only once!
@@ -34,6 +53,18 @@ class CuffPlaceholder: Hashable {
         var result: [Cuff] = [Cuff(pantsCuff0: pantsCuffArray0[0], pantsCuff1: pantsCuffArray0[1], twist: twist)]
         if pantsCuffArrays[1].count > 0 {
             result.append(Cuff(pantsCuff0: pantsCuffArray1[0], pantsCuff1: pantsCuffArray1[1], twist: -twist))
+            for i in 0...1 {
+                result[i].info = CuffInfo.normalWithPartner(result[1-i])
+            }
+        } else {
+            switch type {
+            case .normal, .folded:
+                result[0].info = .normal
+            case .reflected:
+                result[0].info = .reflected
+            case .glideReflected:
+                result[0].info = .glideReflected
+            }
         }
         return result
     }
@@ -51,19 +82,19 @@ func==(lhs: CuffPlaceholder, rhs: CuffPlaceholder) -> Bool {
 }
 
 enum CuffType {
-    case normal, folded, reflected, glideReflected, bisected
+    case normal, folded, reflected, glideReflected
     
     var defaultCuff: CuffPlaceholder {
         switch self {
         case .normal, .folded:
-            return CuffPlaceholder(halfLength: 1.0, twist: 0.1)
-        case .reflected, .glideReflected, .bisected:
-            return CuffPlaceholder(halfLength: 1.0)
+            return CuffPlaceholder(halfLength: 1.0, twist: 0.1, type: self)
+        case .reflected, .glideReflected:
+            return CuffPlaceholder(halfLength: 1.0, type: self)
         }
     }
     
     var numberCuff: NumberCuff {
-        return NumberCuff(c: defaultCuff, type: self)
+        return NumberCuff(c: defaultCuff)
     }
 }
 
@@ -73,7 +104,7 @@ enum NumberCuff {
     
     case number(Int)
     
-    case cuff(CuffPlaceholder, CuffType)
+    case cuff(CuffPlaceholder)
     
     init(n: Int) {
         if n == -22 {
@@ -85,20 +116,13 @@ enum NumberCuff {
     }
     
     init(c: CuffPlaceholder) {
-        self = .cuff(c, .normal)
+        self = .cuff(c)
     }
     
 
-    init(c: CuffPlaceholder, type: CuffType) {
-        self = .cuff(c, type)
-        if type == .glideReflected {
-            c.twist = c.halfLength
-        }
-    }
-
     var cuff: CuffPlaceholder? {
         switch self {
-        case .cuff(let c, _):
+        case .cuff(let c):
             return c
         default:
             return nil
@@ -118,8 +142,8 @@ enum NumberCuff {
         var pants = pants
         var index = index
         switch self {
-        case .cuff(let c, let type):
-            switch type {
+        case .cuff(let c):
+            switch c.type {
             case .reflected, .glideReflected:
                 // We're omitting some error correction
                 if pants.count == 1 {
@@ -232,8 +256,8 @@ class PantsPlaceholder {
         case .whole:
             var result = false
             for i in 0...2 {
-                if case let NumberCuff.cuff(_, cuffType) = cuffArray[i] {
-                    if cuffType == CuffType.reflected || cuffType == CuffType.glideReflected {
+                if case let NumberCuff.cuff(c) = cuffArray[i] {
+                    if c.type == CuffType.reflected || c.type == CuffType.glideReflected {
                         result = true
                     }
                 }

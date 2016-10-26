@@ -64,11 +64,11 @@ enum TestType {
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(p), NumberCuff.number(q), NumberCuff(c: cuff1)]))
             pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(r), NumberCuff.number(s), NumberCuff(c: cuff1)]))
         case .t2223:
-            let cuff1 = CuffPlaceholder(halfLength: 1, twist: 0.1)
-            pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(2), NumberCuff.number(3), NumberCuff(c: cuff1, type: .folded)]))
+            let cuff1 = CuffPlaceholder(halfLength: 1, twist: 0.1, type: .folded)
+            pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(2), NumberCuff.number(3), NumberCuff(c: cuff1)]))
         case .reflectedT2223:
-            let cuff1 = CuffPlaceholder(halfLength: 1)
-            pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(2), NumberCuff.number(3), NumberCuff(c: cuff1, type: .folded)], type: PantsPlaceholderType.threeZeroHalf))
+            let cuff1 = CuffPlaceholder(halfLength: 1, type: .folded)
+            pants.append(PantsPlaceholder(cuffArray: [NumberCuff.number(2), NumberCuff.number(3), NumberCuff(c: cuff1)], type: PantsPlaceholderType.threeZeroHalf))
         }
         return pants
     }
