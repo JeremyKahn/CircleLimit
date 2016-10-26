@@ -90,28 +90,30 @@ class Cuff {
     private var _halfLength: Double
     
     var halfLength: Double {
-        return _halfLength
-    }
-    
-    func setHalfLength(_ newLength: Double) {
-        _halfLength = newLength
-        
-        switch info {
-        case .normalWithPartner(let partner):
-            if signalPartner {
-                partner.signalPartner = false
-                partner.setHalfLength(newLength)
-                partner.signalPartner = true
-            }
-        case .glideReflected:
-            _twist = halfLength
-            setUpTwistsAndGroupoidElementsForThisCuff()
-        case .reflected, .normal:
-            break
+        get {
+            return _halfLength
         }
-        
-        for pantsCuff in pantsCuffs {
-            pantsCuff?.setLength(halfLength)
+        set (newLength) {
+            _halfLength = newLength
+            
+            switch info {
+            case .normalWithPartner(let partner):
+                if signalPartner {
+                    partner.signalPartner = false
+                    partner.halfLength = newLength
+                    partner.signalPartner = true
+                }
+            case .glideReflected:
+                _twist = halfLength
+                setUpTwistsAndGroupoidElementsForThisCuff()
+            case .reflected, .normal:
+                break
+            }
+            
+            for pantsCuff in pantsCuffs {
+                pantsCuff?.setLength(halfLength)
+            }
+
         }
     }
     

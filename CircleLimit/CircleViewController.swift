@@ -891,7 +891,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 }
                 print("Rescaling cuff by " + gesture.scale.nice, when: tracingZoom)
                 // This changes everything
-                cuff.setHalfLength(cuff.halfLength * gesture.scale.double)
+                cuff.halfLength = cuff.halfLength * gesture.scale.double
                 gesture.scale = 1
                 recordChangesForCuff(cuff)
             } else {
