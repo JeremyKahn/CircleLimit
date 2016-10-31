@@ -43,8 +43,7 @@ enum Feature {
                 return (nc, [p])
             default:
                 let nc = CuffType.normal.numberCuff
-                let c = CuffPlaceholder(halfLength: 1.0)
-                let nc2 = NumberCuff(c: c)
+                let nc2 = CuffType.halfWhole.numberCuff
                 let p = PantsPlaceholder(halfCuff: nc2, wholeCuff: nc)
                 var pants = halfPants(halfCuff: nc2)!
                 pants.append(p)
@@ -64,8 +63,7 @@ enum Feature {
             if list.count == 1 {
                 let p = PantsPlaceholder(halfCuff: NumberCuff(n: list[0]), wholeCuff: nc)
                 return [p]            }
-            let c = CuffPlaceholder(halfLength: 1.0)
-            let nc2 = NumberCuff(c: c)
+            let nc2 = CuffType.halfWhole.numberCuff
             var pants = halfPants(halfCuff: nc2)!
             let p = PantsPlaceholder(halfCuff: nc2, wholeCuff: nc)
             pants.append(p)
@@ -94,8 +92,7 @@ enum Feature {
         var pants: [PantsPlaceholder] = []
         var oldNC = halfCuff
         for i in 0..<list.count - 2 {
-            let cc = CuffPlaceholder(halfLength: 1.0)
-            let newNC = NumberCuff(c: cc)
+            let newNC = CuffType.bisected.numberCuff
             let pp = PantsPlaceholder(cuffArray: [oldNC, NumberCuff(n: list[i]), newNC], type: .threeZeroHalf)
             oldNC = newNC
             pants.append(pp)
@@ -220,6 +217,8 @@ func placeholders(conway: String) throws -> [PantsPlaceholder]  {
     }
     var pants: [PantsPlaceholder] = []
     
+    PantsPlaceholder.pantsColorIndex = 0
+    
     switch features.count {
         
     case 0:
@@ -243,8 +242,7 @@ func placeholders(conway: String) throws -> [PantsPlaceholder]  {
          default:
             let nc0 = NumberCuff(n: list.popLast()!)
             let nc1 = NumberCuff(n: list.popLast()!)
-            let c = CuffPlaceholder(halfLength: 1.0)
-            let nc = NumberCuff(c: c)
+            let nc = CuffType.bisected.numberCuff
             let p = PantsPlaceholder(cuffArray: [nc, nc0, nc1], type: PantsPlaceholderType.threeZeroHalf)
             let newFeature = Feature.reflection(list)
             let pp = newFeature.halfPants(halfCuff: nc)!

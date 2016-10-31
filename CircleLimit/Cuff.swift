@@ -24,9 +24,9 @@ enum CuffInfo {
     
     case normal
     case normalWithPartner(Cuff)
-    case reflected
-    case glideReflected
-    
+    case zeroTwist
+    case halfTwist
+    case quarterTwist
 }
 
 /// A cuff, with two associated pants
@@ -65,7 +65,7 @@ class Cuff {
             case .normal:
                 _twist = newTwist
                 setUpTwistsAndGroupoidElementsForThisCuff()
-            case .glideReflected, .reflected:
+            case .zeroTwist, .halfTwist, .quarterTwist:
                 break
             }
         }
@@ -103,10 +103,13 @@ class Cuff {
                     partner.halfLength = newLength
                     partner.signalPartner = true
                 }
-            case .glideReflected:
+            case .halfTwist:
                 _twist = halfLength
                 setUpTwistsAndGroupoidElementsForThisCuff()
-            case .reflected, .normal:
+            case .quarterTwist:
+                _twist = halfLength/2
+                setUpTwistsAndGroupoidElementsForThisCuff()
+            case .zeroTwist, .normal:
                 break
             }
             

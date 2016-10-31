@@ -25,10 +25,12 @@ class CuffPlaceholder: Hashable {
         switch type {
         case .folded, .normal:
             self.twist = twist
-        case .reflected:
+        case .reflected, .bisected:
             self.twist = 0.0
-        case .glideReflected:
+        case .glideReflected, .bisectedReflected:
             self.twist = halfLength
+        case .halfWhole:
+            self.twist = halfLength/2
         }
         
     }
@@ -60,10 +62,12 @@ class CuffPlaceholder: Hashable {
             switch type {
             case .normal, .folded:
                 result[0].info = .normal
-            case .reflected:
-                result[0].info = .reflected
-            case .glideReflected:
-                result[0].info = .glideReflected
+            case .reflected, .bisected:
+                result[0].info = .zeroTwist
+            case .glideReflected, .bisectedReflected:
+                result[0].info = .halfTwist
+            case .halfWhole:
+                result[0].info = .quarterTwist
             }
         }
         return result
@@ -82,13 +86,15 @@ func==(lhs: CuffPlaceholder, rhs: CuffPlaceholder) -> Bool {
 }
 
 enum CuffType {
-    case normal, folded, reflected, glideReflected
+    case normal, folded, reflected, glideReflected, bisected, bisectedReflected, halfWhole
     
     var defaultCuff: CuffPlaceholder {
         switch self {
-        case .normal, .folded:
+        case .normal:
             return CuffPlaceholder(halfLength: 1.0, twist: 0.1, type: self)
-        case .reflected, .glideReflected:
+        case .folded:
+            return CuffPlaceholder(halfLength: 1.0, twist: 1.1, type: self)
+        case .reflected, .glideReflected, .bisected, .bisectedReflected, .halfWhole:
             return CuffPlaceholder(halfLength: 1.0, type: self)
         }
     }
@@ -96,6 +102,17 @@ enum CuffType {
     var numberCuff: NumberCuff {
         return NumberCuff(c: defaultCuff)
     }
+    
+    var bisected: Bool {
+        switch self {
+        case .bisected, .bisectedReflected:
+            return true
+        default:
+            return false
+        }
+    }
+
+    
 }
 
 
@@ -108,7 +125,7 @@ enum NumberCuff {
     
     init(n: Int) {
         if n == -22 {
-            self = CuffType.reflected.numberCuff
+            self = CuffType.bisectedReflected.numberCuff
             return
         }
         guard n > 1 else { fatalError() }
@@ -151,11 +168,11 @@ enum NumberCuff {
                     index.append(index[0])
                 }
                 c.pantsCuffArrays[0] = [0, 1].map() {PantsCuff(pants: pants[$0], index: index[$0]) }
-            case .normal:
+            case .normal, .bisected, .halfWhole:
                 for i in 0..<pants.count {
                     c.pantsCuffArrays[i].append(PantsCuff(pants: pants[i], index: index[i]))
                 }
-            case .folded:
+            case .folded, .bisectedReflected:
                 for i in 0..<pants.count {
                     c.pantsCuffArrays[i].append(PantsCuff(pants: pants[i], index: index[i]))
                     c.pantsCuffArrays[i].append(PantsCuff(pants: pants[i], index: index[i]))
@@ -179,7 +196,12 @@ enum PantsPlaceholderType {
     case oneOneHalf
 }
 
+// TODO: Check the the right type of Cuffs are being entered (bisected or not)
 class PantsPlaceholder {
+    
+    static let pantsColorList = [UIColor.green, UIColor.gray, UIColor.orange, UIColor.yellow, UIColor.purple, UIColor.brown]
+    
+    static var pantsColorIndex = 0
     
     var cuffArray: [NumberCuff]
     
@@ -246,6 +268,14 @@ class PantsPlaceholder {
             pants = [Pants(cuffHalfLengths: [cuffArray[0].cuffRotation, cuffArray[1].cuffRotation, cuffArray[1].cuffRotation])]
             cuffArray[0].enterPantsCuff(pants: pants, index: [0])
             cuffArray[1].enterPantsCuff(pants: [pants[0], pants[0]], index: [1, 2])
+        }
+        let color = PantsPlaceholder.pantsColorList[PantsPlaceholder.pantsColorIndex]
+        for p in pants {
+            p.color = color
+        }
+        PantsPlaceholder.pantsColorIndex += 1
+        if PantsPlaceholder.pantsColorIndex >= PantsPlaceholder.pantsColorList.count {
+            PantsPlaceholder.pantsColorIndex = 0
         }
     }
     
