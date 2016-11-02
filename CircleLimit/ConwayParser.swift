@@ -39,7 +39,7 @@ enum Feature {
                 return (CuffType.reflected.numberCuff, [])
             case 1:
                 let nc = CuffType.normal.numberCuff
-                let p = PantsPlaceholder(halfCuff: NumberCuff(n: list[0]), wholeCuff: nc)
+                let p = PantsPlaceholder(halfCuff: NumberCuff(n: list[0], halfWhole: true), wholeCuff: nc)
                 return (nc, [p])
             default:
                 let nc = CuffType.normal.numberCuff
@@ -61,8 +61,9 @@ enum Feature {
         case .reflection(let list):
             guard list.count >= 1 else { return nil }
             if list.count == 1 {
-                let p = PantsPlaceholder(halfCuff: NumberCuff(n: list[0]), wholeCuff: nc)
-                return [p]            }
+                let p = PantsPlaceholder(halfCuff: NumberCuff(n: list[0], halfWhole: true), wholeCuff: nc)
+                return [p]
+            }
             let nc2 = CuffType.halfWhole.numberCuff
             var pants = halfPants(halfCuff: nc2)!
             let p = PantsPlaceholder(halfCuff: nc2, wholeCuff: nc)

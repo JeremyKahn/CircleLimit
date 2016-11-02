@@ -25,7 +25,7 @@ class CuffPlaceholder: Hashable {
         switch type {
         case .folded, .normal:
             self.twist = twist
-        case .reflected, .bisected:
+        case .reflected, .bisected, .bisectedReflectedHalfWhole:
             self.twist = 0.0
         case .glideReflected, .bisectedReflected:
             self.twist = halfLength
@@ -62,7 +62,7 @@ class CuffPlaceholder: Hashable {
             switch type {
             case .normal, .folded:
                 result[0].info = .normal
-            case .reflected, .bisected:
+            case .reflected, .bisected, .bisectedReflectedHalfWhole:
                 result[0].info = .zeroTwist
             case .glideReflected, .bisectedReflected:
                 result[0].info = .halfTwist
@@ -86,7 +86,7 @@ func==(lhs: CuffPlaceholder, rhs: CuffPlaceholder) -> Bool {
 }
 
 enum CuffType {
-    case normal, folded, reflected, glideReflected, bisected, bisectedReflected, halfWhole
+    case normal, folded, reflected, glideReflected, bisected, bisectedReflected, halfWhole, bisectedReflectedHalfWhole
     
     var defaultCuff: CuffPlaceholder {
         switch self {
@@ -94,7 +94,7 @@ enum CuffType {
             return CuffPlaceholder(halfLength: 1.0, twist: 0.1, type: self)
         case .folded:
             return CuffPlaceholder(halfLength: 1.0, twist: 1.1, type: self)
-        case .reflected, .glideReflected, .bisected, .bisectedReflected, .halfWhole:
+        case .reflected, .glideReflected, .bisected, .bisectedReflected, .halfWhole, .bisectedReflectedHalfWhole:
             return CuffPlaceholder(halfLength: 1.0, type: self)
         }
     }
@@ -105,7 +105,7 @@ enum CuffType {
     
     var bisected: Bool {
         switch self {
-        case .bisected, .bisectedReflected:
+        case .bisected, .bisectedReflected, .bisectedReflectedHalfWhole:
             return true
         default:
             return false
@@ -130,6 +130,14 @@ enum NumberCuff {
         }
         guard n > 1 else { fatalError() }
         self = .number(n)
+    }
+    
+    init(n: Int, halfWhole: Bool) {
+        if n == -22 && halfWhole {
+            self = CuffType.bisectedReflectedHalfWhole.numberCuff
+        } else {
+            self = NumberCuff(n: n)
+        }
     }
     
     init(c: CuffPlaceholder) {
@@ -172,7 +180,7 @@ enum NumberCuff {
                 for i in 0..<pants.count {
                     c.pantsCuffArrays[i].append(PantsCuff(pants: pants[i], index: index[i]))
                 }
-            case .folded, .bisectedReflected:
+            case .folded, .bisectedReflected, .bisectedReflectedHalfWhole:
                 for i in 0..<pants.count {
                     c.pantsCuffArrays[i].append(PantsCuff(pants: pants[i], index: index[i]))
                     c.pantsCuffArrays[i].append(PantsCuff(pants: pants[i], index: index[i]))
