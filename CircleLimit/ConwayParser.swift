@@ -263,10 +263,27 @@ func placeholders(conway: String) throws -> [PantsPlaceholder]  {
         } else {
             fatalError()
         }
-        let (nc, p) = s.numberCuff
-        let pp = D.pantsFromCuff(nc: nc)!
-        pants = p + pp
-
+        var specialCase = false
+        // This whole nested mess searches for the special case where s = .conePoint(2) and D = .reflection
+        switch s {
+        case .conePoint(let nn):
+            if nn == 2 {
+                switch D {
+                case .reflection:
+                    specialCase = true
+                    pants = D.halfPants(halfCuff: CuffType.bisectedReflectedHalfWhole.numberCuff)!
+                default:
+                    break
+                }
+            }
+        default:
+            break
+        }
+        if !specialCase {
+            let (nc, p) = s.numberCuff
+            let pp = D.pantsFromCuff(nc: nc)!
+            pants = p + pp
+        }
         
     case 3:
         var numberCuffs: [NumberCuff] = []
