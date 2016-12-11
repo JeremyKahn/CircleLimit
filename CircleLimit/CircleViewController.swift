@@ -107,12 +107,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // MARK: Guidelines
     var guidelines: [HDrawable] {
-        return drawOnlyHexagonTesselation ? hexagonTesselation : generalGuidelines + surface.cuffGuidelines
+        return drawOnlyHexagonTesselation ? hexagonTesselation : surface.generalGuidelines + surface.cuffGuidelines
     }
-    
-    var generalGuidelines: [HDrawable] = []
-    
-    var hexagonGuidelines: [HDrawable] = []
     
     var hexagonTesselation: [HDrawable] {
         return surface.hexagonTesselation
@@ -156,28 +152,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var hexagons: [Hexagon] {
         return [Hexagon](surface.pantsArray.map({$0.hexagons}).joined())
     }
-    
-//    var hexagonEntrys: [[(Int, HTrans, Int)]] {
-//        var result: [[(Int, HTrans, Int)]] = []
-//        for h in hexagons {
-//            let list = h.neighbor.map() {
-//                (e: HexagonEntry) -> (Int, HTrans, Int) in
-//                (e.entryIndex, e.motion, e.hexagon!.id)
-//            }
-//            result.append(list)
-//        }
-//        return result
-//    }
-    
-    
-    //    var cuffGuidelines: [HDrawable] {
-    //        return pants.cuffGuidelines
-    //    }
-    //
-    //    var orthoGuidelines: [HDrawable] {
-    //        return pants.orthoGuidelines
-    //    }
-    
+       
     var canEditPants: Bool {
         return drawGuidelines
     }

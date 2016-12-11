@@ -24,6 +24,7 @@ extension CircleViewController {
         groupGenerationCutoffDistance = largeGenerationDistance
     }
     
+    // This guy is deprecated and is not necessarily being maintained
     func setUpThreeThreeFourGroup() {
         var generators: [HyperbolicTransformation] = []
         var guidelines: [HDrawable] = []
@@ -50,7 +51,6 @@ extension CircleViewController {
             assert(a.following(b).following(c) == ColorNumberPermutation())
             twistedGenerators = [Action(M: A, P: a), Action(M: B, P: b), Action(M: C, P: c)]
         }
-        self.generalGuidelines = guidelines
         let bigGroup = generatedGroup(twistedGenerators, bigCutoff: bigGroupCutoff)
         makeGroupForIntegerDistanceWith(bigGroup)
         // Right now this is just a guess
@@ -74,8 +74,7 @@ extension CircleViewController {
         if let i = cuffEditIndex {
             surface.cuffGuidelines[i].lineColor = UIColor.red
         }
-        generalGuidelines = surface.generalGuidelines
- 
+
         // Set up the groups
         let dressedGroup = group.map() {Action(M: $0)}
         makeGroupForIntegerDistanceWith(dressedGroup)

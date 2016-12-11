@@ -21,7 +21,6 @@ class Surface {
     
     var hexagonTesselation: [HDrawable] = []
     var generalGuidelines: [HDrawable] = []
-//    var hexagonGuidelines: [HDrawable] = []
     var cuffGuidelines: [HDrawable] = []
     
     init(pantsArray: [Pants], cuffArray: [Cuff]) {
