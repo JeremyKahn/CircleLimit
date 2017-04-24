@@ -87,4 +87,26 @@ func fastLeastFixedPoint<T, U>(_ base: [T], expand: (T) -> [T], good: (T) -> Boo
     print("\(answer.count) elements generated.")
     return answer
 }
- 
+
+func priorityBasedFixedPoint<T, U>(base: [T], expand: (T) -> [T], priority: (T) -> Int, priorityMax: Int, batchSize: Int, timeLimitInMilliseconds: Int, project: (T) -> U) -> ([T], [U]) {
+    let queueTable = QueueTable<T>(maxPriority: priorityMax)
+    var allNewObjects: [T] = []
+    for object in base {
+        queueTable.add(object, priority: priority(object))
+    }
+    let startTime = Date()
+    MAIN: while startTime.millisecondsToPresent < timeLimitInMilliseconds {
+        for _ in 0...batchSize {
+            guard queueTable.hasNext else { break MAIN }
+            let object = queueTable.getNext!
+            let newObjects = expand(object)
+            allNewObjects += newObjects
+            for newObject in newObjects {
+                queueTable.add(newObject, priority: priority(newObject))
+            }
+        }
+    }
+    let answer = allNewObjects.map(project)
+    let leftovers = queueTable.asArray
+    return (leftovers, answer)
+}
