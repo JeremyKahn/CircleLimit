@@ -10,11 +10,18 @@ import UIKit
 
 class HPoint : Equatable, CustomStringConvertible {
     
+    static let maxDistance = 35.0
+    
+    static let maxAbs = distanceToAbs(HPoint.maxDistance)
+    
     init() { self.z = 0.i }
     
     init(_ z: Complex64) {
-        assert(z.abs2 < 1)
+        assert(z.abs < 1.0000001)
         self.z = z
+        if z.abs > HPoint.maxAbs {
+            self.z.abs = HPoint.maxAbs
+        }
     }
     
     var z: Complex64
@@ -136,7 +143,11 @@ func absToSinhDistance(_ a: Double) -> Double {
 }
 
 func absToDistance(_ a: Double) -> Double {
-    return log((1 + a)/(1 - a))
+    if a < 1 {
+        return log((1 + a)/(1 - a))
+    } else {
+        return HPoint.maxDistance
+    }
 }
 
 func distanceToAbs(_ d: Double) -> Double {

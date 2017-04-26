@@ -88,14 +88,16 @@ func fastLeastFixedPoint<T, U>(_ base: [T], expand: (T) -> [T], good: (T) -> Boo
     return answer
 }
 
+// Grows the list by expanding objects according to their priority
+// DOES NOT ADD the projection of the base
 func priorityBasedFixedPoint<T, U>(base: [T], expand: (T) -> [T], priority: (T) -> Int, priorityMax: Int, batchSize: Int, timeLimitInMilliseconds: Int, project: (T) -> U) -> ([T], [U]) {
-    let queueTable = QueueTable<T>(maxPriority: priorityMax)
+    let queueTable = QueueTable<T>()
     var allNewObjects: [T] = []
     for object in base {
         queueTable.add(object, priority: priority(object))
     }
     let startTime = Date()
-    MAIN: while startTime.millisecondsToPresent < timeLimitInMilliseconds {
+    MAIN: while startTime.millisecondsToPresent < timeLimitInMilliseconds  && queueTable.currentPriority <= priorityMax {
         for _ in 0...batchSize {
             guard queueTable.hasNext else { break MAIN }
             let object = queueTable.getNext!

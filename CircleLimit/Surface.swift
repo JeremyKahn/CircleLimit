@@ -29,16 +29,31 @@ class Surface {
         baseHexagon = pantsArray[0].hexagons[0]
     }
     
-    func setupGroupoidAndGroupForDistance(_ distance: Double) {
-        groupoid = baseHexagon.groupoidForDistance(distance)
+    func setupGroupFromGroupoid() {
         group = groupFromEndStates(groupoid, for: baseHexagon)
         if let shadowHexagon = shadowHexagon {
             /* the '4' in downFromOrthocenter[4] is because the 0 side for hexagons[0] forms a contiguous cuff with the 4 side for hexagons[1]
              */
             group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.following(shadowHexagon.downFromOrthocenter[shadowHexagonIndex!]).flip})
         }
-        
     }
+    
+    func setupGroupoidAndGroup(timeLimitInMilliseconds: Int, maxDistance: Int) {
+        groupoid = baseHexagon.prioritizedGroupoid(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance)
+        setupGroupFromGroupoid()
+    }
+    
+    // This will all have to be rewritten so that we can send a pipeline of new elements
+    // We should also move the Groups for Integer Distance to
+    func augmentGroupoidAndGroup(timeLimitInMilliseconds: Int, maxDistance: Int, mask: HyperbolicTransformation) {
+        groupoid += baseHexagon.newGroupoidElements(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance, mask: mask)
+        setupGroupFromGroupoid()
+    }
+    
+//    func setupGroupoidAndGroupForDistance(_ distance: Double) {
+//        groupoid = baseHexagon.groupoidForDistance(distance)
+//        setupGroupFromGroupoid()
+//     }
     
     func setupGroupoidAndGroupForSteps(_ numberOfSteps: Int) {
         //        drawOnlyHexagonTesselation = true

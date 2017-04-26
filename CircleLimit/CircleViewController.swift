@@ -191,6 +191,12 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return testType.distanceToGo
     }
     
+    var groupGenerationTimeLimit = 1000
+    
+    var reallyLargeDistance = Int(HPoint.maxDistance) - 5
+    
+    var visibleDistance = 8
+    
     let smallGenerationDistance = 5.0
     
     var maxTimeToMakeGroup = 10.0
@@ -249,11 +255,12 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return a
     }
     
+    // TODO: Move this to Surface
     // One group for each integral distance cutoff
     func makeGroupForIntegerDistanceWith(_ group: [Action]) {
         let startTime = Date()
         var myGroup = group
-        groupForIntegerDistance = Array<[Action]>(repeating: [], count: maxGroupDistance + 1)
+        groupForIntegerDistance = Array<[Action]>(repeating: [], count: reallyLargeDistance + 1)
         // We have to go backwards so that we can progressively select
         for i in stride(from: maxGroupDistance, through: 0, by: -1) {
             myGroup = selectElements(myGroup, cutoff: distanceToAbs(Double(i)))
@@ -282,7 +289,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     var maxGroupDistance: Int {
-        return Int(groupGenerationCutoffDistance) +  1   }
+        return reallyLargeDistance  }
     
     
     func groupSystem(_ mode: Mode, objects: [HDrawable]) -> GroupSystem {
@@ -703,6 +710,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             mode = mode == .drawing ? .drawing : .usual
             recomputeMask()
             drawing = true
+            surface.augmentGroupoidAndGroup(timeLimitInMilliseconds: 200, maxDistance: visibleDistance, mask: mask)
+            recomputeMask()
+            makeGroupForIntegerDistanceWith(surface.group.map({Action(M: $0)}))
             if cuffToEdit != nil {
                 turnOffChangingForCuff()
             }

@@ -20,7 +20,9 @@ protocol Queue {
     
     var peekNext: Element? {get}
     
+    var numberOfElements: Int {get}
     
+    var asArray: [Element] {get}
 }
 
 // This is a fast, somewhat silly implementation of a queue
@@ -59,29 +61,27 @@ class FastQueue<Element> : Queue {
         return elements[head]
     }
     
+    var numberOfElements: Int {
+        return elements.count - head
+    }
+    
     var asArray: [Element] {
         return [Element](elements[head..<elements.count])
     }
     
 }
 
+// Right now there's no check to see if the priority is negative, or too large.
 class QueueTable<Element> {
     
-    init(maxPriority: Int) {
-        self.maxPriority = maxPriority
-        queues = Array(repeating: FastQueue<Element>(), count: maxPriority + 1)
-        currentPriority = maxPriority + 1
-    }
+    // The least index for a nonempty queue, or the number of queues.
+    var currentPriority = 0
     
-    let maxPriority: Int
-    
-    var currentPriority: Int
-    
-    let queues: [FastQueue<Element>]
+    var queues: [FastQueue<Element>] = []
     
     // the second condition should be redundant
     var hasNext: Bool {
-        return currentPriority <= maxPriority && queues[currentPriority].hasNext
+        return currentPriority < queues.count && queues[currentPriority].hasNext
     }
     
     // We set currentPriority to be the index for the next nonempty queue
@@ -90,14 +90,21 @@ class QueueTable<Element> {
             return nil
         }
         let nextObject = queues[currentPriority].getNext
-        while currentPriority <= maxPriority && !queues[currentPriority].hasNext {
+        while currentPriority < queues.count && !queues[currentPriority].hasNext {
             currentPriority += 1
         }
         return nextObject
     }
     
     func add(_ e: Element, priority: Int) {
-        guard priority <= maxPriority else { return }
+        if !hasNext {
+            currentPriority = priority
+        }
+        if priority >= queues.count {
+            for _ in queues.count...priority {
+                queues.append(FastQueue<Element>())
+            }
+        }
         queues[priority].add(e)
         if priority < currentPriority {
             currentPriority = priority
@@ -106,8 +113,8 @@ class QueueTable<Element> {
     
     var asArray: [Element] {
         var result: [Element] = []
-        for i in currentPriority...maxPriority {
-            result += queues[i].asArray
+        for queue in queues {
+            result += queue.asArray
         }
         return result
     }

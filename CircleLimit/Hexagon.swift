@@ -126,6 +126,8 @@ class Hexagon {
     /// when set, use **hexagonGuideline** as the guideline
     static var hotPants = true
     
+    var groupoidCalculationFrontier:[ForwardState] = []
+    
     var transformedGuidelines: [HDrawable] {
         if baseMask.distance < 50 {
            return guidelines.map() {$0.transformedBy(baseMask)}
@@ -241,6 +243,28 @@ class Hexagon {
         var result = fastLeastFixedPoint(base, expand: nextForwardStates, good: withinRange, project: project)
         result.append(EndState(motion: HTrans.identity, hexagon: self))
         return result
+    }
+    
+    func prioritizedGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int) -> [EndState] {
+        let base = forwardStates
+        var result = base.map(project)
+        let priority = {(f: ForwardState) -> Int in
+            Int(f.newMotion.distance) }
+        let (leftoverForwardStates, newEndStates) = priorityBasedFixedPoint(base: base, expand: nextForwardStates, priority: priority, priorityMax: maxDistance,
+                                             batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
+        groupoidCalculationFrontier = leftoverForwardStates
+        result += newEndStates
+        result.append(EndState(motion: HTrans.identity, hexagon: self))
+        return result
+    }
+    
+    func newGroupoidElements(timeLimitInMilliseconds: Int, maxDistance: Int, mask: HyperbolicTransformation) -> [EndState] {
+        let base = groupoidCalculationFrontier
+        let priority = {(f: ForwardState) -> Int in
+            Int(mask.following(f.newMotion).distance)}
+        let (leftoverForwardState, newEndStates) = priorityBasedFixedPoint(base: base, expand: nextForwardStates, priority: priority, priorityMax: maxDistance, batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
+        groupoidCalculationFrontier = leftoverForwardState
+        return newEndStates
     }
     
     // MARK: - Initialization and setup

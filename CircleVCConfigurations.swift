@@ -62,8 +62,8 @@ extension CircleViewController {
     // And now we're computing the groupoid, the group, and the guidelines, and then setting up all the group segments
     func setUpGroupAndGuidelinesForPants() {
         if serious {
-            print("Generating group for distance \(groupGenerationCutoffDistance)")
-            surface.setupGroupoidAndGroupForDistance(groupGenerationCutoffDistance)
+            print("Generating group in time \(groupGenerationTimeLimit)")
+            surface.setupGroupoidAndGroup(timeLimitInMilliseconds: groupGenerationTimeLimit, maxDistance: visibleDistance)
         } else {
             drawOnlyHexagonTesselation = true
             surface.setupGroupoidAndGroupForSteps(testType.numberOfStepsToTake)
