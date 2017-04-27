@@ -78,7 +78,7 @@ extension CircleViewController {
         // Set up the groups
         let dressedGroup = group.map() {Action(M: $0)}
         makeGroupForIntegerDistanceWith(dressedGroup)
-        searchingGroup = groupForIntegerDistance[min(7, maxGroupDistance)]
+        searchingGroup = groupForIntegerDistance[min(maxGroupDistance, surface.estimatedDiameter)]
     }
     
 }

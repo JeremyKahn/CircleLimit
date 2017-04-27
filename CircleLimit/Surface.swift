@@ -23,6 +23,10 @@ class Surface {
     var generalGuidelines: [HDrawable] = []
     var cuffGuidelines: [HDrawable] = []
     
+    var estimatedDiameter: Int {
+        return 4 * pantsArray.count
+    }
+    
     init(pantsArray: [Pants], cuffArray: [Cuff]) {
         self.pantsArray = pantsArray
         self.cuffArray = cuffArray

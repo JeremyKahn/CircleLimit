@@ -289,7 +289,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     var maxGroupDistance: Int {
-        return reallyLargeDistance  }
+        return reallyLargeDistance
+    }
     
     
     func groupSystem(_ mode: Mode, objects: [HDrawable]) -> GroupSystem {
@@ -818,7 +819,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         guard canRecomputeMask else { return }
         var bestA = mask.abs
         var bestMask = mask
-        //        println("Trying to improve : \(bestA)")
+        print("Trying to improve mask with distance: \(absToDistance(bestA))")
         var foundBetter = false
         repeat {
             foundBetter = false
@@ -828,7 +829,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                     foundBetter = true
                     bestA = newMask.abs
                     bestMask = newMask
-                    //                    println("Found \(bestA)")
+                    print("Found new mask with distance: \(absToDistance(bestA))")
                 }
             }
         } while (foundBetter)
