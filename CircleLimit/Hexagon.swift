@@ -167,6 +167,8 @@ class Hexagon: Hashable {
         }
         return result
     }
+    
+    func resetGroupoid() { groupoid = [:] }
 
     // MARK: - Moving to adjacent hexagons
     

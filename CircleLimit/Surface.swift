@@ -8,6 +8,7 @@
 
 import UIKit
 
+// TODO: Remove the local mask?
 struct LocationData {
     
     var hexagon: Hexagon
@@ -22,6 +23,9 @@ class Surface {
     var baseHexagon: Hexagon!
     var shadowHexagon: Hexagon?
     var shadowHexagonIndex: Int?
+    var hexagons: [Hexagon] {
+        return pantsArray.flatMap({$0.hexagons})
+    }
     
     // MARK: Location information
     var mask: HyperbolicTransformation = HyperbolicTransformation.identity
@@ -51,12 +55,17 @@ class Surface {
     
     // MARK: Deliver masks for drawing, etc.
     func visibleMasks(object: Disked, location: LocationData, radius: Double) -> [HTrans] {
+        return visibleMasks(object: object, location: location, radius: radius, center: HPoint(), useMask: true)
+    }
+    
+    func visibleMasks(object: Disked, location: LocationData, radius: Double, center: HPoint, useMask: Bool) -> [HTrans] {
+        let m = useMask ? mask : HTrans.identity
         let M = location.localMask
         let r = object.radius
-        let distance = Int(M.distance + r + mask.distance + radius)
+        let distance = Int(M.distance + r + m.distance + radius + center.distanceToOrigin)
         let g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance)
-        let gg = g.map({mask.following($0.motion).following(M)})
-        return gg.filter({$0.appliedTo(object.centerPoint).distanceToOrigin  < radius + r})
+        let gg = g.map({m.following($0.motion).following(M)})
+        return gg.filter({$0.appliedTo(object.centerPoint).distanceTo(center)  < radius + r})
     }
     
     
@@ -90,20 +99,12 @@ class Surface {
     
     // MARK: Setting stuff up
     
-    // DEPRECATED: We're not really using the group anymore
-//    func setupGroupFromGroupoid() {
-//        group = groupFromEndStates(groupoid, for: baseHexagon)
-//        if let shadowHexagon = shadowHexagon {
-//            /* the '4' in downFromOrthocenter[4] is because the 0 side for hexagons[0] forms a contiguous cuff with the 4 side for hexagons[1]
-//             */
-//            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.following(shadowHexagon.downFromOrthocenter[shadowHexagonIndex!]).flip})
-//        }
-//    }
-
     // We should probably give this a new name
     func setupGroupoidAndGroup(timeLimitInMilliseconds: Int, maxDistance: Int) {
+        for h in hexagons {
+            h.resetGroupoid()
+        }
         baseHexagon.computeInitialGroupoid(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance)
-//        setupGroupFromGroupoid()
     }
     
     func setUpGuidelines() {

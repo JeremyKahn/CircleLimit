@@ -15,67 +15,21 @@ extension CircleViewController {
         print("CircleViewController loaded")
         if CircleViewController.testing { return }
         setUpTestSurface()
-        setUpGroupAndGuidelinesForPants()
+        setUpGroupAndGuidelinesForTheSurface()
     }
     
     func setUpTestSurface() {
         surface = testType.surface
-//        largeGenerationDistance = testType.distanceToGo
-//        groupGenerationCutoffDistance = largeGenerationDistance
     }
     
-    // This guy is deprecated and is not necessarily being maintained
-//    func setUpThreeThreeFourGroup() {
-//        var generators: [HyperbolicTransformation] = []
-//        var guidelines: [HDrawable] = []
-//        var twistedGenerators: [Action] = []
-//        if !trivialGroup {
-//            (generators, guidelines) = pqrGeneratorsAndGuidelines(3, q: 3, r: 4)
-//            for object in guidelines {
-//                object.intrinsicLineWidth = 0.005
-//                object.lineColor = UIColor.gray
-//                object.useFillColorTable = false
-//            }
-//            
-//            // This will show the fixed points of all the elliptic elements
-//            //            guidelines.append(HyperbolicDot(center: HPoint()))
-//            for g in generators {
-//                let fixedPointDot = HyperbolicDot(center: g.fixedPoint!)
-//                self.fixedPoints.append(fixedPointDot)
-//            }
-//            
-//            let (A, B, C) = (generators[0], generators[1], generators[2])
-//            let a = ColorNumberPermutation(mapping: [1: 2, 2: 3, 3: 1, 4: 4])
-//            let b = ColorNumberPermutation(mapping: [1: 1, 2: 3, 3: 4, 4: 2])
-//            let c = ColorNumberPermutation(mapping: [1: 2, 2: 1, 3: 4, 4: 3])
-//            assert(a.following(b).following(c) == ColorNumberPermutation())
-//            twistedGenerators = [Action(M: A, P: a), Action(M: B, P: b), Action(M: C, P: c)]
-//        }
-//        let bigGroup = generatedGroup(twistedGenerators, bigCutoff: bigGroupCutoff)
-//        makeGroupForIntegerDistanceWith(bigGroup)
-//        // Right now this is just a guess
-//        let I = ColorNumberPermutation()
-//        searchingGroup = groupForIntegerDistance[5].filter() { $0.action == I }
-//    }
     
-    func setUpGroupAndGuidelinesForPants() {
-        if serious {
-            print("Generating group with time limit \(groupGenerationTimeLimit)")
-            surface.setupGroupoidAndGroup(timeLimitInMilliseconds: groupGenerationTimeLimit, maxDistance: visibleDistance)
-        } else { // Will cause a horrible crash
-//            drawOnlyHexagonTesselation = true
-//            surface.setupGroupoidAndGroupForSteps(testType.numberOfStepsToTake)
-        }
-        let group =  surface.group
-        
+    func setUpGroupAndGuidelinesForTheSurface() {
+        print("Generating group with time limit \(groupGenerationTimeLimit)")
+        surface.setupGroupoidAndGroup(timeLimitInMilliseconds: groupGenerationTimeLimit, maxDistance: visibleDistance)
         surface.setUpGuidelines()
         if let i = cuffEditIndex {
             surface.cuffGuidelines[i].object.lineColor = UIColor.red
         }
-
-        // Set up the groups
-        let dressedGroup = group.map() {Action(M: $0)}
-        makeGroupForIntegerDistanceWith(dressedGroup)
     }
     
 }
