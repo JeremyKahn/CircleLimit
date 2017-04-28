@@ -77,26 +77,8 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         case usual
         case drawing
         case moving
+        case cuffEditing
     }
-    
-    // MARK: Debugging variables
-    var drawOnlyHexagonTesselation = false
-    
-    static var testing = false
-    
-    var tracingGroupMaking = false
-    
-    var tracingZoom = true
-    
-    var tracingGesturesAndTouches = false
-    
-    var trivialGroup = false
-    
-    var testType = TestType.t2223
-    
-    var serious = true
-    
-    var trivial = false
     
     // MARK: Basic overrides
     override var prefersStatusBarHidden : Bool {
@@ -179,21 +161,11 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var minLogScaleChange = 0.025
     
     // MARK: Parameters for making the group
-    func distance() -> Double {
-        return testType.distanceToGo
-    }
-    
     let shortGroupGenerationTimeLimit = 75
     
     let longGroupGenerationTimeLimit = 250
     
     var groupGenerationTimeLimit = 250
-    
-    var reallyLargeDistance = Int(HPoint.maxDistance) - 5
-    
-    var visibleDistance = 8
-    
-    var apparentBasePoint = HTrans()
     
     // MARK: For PoincareViewDataSource
     var objectsToDraw: [LocatedObject] {
@@ -263,7 +235,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     // Change these values to determine the size of the various groups
-    var cutoff : [Mode : Double] = [.usual : 0.98, .moving : 0.8, .drawing : 0.8]
+    var cutoff : [Mode : Double] = [.usual : 0.98, .moving : 0.8, .drawing : 0.9, .cuffEditing: 0.8]
     
     func groupSystem(cutoffDistance distance: Double, objects: [LocatedObject]) -> GroupSystem {
         return groupSystem(cutoffDistance: distance, center: HPoint(), objects: objects, useMask: true)
@@ -615,7 +587,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             poincareView.setNeedsDisplay()
         case .ended:
             mode = mode == .drawing ? .drawing : .usual
-            surface.recomputeMask()
+            if canRecomputeMask {
+                surface.recomputeMask()
+            }
             drawing = true
             if cuffToEdit != nil {
                 turnOffChangingForCuff()
@@ -808,5 +782,24 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         }
     }
     
+    // MARK: Debugging variables
+    var drawOnlyHexagonTesselation = false
     
+    static var testing = false
+    
+    var tracingGroupMaking = false
+    
+    var tracingZoom = true
+    
+    var tracingGesturesAndTouches = false
+    
+    var trivialGroup = false
+    
+    var testType = TestType.t2223
+    
+    var serious = true
+    
+    var trivial = false
+    
+
 }

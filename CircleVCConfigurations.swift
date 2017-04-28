@@ -25,7 +25,7 @@ extension CircleViewController {
     
     func setUpGroupAndGuidelinesForTheSurface() {
         print("Generating group with time limit \(groupGenerationTimeLimit)")
-        surface.setupGroupoidAndGroup(timeLimitInMilliseconds: groupGenerationTimeLimit, maxDistance: visibleDistance)
+        surface.setupGroupoidAndGroup(timeLimitInMilliseconds: groupGenerationTimeLimit, maxDistance: Int(cutoffDistance) + 2)
         surface.setUpGuidelines()
         if let i = cuffEditIndex {
             surface.cuffGuidelines[i].object.lineColor = UIColor.red
