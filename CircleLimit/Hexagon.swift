@@ -59,7 +59,7 @@ class Hexagon: Hashable {
     }
     
     var location: LocationData {
-        return LocationData(hexagon: self, localMask: HTrans.identity)
+        return LocationData(hexagon: self)
     }
     
     /**
@@ -162,7 +162,9 @@ class Hexagon: Hashable {
     
     func groupoidTo(_ h: Hexagon, withDistance distance: Int) -> [EndState] {
         var result: [EndState] = []
-        for states in groupoid[h]![0...distance] {
+        let groupoidTable = groupoid[h]!
+        let maxIndex = min(distance, groupoidTable.count - 1)
+        for states in groupoid[h]![0...maxIndex] {
             result += states
         }
         return result
@@ -256,19 +258,6 @@ class Hexagon: Hashable {
         return RotationState(left: left, right: right, thing: special)
     }
 
-    
-    /**
-     - returns: All elements of the groupoid starting at **self** within **cutoffDistance**
-     */
-    func groupoidForDistance(_ cutoffDistance: Double) -> [EndState] {
-        let base = forwardStates
-        // For better or for worse, this takes us one step past the cutoffDistance
-        let cutoffAbs = distanceToAbs(cutoffDistance)
-        let withinRange = {(f: ForwardState) -> Bool in f.newMotion.abs < cutoffAbs}
-        var result = fastLeastFixedPoint(base, expand: nextForwardStates, good: withinRange, project: project)
-        result.append(EndState(motion: HTrans.identity, hexagon: self))
-        return result
-    }
     
     func computeInitialGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int) {
         if groupoid.count > 0 {

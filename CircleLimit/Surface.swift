@@ -8,12 +8,9 @@
 
 import UIKit
 
-// TODO: Remove the local mask?
 struct LocationData {
     
     var hexagon: Hexagon
-    var localMask: HTrans
-    
 }
 
 class Surface {
@@ -30,19 +27,11 @@ class Surface {
     // MARK: Location information
     var mask: HyperbolicTransformation = HyperbolicTransformation.identity
     var currentLocation: LocationData {
-        return LocationData(hexagon: baseHexagon, localMask: mask)
+        return LocationData(hexagon: baseHexagon)
     }
     
-    // MARK: Group information
-    // This is now total garbage
-    var groupoid: [EndState] {
-        let x: [EndState] = []
-        return x
-    }
-    var group: [HTrans] = []  // Or [Action]?
     
     // MARK: Guidelines
-//    var hexagonTesselation: [HDrawable] = []
     var generalGuidelines: [LocatedObject] = []
     var cuffGuidelines: [LocatedObject] = []
     
@@ -60,11 +49,10 @@ class Surface {
     
     func visibleMasks(object: Disked, location: LocationData, radius: Double, center: HPoint, useMask: Bool) -> [HTrans] {
         let m = useMask ? mask : HTrans.identity
-        let M = location.localMask
         let r = object.radius
-        let distance = Int(M.distance + r + m.distance + radius + center.distanceToOrigin)
+        let distance = Int(r + m.distance + radius + center.distanceToOrigin)
         let g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance)
-        let gg = g.map({m.following($0.motion).following(M)})
+        let gg = g.map({m.following($0.motion)})
         return gg.filter({$0.appliedTo(object.centerPoint).distanceTo(center)  < radius + r})
     }
     
@@ -76,7 +64,6 @@ class Surface {
         mask = M.following(mask)
     }
     
-    // TODO: Maintain a smaller searching groupoid?
     func recomputeMask() {
         var searchStates: [EndState] = []
         for h in baseHexagon.groupoid.keys {
