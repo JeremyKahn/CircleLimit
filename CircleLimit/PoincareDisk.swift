@@ -182,7 +182,7 @@ func isocelesAltitudeFromSideLength(_ l: Double, andAngle angle: Double) -> Doub
 
 extension Double {
     var degrees:  Int {
-        return Int(360 * self/(2 * M_PI))
+        return Int(360 * self/(2 * Double.pi))
     }
 }
 

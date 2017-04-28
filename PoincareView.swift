@@ -24,7 +24,7 @@ protocol PoincareViewDataSource : class {
 
 
 func circlePath(_ center: CGPoint, radius: CGFloat) -> UIBezierPath {
-    let path =  UIBezierPath(arcCenter: center, radius: radius, startAngle: 0, endAngle: CGFloat(2 * M_PI), clockwise: false)
+    let path =  UIBezierPath(arcCenter: center, radius: radius, startAngle: 0, endAngle: CGFloat(2 * Double.pi), clockwise: false)
     return path
 }
 
@@ -81,7 +81,7 @@ class PoincareView: UIView {
     @IBInspectable
     var circleColor = UIColor.blue
     
-    let cgturn = CGFloat(2 * M_PI)
+    let cgturn = CGFloat(2 * Double.pi)
     
      func circlePath(_ center: CGPoint, radius: CGFloat) -> UIBezierPath {
         let path =  UIBezierPath(arcCenter: center, radius: radius, startAngle: 0, endAngle: cgturn, clockwise: false)

@@ -90,25 +90,36 @@ func fastLeastFixedPoint<T, U>(_ base: [T], expand: (T) -> [T], good: (T) -> Boo
 
 // Grows the list by expanding objects according to their priority
 // DOES NOT ADD the projection of the base
-func priorityBasedFixedPoint<T, U>(base: [T], expand: (T) -> [T], priority: (T) -> Int, priorityMax: Int, batchSize: Int, timeLimitInMilliseconds: Int, project: (T) -> U) -> ([T], [U]) {
-    let queueTable = QueueTable<T>()
-    var allNewObjects: [T] = []
-    for object in base {
-        queueTable.add(object, priority: priority(object))
-    }
+func priorityBasedFixedPoint<T, U>(queueTable: QueueTable<T>, expand: (T) -> [T], priority: (T) -> Int, priorityMax: Int, batchSize: Int, timeLimitInMilliseconds: Int, project: (T) -> U) -> QueueTable<U> {
+    let allNewObjects = QueueTable<U>()
     let startTime = Date()
     MAIN: while startTime.millisecondsToPresent < timeLimitInMilliseconds  && queueTable.currentPriority <= priorityMax {
         for _ in 0...batchSize {
             guard queueTable.hasNext else { break MAIN }
             let object = queueTable.getNext!
             let newObjects = expand(object)
-            allNewObjects += newObjects
             for newObject in newObjects {
-                queueTable.add(newObject, priority: priority(newObject))
+                let p = priority(newObject)
+                allNewObjects.add(project(newObject), priority: p)
+                queueTable.add(newObject, priority: p)
             }
         }
     }
-    let answer = allNewObjects.map(project)
-    let leftovers = queueTable.asArray
-    return (leftovers, answer)
+    return allNewObjects
 }
+
+func priorityBasedFixedPoint<T, U>(base: [T], expand: (T) -> [T], priority: (T) -> Int, priorityMax: Int, batchSize: Int, timeLimitInMilliseconds: Int, project: (T) -> U) -> (QueueTable<T>, QueueTable<U>) {
+    let queueTable = QueueTable<T>()
+    for object in base {
+        queueTable.add(object, priority: priority(object))
+    }
+    let newTable = priorityBasedFixedPoint(queueTable: queueTable, expand: expand, priority: priority, priorityMax: priorityMax, batchSize: batchSize, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
+    for object in base {
+        newTable.add(project(object), priority: priority(object))
+    }
+    return (queueTable, newTable)
+}
+
+
+
+

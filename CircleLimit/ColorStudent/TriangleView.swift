@@ -92,7 +92,7 @@ class TriangleView: UIView {
     let sqrt3over2: CGFloat = sqrt(3.0)/2
     
     lazy var geometricHexagon: [CGPoint] = {
-        let piOver3 = M_PI/3
+        let piOver3 = Double.pi/3
         var _geometricHexagon = Array<CGPoint>(repeating: CGPoint(), count: 7)
         for i in 0...6 {
             _geometricHexagon[i] = CGPoint(x: cos(i.double * piOver3), y: sin(i.double * piOver3))
@@ -110,7 +110,7 @@ class TriangleView: UIView {
         if centerX == 0 && centerY == 0 {
             return ColorChoiceParameters()
         }
-        let twoPi = M_PI.cg * 2
+        let twoPi = Double.pi.cg * 2
         var argument = atan2(centerY, centerX)
         argument = argument > 0 ? argument : argument + twoPi
         var triangleNumber = Int(6.cg * argument/twoPi)

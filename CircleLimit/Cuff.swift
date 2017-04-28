@@ -122,13 +122,13 @@ class Cuff {
     
     var pantsCuffs: [PantsCuff?] = [nil, nil]
     
-    var guideline: HDrawable {
+    var guideline: LocatedObject {
         return pantsCuffs[0]!.pants.cuffGuidelines[pantsCuffs[0]!.index]!
     }
     
-    var transformedGuideline: HDrawable {
-        return guideline.transformedBy(pantsCuffs[0]!.pants.baseMask)
-    }
+//    var transformedGuideline: HDrawable {
+//        return guideline.transformedBy(pantsCuffs[0]!.pants.baseMask)
+//    }
     
     convenience init(pantsCuff0: PantsCuff, pantsCuff1: PantsCuff, twist: Double) {
         self.init(pants0: pantsCuff0.pants, index0: pantsCuff0.index, pants1: pantsCuff1.pants, index1: pantsCuff1.index, twist: twist)

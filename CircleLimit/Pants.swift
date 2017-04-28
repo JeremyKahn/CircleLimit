@@ -78,11 +78,7 @@ class Pants {
     
     var id: Int
     
-    var transformedGuidelines: [HDrawable] {
-        return hexagonGuidelines
-    }
-    
-    var guidelines: [HDrawable] {
+    var guidelines: [LocatedObject] {
         return hexagonGuidelines
 //        return orthoGuidelines
         
@@ -91,17 +87,17 @@ class Pants {
     static var firstHexagonOnly = true
     
     // This would actually be more readable as a nested for loop, with append
-    var hexagonGuidelines: [HDrawable] {
+    var hexagonGuidelines: [LocatedObject] {
         if Pants.firstHexagonOnly {
-            return hexagons[0].transformedGuidelines
+            return hexagons[0].locatedGuidelines
         }
-        return hexagons.flatMap({$0.transformedGuidelines})
+        return hexagons.flatMap({$0.locatedGuidelines})
     }
     
     /// An array of size three, with a guideline for each actual cuff, and nil at rotation indices
-    var cuffGuidelines: [HDrawable?] = Array(repeating: nil, count: 3)
+    var cuffGuidelines: [LocatedObject?] = Array(repeating: nil, count: 3)
     
-    var orthoGuidelines: [HDrawable] = []
+    var orthoGuidelines: [LocatedObject] = []
     
     static var nextId = 0
     
@@ -137,10 +133,11 @@ class Pants {
             let oppositePoint = hexagons[0].start[(sideIndex - 1) %% 6].appliedToOrigin
             let orthoGuideline = HyperbolicPolyline([firstPoint, oppositePoint])
             orthoGuideline.lineColor = UIColor.gray
-            orthoGuidelines.append(orthoGuideline)
+            orthoGuidelines.append(LocatedObject(object: orthoGuideline, location: hexagons[0].location))
             if hexagons[0].isCuffIndex(sideIndex) {
                 let secondPoint = walker.goForward(cuffHalfLengths[i].re * 2).appliedToOrigin
-                cuffGuidelines[i] = HyperbolicPolyline([firstPoint, secondPoint])
+                cuffGuidelines[i] = LocatedObject(object: HyperbolicPolyline([firstPoint, secondPoint]),
+                                                  location: hexagons[0].location)
             }
         }
     }

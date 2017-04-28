@@ -15,6 +15,15 @@ enum TouchType {
     case ended
 }
 
+struct LocatedObject {
+    var object: HDrawable
+    var location: LocationData
+    
+    func copy() -> LocatedObject {
+        return LocatedObject(object: object.copy(), location: location)
+    }
+}
+
 /// Holds the data for a point matched (clicked on) in a polyline
 struct MatchedPoint {
     
@@ -83,7 +92,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var trivialGroup = false
     
-    var testType = TestType.angelsAndDevils
+    var testType = TestType.t2223
     
     var serious = true
     
@@ -106,37 +115,31 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     // MARK: Guidelines
-    var guidelines: [HDrawable] {
-        return drawOnlyHexagonTesselation ? hexagonTesselation : surface.generalGuidelines + surface.cuffGuidelines
-    }
-    
-    var hexagonTesselation: [HDrawable] {
-        return surface.hexagonTesselation
+    var guidelines: [LocatedObject] {
+        return surface.generalGuidelines + surface.cuffGuidelines
     }
     
     var drawGuidelines = true
     
     // MARK: Arrays of objects
-    var drawObjects: [HDrawable] = []
+    var drawObjects: [LocatedObject] = []
     
-    var oldDrawObjects: [HDrawable] = [] {
+    var oldDrawObjects: [LocatedObject] = [] {
         didSet {
             //            print("There are now \(oldDrawObjects.count) old draw objects")
         }
     }
     
-    var undoneObjects: [HDrawable] = []
+    var undoneObjects: [LocatedObject] = []
     
     // MARK: For moving the picture
     // The translates (by the color fixing subgroup) of a disk around the origin of this radius should cover the boundary of that disk
     // Right now the size is determined by trial and error
     var searchingGroup: [Action] = []
     
-    var mask: HyperbolicTransformation = HyperbolicTransformation()
-    
     // MARK: For moving the points
     // TODO: Initialize these properly from the fixed points in the hexagons
-    var fixedPoints: [HDrawable] = []
+    var fixedPoints: [LocatedObject] = []
     
     var touchDistance: Double {
         let m = Double(multiplier)
@@ -165,9 +168,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var cuffEditIndex: Int? {
         didSet {
             if let i = cuffEditIndex {
-                surface.cuffGuidelines[i].lineColor = UIColor.red
+                surface.cuffGuidelines[i].object.lineColor = UIColor.red
             } else  if let i = oldValue {
-                surface.cuffGuidelines[i].lineColor = UIColor.black
+                surface.cuffGuidelines[i].object.lineColor = UIColor.black
             }
         }
     }
@@ -208,17 +211,26 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     var apparentBasePoint = HTrans()
     
     // MARK: For PoincareViewDataSource
-    var objectsToDraw: [HDrawable] {
+    var objectsToDraw: [LocatedObject] {
         var fullDrawObjects = drawGuidelines ? guidelines : []
         fullDrawObjects += drawObjects
         if newCurve != nil {
-            fullDrawObjects.append(newCurve!)
+            fullDrawObjects.append(LocatedObject(object: newCurve!, location: location.hexagon.location))
         }
         return fullDrawObjects
     }
     
     var groupSystemToDraw: GroupSystem {
-        return groupSystem(mode, objects: objectsToDraw)
+        var result: GroupSystem = []
+        for object in objectsToDraw {
+            var actions: [Action] = []
+            let masks = surface.visibleMasks(object: object.object, location: object.location, radius: cutoffDistance)
+            for M in masks {
+                actions.append(Action(M: M))
+            }
+            result.append((object.object, actions))
+        }
+        return result
     }
     
     var multiplier = CGFloat(1.0)
@@ -248,6 +260,16 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return poincareView.scale
     }
     
+    // MARK: From the surface
+    // It seems that we just want to plot the points with respect to the base hexagon
+    var location: LocationData {
+        return surface.baseHexagon.location
+    }
+    
+    var mask: HTrans {
+        return surface.mask
+    }
+    
     // MARK: - Get the group you want
     func selectElements(_ group: [Action], cutoff: Double) -> [Action] {
         let a = group.filter { (M: Action) in M.motion.a.abs < cutoff }
@@ -255,19 +277,19 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return a
     }
     
-    // TODO: Move this to Surface
-    // One group for each integral distance cutoff
+    // TODO: REMOVE
+    // This now does next to nothing.
     func makeGroupForIntegerDistanceWith(_ group: [Action]) {
-        let startTime = Date()
-        var myGroup = group
+//        let startTime = Date()
+//        var myGroup = group
         groupForIntegerDistance = Array<[Action]>(repeating: [], count: reallyLargeDistance + 1)
         // We have to go backwards so that we can progressively select
-        for i in stride(from: maxGroupDistance, through: 0, by: -1) {
-            myGroup = selectElements(myGroup, cutoff: distanceToAbs(Double(i)))
-            groupForIntegerDistance[i] = myGroup
-            print("Selected \(myGroup.count) elements at distance \(i): \(startTime.millisecondsToPresent)")
-        }
-        
+//    for i in stride(from: maxGroupDistance, through: 0, by: -1) {
+//            myGroup = selectElements(myGroup, cutoff: distanceToAbs(Double(i)))
+//            groupForIntegerDistance[i] = myGroup
+//            print("Selected \(myGroup.count) elements at distance \(i): \(startTime.millisecondsToPresent)")
+//        }
+//        
     }
     
     var groupForIntegerDistance: [[Action]] = []
@@ -293,6 +315,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     }
     
     
+//    All this is now deprecated and ready for removal as soon as we can remove everything that calls it
     func groupSystem(_ mode: Mode, objects: [HDrawable]) -> GroupSystem {
         let zoomAbs = 2.0 / Double(multiplier)
         let cutoffAbs = min(zoomAbs, cutoff[mode]!)
@@ -354,7 +377,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // MARK: - Undo and redo
     // TODO: Undo with a shake, clear picture...with what?
     struct State {
-        var completedObjects: [HDrawable]?
+        var completedObjects: [LocatedObject]?
         var newCurve: HyperbolicPolyline?
     }
     
@@ -416,7 +439,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     func makeDot(_ rawLocation: CGPoint) {
         if let p = hPoint(rawLocation) {
-            drawObjects.append(HyperbolicDot(center: p))
+            drawObjects.append(LocatedObject(object: HyperbolicDot(center: p), location: location))
             poincareView.setNeedsDisplay()
         }
     }
@@ -461,15 +484,15 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         stateStack = stateStack.filter {$0.completedObjects != nil}
         stateStack.append(State(completedObjects: drawObjects, newCurve: nil))
         newCurve = nil
-        drawObjects.append(curve)
+        drawObjects.append(LocatedObject(object: curve, location: location))
         poincareView.setNeedsDisplay()
     }
     
     var printingTouches = true
     
     func nearbyPointsTo(_ point: HPoint, withinDistance distance: Double) -> [MatchedPoint] {
-        let objects = drawObjects.filter() { $0 is HyperbolicPolyline }
-        let g = groupSystem(cutoffDistance: distance, center: point, objects: objects)
+        let objects = drawObjects.filter() { $0.object is HyperbolicPolyline }
+        let g = groupSystem(cutoffDistance: distance, center: point, objects: objects.map({$0.object}))
         var matchedPoints: [MatchedPoint] = []
         for (object, group)  in g {
             let polyline = object as! HyperbolicPolyline
@@ -530,7 +553,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         touchesMoved(touches, with: event)
         if let touch = touches.first {
             if var z = hPoint(touch.location(in: poincareView)) {
-                let g = groupSystem(cutoffDistance: touchDistance, center: z, objects: fixedPoints)
+                let g = groupSystem(cutoffDistance: touchDistance, center: z, objects: fixedPoints.map({$0.object}))
                 // THIS WILL BE UNDEFINED if g has more than one element
                 for (object, group) in g {
                     for action in group {
@@ -559,9 +582,9 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     // MARK: Adding a point to a line
     func addPointToArcs(_ z: HPoint) {
-        let objects = drawObjects.filter() { $0 is HyperbolicPolyline }
+        let objects = drawObjects.filter() { $0.object is HyperbolicPolyline }
         
-        let g = groupSystem(cutoffDistance: touchDistance, center: z, objects: objects)
+        let g = groupSystem(cutoffDistance: touchDistance, center: z, objects: objects.map({$0.object}))
         
         for (object, group) in g {
             let polyline = object as! HyperbolicPolyline
@@ -703,17 +726,13 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
                 a = a/(a.abs+1) // This prevents bad transformations
                 let M = HyperbolicTransformation(a: -a)
                 //            println("Moebius translation: \(M)")
-                mask = M.following(mask)
-                recomputeMask()
+                surface.applyToMask(M: M)
             }
             poincareView.setNeedsDisplay()
         case .ended:
             mode = mode == .drawing ? .drawing : .usual
-            recomputeMask()
+            surface.recomputeMask()
             drawing = true
-            surface.augmentGroupoidAndGroup(timeLimitInMilliseconds: 200, maxDistance: visibleDistance, mask: mask)
-            recomputeMask()
-            makeGroupForIntegerDistanceWith(surface.group.map({Action(M: $0)}))
             if cuffToEdit != nil {
                 turnOffChangingForCuff()
             }
@@ -733,13 +752,13 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             stateStack.append(State(completedObjects: nil, newCurve: (newCurve!.copy() as! HyperbolicPolyline)))
             newCurve!.addPoint(z!)
         } else if canEditPants && !editingPants {
-            let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: surface.cuffGuidelines)
+            let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: surface.cuffGuidelines.map({$0.object}))
             for i in 0..<surface.cuffArray.count {
                 let (object, group) = g[i]
                 if let line = object as? HyperbolicPolyline {
                     for action in group {
                         if line.sidesNear(z!, withMask: action.motion, withinDistance: touchDistance).count > 0 {
-                            mask = mask.following(action.motion)
+//                            mask = mask.following(action.motion)
                             cuffEditIndex = i
                         }
                     }
@@ -782,12 +801,12 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         let z = hPoint(sender.location(in: poincareView))
         if let point = z {
             if tracingGesturesAndTouches {
-                drawObjects.append(HyperbolicDot(center: point, radius: touchDistance))
+                drawObjects.append(LocatedObject(object: HyperbolicDot(center: point, radius: touchDistance), location: location))
             }
             cancelEffectOfTouches()
             //            addPointToArcs(point)
-            let polylines = drawObjects.filter({$0 is HyperbolicPolyline})
-            let g = groupSystem(cutoffDistance: touchDistance, center: point, objects: polylines).reversed()
+            let polylines = drawObjects.filter({$0.object is HyperbolicPolyline})
+            let g = groupSystem(cutoffDistance: touchDistance, center: point, objects: polylines.map({$0.object})).reversed()
             // As constructed this just sets the color of the first polygon that matches
             // So if you touch overlapping polygons, or between two polygons, the result is unpredictable
             // It makes some effort to change the highest polygon
@@ -815,26 +834,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         return !formingPolygon && !editingPants
     }
     
-    func recomputeMask() {
-        guard canRecomputeMask else { return }
-        var bestA = mask.abs
-        var bestMask = mask
-        print("Trying to improve mask with distance: \(absToDistance(bestA))")
-        var foundBetter = false
-        repeat {
-            foundBetter = false
-            for E in searchingGroup  {
-                let newMask = mask.following(E.motion)  // Let's try it
-                if  newMask.abs < bestA {
-                    foundBetter = true
-                    bestA = newMask.abs
-                    bestMask = newMask
-                    print("Found new mask with distance: \(absToDistance(bestA))")
-                }
-            }
-        } while (foundBetter)
-        mask = bestMask
-    }
     
     func prepareCuffForChanges(_ cuff: Cuff) {
         groupGenerationCutoffDistance = smallGenerationDistance
@@ -844,7 +843,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     func recordChangesForCuff(_ cuff: Cuff) {
         setUpGroupAndGuidelinesForPants()
-        mask = apparentBasePoint.following(cuff.baseMask.inverse)
+//        mask = apparentBasePoint.following(cuff.baseMask.inverse)
     }
     
     func turnOffChangingForCuff() {

@@ -139,7 +139,15 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     static let identity = HyperbolicTransformation()
     
     var appliedToOrigin: HPoint {
-        return appliedTo(HPoint())
+        return HPoint(v/u.conj)
+    }
+    
+    var inverseAppliedToOrigin: HPoint {
+        var w = -v/u
+        if conjugateInput {
+            w = w.conj
+        }
+        return HPoint(w)
     }
     
     var basePoint: HPoint {

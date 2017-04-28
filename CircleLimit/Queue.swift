@@ -118,4 +118,8 @@ class QueueTable<Element> {
         }
         return result
     }
+    
+    var asArrayOfArrays: [[Element]] {
+        return queues.map() {$0.asArray}
+    }
 }

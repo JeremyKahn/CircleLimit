@@ -8,6 +8,13 @@
 
 import UIKit
 
+struct LocationData {
+    
+    var hexagon: Hexagon
+    var localMask: HTrans
+    
+}
+
 class Surface {
     
     var pantsArray: [Pants] = []
@@ -16,74 +23,95 @@ class Surface {
     var shadowHexagon: Hexagon?
     var shadowHexagonIndex: Int?
     
-    var groupoid: [EndState] = []
-    var group: [HTrans] = []  // Or [Action]?
-    
-    var hexagonTesselation: [HDrawable] = []
-    var generalGuidelines: [HDrawable] = []
-    var cuffGuidelines: [HDrawable] = []
-    
-    var estimatedDiameter: Int {
-        return 4 * pantsArray.count
+    // MARK: Location information
+    var mask: HyperbolicTransformation = HyperbolicTransformation.identity
+    var currentLocation: LocationData {
+        return LocationData(hexagon: baseHexagon, localMask: mask)
     }
     
+    // MARK: Group information
+    // This is now total garbage
+    var groupoid: [EndState] {
+        let x: [EndState] = []
+        return x
+    }
+    var group: [HTrans] = []  // Or [Action]?
+    
+    // MARK: Guidelines
+//    var hexagonTesselation: [HDrawable] = []
+    var generalGuidelines: [LocatedObject] = []
+    var cuffGuidelines: [LocatedObject] = []
+    
+    // MARK: Initializers
     init(pantsArray: [Pants], cuffArray: [Cuff]) {
         self.pantsArray = pantsArray
         self.cuffArray = cuffArray
         baseHexagon = pantsArray[0].hexagons[0]
     }
     
-    func setupGroupFromGroupoid() {
-        group = groupFromEndStates(groupoid, for: baseHexagon)
-        if let shadowHexagon = shadowHexagon {
-            /* the '4' in downFromOrthocenter[4] is because the 0 side for hexagons[0] forms a contiguous cuff with the 4 side for hexagons[1]
-             */
-            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.following(shadowHexagon.downFromOrthocenter[shadowHexagonIndex!]).flip})
+    // MARK: Deliver masks for drawing, etc.
+    func visibleMasks(object: Disked, location: LocationData, radius: Double) -> [HTrans] {
+        let M = location.localMask
+        let r = object.radius
+        let distance = Int(M.distance + r + mask.distance + radius)
+        let g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance)
+        let gg = g.map({mask.following($0.motion).following(M)})
+        return gg.filter({$0.appliedTo(object.centerPoint).distanceToOrigin  < radius + r})
+    }
+    
+    
+    // MARK: Alter the mask
+    var searchDistance = 4
+
+    func applyToMask(M: HTrans) {
+        mask = M.following(mask)
+    }
+    
+    // TODO: Maintain a smaller searching groupoid?
+    func recomputeMask() {
+        var searchStates: [EndState] = []
+        for h in baseHexagon.groupoid.keys {
+            searchStates += baseHexagon.groupoidTo(h, withDistance: searchDistance)
+        }
+        let bestNewEndstate = searchStates.leastElementFor({self.mask.appliedTo($0.motion.appliedToOrigin).abs})!
+        if bestNewEndstate.motion.abs > 0.00001 {
+            shiftBaseHexagon(newBase: bestNewEndstate)
         }
     }
     
+    // TODO: Deal with the shadow hexagon
+    func shiftBaseHexagon(newBase: EndState) {
+        baseHexagon = newBase.hexagon
+        baseHexagon.computeInitialGroupoid(timeLimitInMilliseconds: 200, maxDistance: 7)
+        mask = mask.following(newBase.motion)
+        print("New base hexagon with id \(baseHexagon.id))")
+    }
+    
+    
+    // MARK: Setting stuff up
+    
+    // DEPRECATED: We're not really using the group anymore
+//    func setupGroupFromGroupoid() {
+//        group = groupFromEndStates(groupoid, for: baseHexagon)
+//        if let shadowHexagon = shadowHexagon {
+//            /* the '4' in downFromOrthocenter[4] is because the 0 side for hexagons[0] forms a contiguous cuff with the 4 side for hexagons[1]
+//             */
+//            group += groupFromEndStates(groupoid, for: shadowHexagon).map({$0.following(shadowHexagon.downFromOrthocenter[shadowHexagonIndex!]).flip})
+//        }
+//    }
+
+    // We should probably give this a new name
     func setupGroupoidAndGroup(timeLimitInMilliseconds: Int, maxDistance: Int) {
-        groupoid = baseHexagon.prioritizedGroupoid(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance)
-        setupGroupFromGroupoid()
-    }
-    
-    // This will all have to be rewritten so that we can send a pipeline of new elements
-    // We should also move the Groups for Integer Distance to
-    func augmentGroupoidAndGroup(timeLimitInMilliseconds: Int, maxDistance: Int, mask: HyperbolicTransformation) {
-        groupoid += baseHexagon.newGroupoidElements(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance, mask: mask)
-        setupGroupFromGroupoid()
-    }
-    
-//    func setupGroupoidAndGroupForDistance(_ distance: Double) {
-//        groupoid = baseHexagon.groupoidForDistance(distance)
+        baseHexagon.computeInitialGroupoid(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance)
 //        setupGroupFromGroupoid()
-//     }
-    
-    func setupGroupoidAndGroupForSteps(_ numberOfSteps: Int) {
-        //        drawOnlyHexagonTesselation = true
-        var steppedStates: [[ForwardState]] = [baseHexagon.forwardStates]
-        for i in 0..<numberOfSteps {
-            steppedStates.append(steppedStates.last!.flatMap(nextForwardStates))
-            print("At stage \(i) in adding new states for a total of \(steppedStates.joined().count) states")
-        }
-        groupoid = steppedStates.joined().map(project) + [EndState(motion: HTrans(), hexagon: baseHexagon)]
-        hexagonTesselation = steppedStates.joined().map() { $0.lineToDraw }
     }
     
-    func setUpHexagonsAndGuidelines() {
-        generalGuidelines = []
-        
-        for Q in pantsArray {
-            for i in 0...1 {
-                let hexagon = Q.hexagons[i]
-                let morphismsToHexagon = groupoid.filter({$0.hexagon === hexagon})
-                if let motion = morphismsToHexagon.map({$0.motion}).leastElementFor({$0.distance}) {
-                    hexagon.baseMask = motion
-                }
-            }
-            generalGuidelines += Q.transformedGuidelines
-        }
-        cuffGuidelines = cuffArray.map() {$0.transformedGuideline}
+    func setUpGuidelines() {
+        generalGuidelines = pantsArray.flatMap({$0.guidelines})
+        cuffGuidelines = cuffArray.map() {$0.guideline}
     }
     
 }
+
+
+
