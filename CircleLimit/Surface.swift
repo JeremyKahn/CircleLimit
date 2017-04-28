@@ -18,8 +18,7 @@ class Surface {
     var pantsArray: [Pants] = []
     var cuffArray: [Cuff] = []
     var baseHexagon: Hexagon!
-    var shadowHexagon: Hexagon?
-    var shadowHexagonIndex: Int?
+    var hasReflection = false
     var hexagons: [Hexagon] {
         return pantsArray.flatMap({$0.hexagons})
     }
@@ -51,8 +50,15 @@ class Surface {
         let m = useMask ? mask : HTrans.identity
         let r = object.radius
         let distance = Int(r + m.distance + radius + center.distanceToOrigin)
-        let g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance)
-        let gg = g.map({m.following($0.motion)})
+        var g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance).map() {$0.motion}
+        if hasReflection {
+            let shadowHexagon = location.hexagon.shadowHexagon!
+            let shadowIndex = location.hexagon.shadowHexagonIndex!
+            let gShadow = baseHexagon.groupoidTo(shadowHexagon, withDistance: distance).map()
+            {$0.motion.following(shadowHexagon.downFromOrthocenter[shadowIndex]).flip}
+            g += gShadow
+        }
+        let gg = g.map({m.following($0)})
         return gg.filter({$0.appliedTo(object.centerPoint).distanceTo(center)  < radius + r})
     }
     

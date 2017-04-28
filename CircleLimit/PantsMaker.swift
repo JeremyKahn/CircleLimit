@@ -232,6 +232,28 @@ class PantsPlaceholder {
         }
     }
     
+    func setUpShadowHexagonsAndIndices() {
+        for i in 0..<pants.count {
+            for j in 0...1 {
+                let ii: Int, jj: Int
+                switch type {
+                case .whole:
+                    ii = 1 - i
+                    jj = j
+                case .threeZeroHalf:
+                    ii = i
+                    jj = 1 - j
+                case .oneOneHalf:
+                    ii = i
+                    jj = j
+                }
+                let h = pants[i].hexagons[j]
+                h.shadowHexagon = pants[ii].hexagons[jj]
+                h.shadowHexagonIndex = shadowHexagonIndex
+            }
+        }
+    }
+    
     var shadowHexagonIndex: Int {
         switch type {
         case .oneOneHalf:
@@ -333,8 +355,10 @@ func surfaceFromPlaceholders(_ pantsPlaceholders: [PantsPlaceholder]) -> Surface
     let s = Surface(pantsArray: pantsArray, cuffArray: cuffArray)
     s.baseHexagon = pantsPlaceholders[0].hexagon
     if hasReflection {
-        s.shadowHexagon = pantsPlaceholders[0].shadowHexagon
-        s.shadowHexagonIndex = pantsPlaceholders[0].shadowHexagonIndex
+        s.hasReflection = true
+        for pp in pantsPlaceholders {
+            pp.setUpShadowHexagonsAndIndices()
+        }
     }
     return s
 }

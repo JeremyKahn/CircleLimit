@@ -62,6 +62,9 @@ class Hexagon: Hashable {
         return LocationData(hexagon: self)
     }
     
+    var shadowHexagon: Hexagon?
+    var shadowHexagonIndex: Int?
+    
     /**
      The transformation to the base frame of the hexagon at the orthcenter
      - remark:  We're using absolute coordinates, not relative to the pants
@@ -99,7 +102,7 @@ class Hexagon: Hashable {
     /// the distances from the orthocenter to the feet of the altitude
     var altitudeParts = Array<Double>(repeating: 0.0, count: 6)
     
-    /// the transformations from the base frame to the feet of the altitude
+    /// the transformations from the base frame to the frames at the orthocenter pointing towards the sides
     var downFromOrthocenter: [HUVect] = [HUVect](repeating: HTrans.identity, count: 6)
     
     
@@ -162,7 +165,7 @@ class Hexagon: Hashable {
     
     func groupoidTo(_ h: Hexagon, withDistance distance: Int) -> [EndState] {
         var result: [EndState] = []
-        let groupoidTable = groupoid[h]!
+        guard let groupoidTable = groupoid[h] else {return []}
         let maxIndex = min(distance, groupoidTable.count - 1)
         for states in groupoid[h]![0...maxIndex] {
             result += states

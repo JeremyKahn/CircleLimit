@@ -200,7 +200,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         var fullDrawObjects = drawGuidelines ? guidelines : []
         fullDrawObjects += drawObjects
         if newCurve != nil {
-            fullDrawObjects.append(LocatedObject(object: newCurve!, location: location.hexagon.location))
+            fullDrawObjects.append(LocatedObject(object: newCurve!, location: location))
         }
         return fullDrawObjects
     }
