@@ -65,12 +65,13 @@ class Surface {
     
     
     // MARK: Alter the mask
-    var searchDistance = 4
+    var searchDistance = 20
 
     func applyToMask(M: HTrans) {
         mask = M.following(mask)
     }
     
+    // TODO: Get sensible time and distance limits from the caller
     func recomputeMask() {
         var searchStates: [EndState] = []
         for h in baseHexagon.groupoid.keys {
@@ -79,18 +80,15 @@ class Surface {
         let bestNewEndstate = searchStates.leastElementFor({self.mask.appliedTo($0.motion.appliedToOrigin).abs})!
         if bestNewEndstate.motion.abs > 0.00001 {
             shiftBaseHexagon(newBase: bestNewEndstate)
-        } else {
-            baseHexagon.improveGroupoid(timeLimitInMilliseconds: 100, maxDistance: 7, mask: mask)
         }
+        baseHexagon.recomputeGroupoid(timeLimitInMilliseconds: 200, maxDistance: 7, mask: mask)
     }
     
     // TODO: Deal with the shadow hexagon
     func shiftBaseHexagon(newBase: EndState) {
         baseHexagon = newBase.hexagon
-        baseHexagon.computeInitialGroupoid(timeLimitInMilliseconds: 200, maxDistance: 7)
         mask = mask.following(newBase.motion)
-        print("New base hexagon with id \(baseHexagon.id))")
-        baseHexagon.improveGroupoid(timeLimitInMilliseconds: 100, maxDistance: 7, mask: mask)
+        print("New base hexagon with id \(baseHexagon.id)")
     }
     
     
@@ -101,7 +99,7 @@ class Surface {
         for h in hexagons {
             h.resetGroupoid()
         }
-        baseHexagon.computeInitialGroupoid(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance)
+        baseHexagon.recomputeGroupoid(timeLimitInMilliseconds: timeLimitInMilliseconds, maxDistance: maxDistance, mask: mask)
     }
     
     func setUpGuidelines() {

@@ -123,6 +123,9 @@ class Hexagon: Hashable {
     /// A point which we hope will aways be in the interior of the hexagon
     var centerpoint: HPoint = HPoint()
     
+    /// The smallest radius of a circle around the orthocenter that contains the hexagon
+    var radius: Double = 0.0
+    
     // MARK: - The guidelines
     
     /// lines to draw the sides
@@ -207,6 +210,7 @@ class Hexagon: Hashable {
     
     
     func recomputeGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int, mask: HyperbolicTransformation?) {
+        groupoid = [:]
         addEndState(EndState(motion: HTrans.identity, hexagon: self))
         let base = forwardStates
         let priority: (ForwardState) -> Int
@@ -402,6 +406,7 @@ class Hexagon: Hashable {
             end[i] = middle[i].goForward(secondParts[i].re)
             start[i] = middle[i].goForward(-firstParts[i].re)
         }
+        radius = start.map({$0.distance}).max()!
         sideGuidelines = []
         for i in 0..<6 {
             let line = HyperbolicPolyline([start[i].appliedToOrigin, end[i].appliedToOrigin])

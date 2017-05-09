@@ -207,7 +207,7 @@ enum PantsPlaceholderType {
 // TODO: Check the the right type of Cuffs are being entered (bisected or not)
 class PantsPlaceholder {
     
-    static let pantsColorList = [UIColor.green, UIColor.gray, UIColor.orange, UIColor.yellow, UIColor.purple, UIColor.brown]
+    static let pantsColorList = [UIColor.green, UIColor.orange, UIColor.yellow, UIColor.purple, UIColor.cyan, UIColor.magenta, UIColor.brown]
     
     static var pantsColorIndex = 0
     

@@ -159,8 +159,6 @@ extension Array {
         let incremented = instructions.map { ($0.0 + 1, $0.1) }
         insertAtIndices(incremented)
     }
-    
-    
 
     func at(_ indices: [Int]) -> [Element] {
         return indices.map({self[$0]})

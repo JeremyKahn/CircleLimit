@@ -49,7 +49,7 @@ class Pants {
     var color = UIColor.clear {
         didSet {
             hexagons[0].color = color
-            hexagons[1].color = weightedColor([0.5, 0.5], colors: [color, UIColor.gray])
+            hexagons[1].color = weightedColor([0.7, 0.3], colors: [color, UIColor.gray])
             for h in hexagons {
                 h.hexagonGuideline.fillColor = h.color
             }
@@ -84,7 +84,7 @@ class Pants {
         
     }
     
-    static var firstHexagonOnly = true
+    static var firstHexagonOnly = false
     
     // This would actually be more readable as a nested for loop, with append
     var hexagonGuidelines: [LocatedObject] {
