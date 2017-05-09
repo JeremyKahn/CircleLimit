@@ -96,7 +96,7 @@ func priorityBasedFixedPoint<T, U>(queueTable: QueueTable<T>, expand: (T) -> [T]
     MAIN: while startTime.millisecondsToPresent < timeLimitInMilliseconds  && queueTable.currentPriority <= priorityMax {
         for _ in 0...batchSize {
             guard queueTable.hasNext else { break MAIN }
-            let object = queueTable.getNext!
+            let object = queueTable.next()!
             let newObjects = expand(object)
             for newObject in newObjects {
                 let p = priority(newObject)

@@ -9,14 +9,14 @@
 import Foundation
 
 // In principle we should be able to make this conform to SequenceType
-protocol Queue {
+protocol Queue: Sequence, IteratorProtocol {
     associatedtype Element
-    
-    var getNext: Element? {get}
     
     func add(_: Element)
     
     var hasNext: Bool {get}
+    
+    func next() -> Element?
     
     var peekNext: Element? {get}
     
@@ -24,6 +24,7 @@ protocol Queue {
     
     var asArray: [Element] {get}
 }
+
 
 // This is a fast, somewhat silly implementation of a queue
 class FastQueue<Element> : Queue {
@@ -40,7 +41,7 @@ class FastQueue<Element> : Queue {
         return head < elements.count
     }
     
-    var getNext: Element? {
+    func next() ->  Element? {
         guard hasNext else {return nil}
         let result = elements[head]
         head += 1
@@ -72,7 +73,7 @@ class FastQueue<Element> : Queue {
 }
 
 // Right now there's no check to see if the priority is negative, or too large.
-class QueueTable<Element> {
+class QueueTable<Element>: Sequence, IteratorProtocol {
     
     // The least index for a nonempty queue, or the number of queues.
     var currentPriority = 0
@@ -85,11 +86,11 @@ class QueueTable<Element> {
     }
     
     // We set currentPriority to be the index for the next nonempty queue
-    var getNext: Element? {
+    func next() ->  Element? {
         guard hasNext else {
             return nil
         }
-        let nextObject = queues[currentPriority].getNext
+        let nextObject = queues[currentPriority].next()
         while currentPriority < queues.count && !queues[currentPriority].hasNext {
             currentPriority += 1
         }
@@ -109,6 +110,15 @@ class QueueTable<Element> {
         if priority < currentPriority {
             currentPriority = priority
         }
+    }
+    
+    func asArrayWithPriorityLessThan(_ n: Int) -> [Element] {
+        let maxIndex = Swift.min(n, queues.count)
+        var result: [Element] = []
+        for queue in queues[0..<maxIndex] {
+            result += queue.asArray
+        }
+        return result
     }
     
     var asArray: [Element] {

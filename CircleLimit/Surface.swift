@@ -13,6 +13,7 @@ struct LocationData {
     var hexagon: Hexagon
 }
 
+// TODO: Set up a GroupManager protocol and change CircleViewController so that it owns a GroupManager
 class Surface {
     
     var pantsArray: [Pants] = []
@@ -78,6 +79,8 @@ class Surface {
         let bestNewEndstate = searchStates.leastElementFor({self.mask.appliedTo($0.motion.appliedToOrigin).abs})!
         if bestNewEndstate.motion.abs > 0.00001 {
             shiftBaseHexagon(newBase: bestNewEndstate)
+        } else {
+            baseHexagon.improveGroupoid(timeLimitInMilliseconds: 100, maxDistance: 7, mask: mask)
         }
     }
     
@@ -87,6 +90,7 @@ class Surface {
         baseHexagon.computeInitialGroupoid(timeLimitInMilliseconds: 200, maxDistance: 7)
         mask = mask.following(newBase.motion)
         print("New base hexagon with id \(baseHexagon.id))")
+        baseHexagon.improveGroupoid(timeLimitInMilliseconds: 100, maxDistance: 7, mask: mask)
     }
     
     
