@@ -142,7 +142,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
         didSet {
             if let i = cuffEditIndex {
                 surface.cuffGuidelines[i].object.lineColor = UIColor.red
-            } else  if let i = oldValue {
+            } else if let i = oldValue {
                 surface.cuffGuidelines[i].object.lineColor = UIColor.black
             }
         }
@@ -303,6 +303,7 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     // MARK: - Adding points and drawing
     let drawRadius = 0.99
     
+    
     func hPoint(_ rawLocation: CGPoint) -> HPoint? {
         var thing = rawLocation
         thing = thing.applying(toPoincare)
@@ -316,7 +317,6 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             return nil
         }
     }
-    
     
     
     func makeDot(_ rawLocation: CGPoint) {
@@ -611,13 +611,15 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             newCurve!.addPoint(z!)
         } else if canEditPants && !editingPants {
             let g = groupSystem(cutoffDistance: touchDistance, center: z!, objects: surface.cuffGuidelines)
-            for i in 0..<surface.cuffArray.count {
+            SEARCH: for i in 0..<surface.cuffArray.count {
                 let (object, group) = g[i]
                 if let line = object as? HyperbolicPolyline {
                     for action in group {
                         if line.sidesNear(z!, withMask: action.motion, withinDistance: touchDistance).count > 0 {
 //                            mask = mask.following(action.motion)
                             cuffEditIndex = i
+                            // Once we match one cuff we no longer look for the others
+                            break SEARCH
                         }
                     }
                 }

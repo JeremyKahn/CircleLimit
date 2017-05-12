@@ -187,9 +187,9 @@ class Hexagon: Hashable {
     
     var groupoidCalculationFrontier =  QueueTable<ForwardState>()
     
-    func groupoidTo(_ h: Hexagon, withDistance distance: Int) -> [EndState] {
+    func groupoidTo(_ h: Hexagon, withDistance distance: Double) -> [EndState] {
         guard let groupoidTable = groupoid[h] else {return []}
-        return groupoidTable.asArrayWithPriorityLessThan(distance)
+        return groupoidTable.asArrayWithPriorityLessThan(Int(distance)+1)
     }
     
     func resetGroupoid() { groupoid = [:] }

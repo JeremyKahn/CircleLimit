@@ -50,7 +50,7 @@ class Surface {
     func visibleMasks(object: Disked, location: LocationData, radius: Double, center: HPoint, useMask: Bool) -> [HTrans] {
         let m = useMask ? mask : HTrans.identity
         let r = object.radius
-        let distance = Int(r + m.distance + radius + center.distanceToOrigin)
+        let distance = r + m.distance + radius + center.distanceToOrigin
         var g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance).map() {$0.motion}
         if hasReflection {
             let shadowHexagon = location.hexagon.shadowHexagon!
@@ -65,7 +65,7 @@ class Surface {
     
     
     // MARK: Alter the mask
-    var searchDistance = 20
+    var searchDistance = absToDistance(0.99)
 
     func applyToMask(M: HTrans) {
         mask = M.following(mask)
