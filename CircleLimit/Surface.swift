@@ -47,16 +47,18 @@ class Surface {
         return visibleMasks(object: object, location: location, radius: radius, center: HPoint(), useMask: true)
     }
     
+    /// Computes the group elements that map the located object to within 'radius' of 'center'
     func visibleMasks(object: Disked, location: LocationData, radius: Double, center: HPoint, useMask: Bool) -> [HTrans] {
         let m = useMask ? mask : HTrans.identity
+        let M = useMask ? HTrans.identity : mask.inverse
         let r = object.radius
-        let distance = r + m.distance + radius + center.distanceToOrigin
-        var g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance).map() {$0.motion}
+        let distance = r + radius + M.appliedTo(center).distanceToOrigin
+        var g = baseHexagon.groupoidTo(location.hexagon, withDistance: distance)
         if hasReflection {
             let shadowHexagon = location.hexagon.shadowHexagon!
             let shadowIndex = location.hexagon.shadowHexagonIndex!
             let gShadow = baseHexagon.groupoidTo(shadowHexagon, withDistance: distance).map()
-            {$0.motion.following(shadowHexagon.downFromOrthocenter[shadowIndex]).flip}
+            {$0.following(shadowHexagon.downFromOrthocenter[shadowIndex]).flip}
             g += gShadow
         }
         let gg = g.map({m.following($0)})
@@ -75,7 +77,7 @@ class Surface {
     func recomputeMask() {
         var searchStates: [EndState] = []
         for h in baseHexagon.groupoid.keys {
-            searchStates += baseHexagon.groupoidTo(h, withDistance: searchDistance)
+            searchStates += baseHexagon.groupoidTo(h, withDistance: searchDistance).map() {EndState(motion: $0, hexagon: h)}
         }
         let bestNewEndstate = searchStates.leastElementFor({self.mask.appliedTo($0.motion.appliedToOrigin).abs})!
         if bestNewEndstate.motion.abs > 0.00001 {

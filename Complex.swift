@@ -181,7 +181,7 @@ public struct Complex<T:RealType> : Equatable, CustomStringConvertible {
     public var description:String {
         let plus = im.isSignMinus ? "" : "+"
         return "(\(re)\(plus)\(im).i)"
-    }
+    }    
     /// .hashvalue -- conforms to Hashable
 //    var hashValue:Int { // take most significant halves and join
 //        let bits = sizeof(Int) * 4

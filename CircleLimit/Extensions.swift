@@ -198,3 +198,11 @@ extension Complex {
     }
 }
 
+class ComplexConstant {
+    
+    public static let zero = Complex64(0.0, 0.0)
+    public static let one = Complex64(1.0, 0.0)
+    public static let minusOne = Complex64(-1.0, 0.0)
+    
+}
+

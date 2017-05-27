@@ -196,7 +196,7 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     }
     
     // MARK: Conjugacy invariants and equivariants
-    // TODO: Remove or consider the case where conjugateImput is true
+    // TODO: Remove or consider the case where conjugateInput is true
     // This is very close to correct when the axis is far from the origin
     // We return nil if the transformation is not hyperbolic
     var approximateDistanceOfTranslationAxisToOrigin: Double? {
@@ -240,6 +240,15 @@ struct HyperbolicTransformation : CustomStringConvertible, Locatable {
     //    func inverse() -> HyperbolicTransformation {
     //        return HyperbolicTransformation(a: -a * lambda, lambda: lambda.conj)
     //    }
+    
+    // MARK: Properties as an HUVect
+    var approximateDistanceOfLineThroughVectorToOrigin: Double {
+        let frontPoint = appliedTo(ComplexConstant.one)
+        let backPoint = appliedTo(ComplexConstant.minusOne)
+        let sumOfEndpoints = frontPoint + backPoint
+        // This is stolen from Heuristic Geodesic
+        return 0.5 * log(16/(4 - sumOfEndpoints.abs2))
+    }
     
     // MARK: Location, comparison, and description
     typealias Location = Int

@@ -92,7 +92,7 @@ class Hexagon: Hashable {
     }
     
     // MARK: - The derived geometry of the hexagon
-
+    
     /// the lengths of the parts from the start to the foot of the altitude
     var firstParts = Array<Complex64>(repeating: Complex64(), count: 6)
     
@@ -140,13 +140,13 @@ class Hexagon: Hashable {
     /// when set, use **hexagonGuideline** as the guideline
     static var hotPants = true
     
-//    var transformedGuidelines: [HDrawable] {
-//        if baseMask.distance < 50 {
-//           return guidelines.map() {$0.transformedBy(baseMask)}
-//        } else {
-//            return []
-//        }
-//     }
+    //    var transformedGuidelines: [HDrawable] {
+    //        if baseMask.distance < 50 {
+    //           return guidelines.map() {$0.transformedBy(baseMask)}
+    //        } else {
+    //            return []
+    //        }
+    //     }
     
     var guidelines: [HDrawable] {
         if Hexagon.hotPants {
@@ -162,24 +162,26 @@ class Hexagon: Hashable {
     }
     
     // MARK: - The groupoid and its frontier
-    // Each array is always parametrized by the floor of the distance between the centers of the hexagons
-    var groupoid: [Hexagon:QueueTable<EndState>] = [:]
+    // Each array is always parametrized by the floor of the distance between the current location and the given hexagon
+    var groupoid: [Hexagon:QueueTable<HTrans>] = [:]
     
-    func addEndState(_ e: EndState) {
-        let n = Int(e.motion.distance)
-         if let queueTable = groupoid[e.hexagon] {
-            queueTable.add(e, priority: n)
+    var computationLines: [HDrawable] = []
+    
+    func addEndState(_ e: EndState, priority: (HTrans) -> Double) {
+        let n = Int(priority(e.motion))
+        if let queueTable = groupoid[e.hexagon] {
+            queueTable.add(e.motion, priority: n)
         } else {
-            let queueTable = QueueTable<EndState>()
-            queueTable.add(e, priority: n)
+            let queueTable = QueueTable<HTrans>()
+            queueTable.add(e.motion, priority: n)
             groupoid[e.hexagon] = queueTable
         }
     }
     
-    func addEndStates<T: Sequence>(_ ee: T) where T.Iterator.Element == EndState {
+    func addEndStates<T: Sequence>(_ ee: T, priority: (HTrans) -> Double) where T.Iterator.Element == EndState {
         var count = 0
         for e in ee {
-            addEndState(e)
+            addEndState(e, priority: priority)
             count += 1
         }
         print("Added \(count) new end states for hexagon \(id)")
@@ -187,62 +189,65 @@ class Hexagon: Hashable {
     
     var groupoidCalculationFrontier =  QueueTable<ForwardState>()
     
-    func groupoidTo(_ h: Hexagon, withDistance distance: Double) -> [EndState] {
+    func groupoidTo(_ h: Hexagon, withDistance distance: Double) -> [HTrans] {
         guard let groupoidTable = groupoid[h] else {return []}
         return groupoidTable.asArrayWithPriorityLessThan(Int(distance)+1)
     }
     
     func resetGroupoid() { groupoid = [:] }
     
-    func computeInitialGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int) {
-        if groupoid.count > 0 {
-            return
-        }
-        addEndState(EndState(motion: HTrans.identity, hexagon: self))
-        let base = forwardStates
-        let priority = {(f: ForwardState) -> Int in
-            Int(f.newMotion.distance) }
-        let (leftoverForwardStates, newEndStates) = priorityBasedFixedPoint(base: base, expand: nextForwardStates, priority: priority, priorityMax: maxDistance,
-                                                                            batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
-        groupoidCalculationFrontier = leftoverForwardStates
-        addEndStates(newEndStates)
-    }
+//    func computeInitialGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int) {
+//        if groupoid.count > 0 {
+//            return
+//        }
+//        addEndState(EndState(motion: HTrans.identity, hexagon: self))
+//        let base = forwardStates
+//        let priority = {(f: ForwardState) -> Int in
+//            Int(f.middleOfNewSide.distance) }
+//        let (leftoverForwardStates, newEndStates) = priorityBasedFixedPoint(base: base, expand: nextForwardStates, priority: priority, priorityMax: maxDistance, batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
+//        groupoidCalculationFrontier = leftoverForwardStates
+//        addEndStates(newEndStates)
+//    }
     
     
     func recomputeGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int, mask: HyperbolicTransformation?) {
         groupoid = [:]
-        addEndState(EndState(motion: HTrans.identity, hexagon: self))
+        addEndState(EndState(motion: HTrans.identity, hexagon: self), priority: {_ in 0})
         let base = forwardStates
         let priority: (ForwardState) -> Int
         if let mask = mask {
             priority = {(f: ForwardState) -> Int in
-                Int(mask.following(f.newMotion).distance) }
+                Int(mask.following(f.middleOfNewSide).approximateDistanceOfLineThroughVectorToOrigin) }
         } else {
             priority = {(f: ForwardState) -> Int in
-                Int(f.newMotion.distance) }
+                Int(f.middleOfNewSide.approximateDistanceOfLineThroughVectorToOrigin) }
         }
-        let (leftoverForwardStates, newEndStates) =
+        let twoThings = {(f: ForwardState) -> (EndState, HDrawable) in
+            (project(f), f.lineToDraw) }
+        let (leftoverForwardStates, newEndStatesAndLines) =
             priorityBasedFixedPoint(base: base, expand: nextForwardStates, priority: priority, priorityMax: maxDistance,
-                                    batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
+                                    batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: twoThings)
         groupoidCalculationFrontier = leftoverForwardStates
-        addEndStates(newEndStates)
+        computationLines = newEndStatesAndLines.asArray.map({$0.1})
+        // This line eats the whole queue
+        addEndStates(newEndStatesAndLines.map({$0.0}), priority: mask != nil ? {mask!.following($0).distance}: {$0.distance})
     }
     
     
     
-    func improveGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int, mask: HyperbolicTransformation)  {
-        let priority = {(f: ForwardState) -> Int in
-            Int(mask.following(f.newMotion).distance)}
-        let newFrontier = QueueTable<ForwardState>()
-        for f in groupoidCalculationFrontier {
-            newFrontier.add(f, priority: priority(f))
-        }
-        let newEndStates = priorityBasedFixedPoint(queueTable: newFrontier, expand: nextForwardStates, priority: priority, priorityMax: maxDistance, batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
-        addEndStates(newEndStates)
-        groupoidCalculationFrontier = newFrontier
-    }
-
-
+//    func improveGroupoid(timeLimitInMilliseconds: Int, maxDistance: Int, mask: HyperbolicTransformation)  {
+//        let priority = {(f: ForwardState) -> Int in
+//            Int(mask.following(f.newMotion).distance)}
+//        let newFrontier = QueueTable<ForwardState>()
+//        for f in groupoidCalculationFrontier {
+//            newFrontier.add(f, priority: priority(f))
+//        }
+//        let newEndStates = priorityBasedFixedPoint(queueTable: newFrontier, expand: nextForwardStates, priority: priority, priorityMax: maxDistance, batchSize: 100, timeLimitInMilliseconds: timeLimitInMilliseconds, project: project)
+//        addEndStates(newEndStates)
+//        groupoidCalculationFrontier = newFrontier
+//    }
+    
+    
     // MARK: - Moving to adjacent hexagons
     
     /// The neighbors to the hexagon after the connections are formed
@@ -261,8 +266,8 @@ class Hexagon: Hashable {
                 right = isCuffIndex((i + 1) % 6) ? 0 : 1
             }
             return ForwardState(entry: entry,
-                newMotion: entry.motion,
-                state: RotationState(left: left, right: right))
+                                newMotion: entry.motion,
+                                state: RotationState(left: left, right: right))
         }
     }
     
@@ -328,7 +333,7 @@ class Hexagon: Hashable {
         }
         return RotationState(left: left, right: right, thing: special)
     }
-
+    
     
     
     // MARK: - Initialization and setup

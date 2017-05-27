@@ -187,6 +187,11 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
             }
             result.append((object.object, actions))
         }
+        if showComputationLines {
+            for line in surface.baseHexagon.computationLines {
+                result.append((line, [Action(M: mask)]))
+            }
+        }
         return result
     }
     
@@ -803,5 +808,5 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var trivial = false
     
-
+    var showComputationLines = false
 }

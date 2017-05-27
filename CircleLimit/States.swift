@@ -116,6 +116,10 @@ struct ForwardState {
     var guidelines: [HDrawable] {
         return [lineToDraw, endState.translatedHexagon]
     }
+    
+    var middleOfNewSide: HUVect {
+        return newMotion.appliedTo(entry.hexagon!.middle[entry.entryIndex])
+    }
 }
 
 struct EndState {
