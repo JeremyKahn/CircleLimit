@@ -10,7 +10,7 @@
 import Foundation
 
 // TODO: Get the cone points in the right cyclic order on the boundaries
-
+/// Represents all the possible features that might be added to a surface
 enum Feature {
     
     case twoTwo
@@ -18,6 +18,7 @@ enum Feature {
     case conePoint(Int)
     case reflection([Int])
     case glide
+    case hole
     
     /// The NumberCuff for the feature, along with internal pants and cuffs, including the cuff for the feature
     var numberCuff: (NumberCuff, [PantsPlaceholder]) {
@@ -33,6 +34,8 @@ enum Feature {
             let cc = CuffPlaceholder(halfLength: 1.0, twist: 0.1)
              let p = PantsPlaceholder(cuffArray: [nc, NumberCuff(c: cc), NumberCuff(c: cc)])
             return (nc, [p])
+        case .hole:
+            return (CuffType.normal.numberCuff, [])
         case .reflection(let list):
             switch list.count {
             case 0:
@@ -52,12 +55,15 @@ enum Feature {
         }
     }
     
+    /// The list of pants to add to a cuff to produce the given feature
     func pantsFromCuff(nc: NumberCuff) -> [PantsPlaceholder]? {
         switch self {
         case .handle:
             let cc = CuffPlaceholder(halfLength: 1.0, twist: 0.1)
             let p = PantsPlaceholder(cuffArray: [nc, NumberCuff(c: cc), NumberCuff(c: cc)])
             return [p]
+        case .hole:
+            return []
         case .reflection(let list):
             guard list.count >= 1 else { return nil }
             if list.count == 1 {
@@ -76,6 +82,8 @@ enum Feature {
     
     var canMakePantsFromCuff: Bool {
         switch  self {
+        case .hole:
+            return true
         case .handle:
             return true
         case .reflection(let list):
@@ -85,6 +93,7 @@ enum Feature {
         }
     }
     
+    // TODO: Should we add the case .hole?
     func halfPants(halfCuff: NumberCuff) -> [PantsPlaceholder]? {
         guard  case let Feature.reflection(list) = self else {
             return nil
@@ -103,6 +112,7 @@ enum Feature {
         return pants
     }
     
+    /// The contribution of the feature to the Euler characteristic
     var value: Double {
         switch self {
         case .conePoint(let n):
@@ -111,6 +121,8 @@ enum Feature {
             return -1.0
         case .handle:
             return -2.0
+        case .hole:
+            return -1.0
         case .reflection(let list):
             var m = -1.0
             for n in list {
@@ -156,6 +168,8 @@ class Tokenizer {
             switch c {
             case "o":
                 result.append(Feature.handle)
+            case "c":
+                result.append(Feature.hole)
             case "2":
                 if !haveTwo {
                     haveTwo = true
