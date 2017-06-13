@@ -32,6 +32,9 @@ enum CuffInfo {
 /// A cuff, with two associated pants
 class Cuff {
     
+    static var maxLength = 10.0
+    static var minLength = 0.01
+    
     var info: CuffInfo = .normal
     
     // The point at the middle of the selected cuff segment
@@ -94,6 +97,9 @@ class Cuff {
             return _halfLength
         }
         set (newLength) {
+            if newLength > Cuff.maxLength || newLength < Cuff.minLength {
+                return
+            }
             _halfLength = newLength
             
             switch info {
@@ -118,6 +124,12 @@ class Cuff {
             }
 
         }
+    }
+    
+    func rescaleHalfLengthBy(rescale: Double) {
+        var renormalizedHalfLength = exp(halfLength) - 1
+        renormalizedHalfLength *= rescale
+        halfLength = log(renormalizedHalfLength + 1)
     }
     
     var pantsCuffs: [PantsCuff?] = [nil, nil]
