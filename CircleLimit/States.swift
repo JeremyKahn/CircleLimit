@@ -41,11 +41,14 @@ struct HexagonEntry {
     }
 }
 
+
+/// How much we've rotated around fixed points on the left and the right
 struct RotationState {
     
     var left: Int
     var right: Int
     
+    /// the thing for the thing that happens when there's a fixed point of order 2
     var thing = false
     
     init(left: Int, right: Int) {

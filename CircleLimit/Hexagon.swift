@@ -11,6 +11,7 @@ import UIKit
 
 /// Represents either a cuff or a rotation
 enum CuffRotation {
+    
     /// A cuff, with a given length
     case cuff(Double)
     
@@ -287,7 +288,10 @@ class Hexagon: Hashable {
             if abs(exit - entrance) == 1 || (exit == 0 && entrance == 5)  {
                 return nil
             }
-            
+            // We don't cross the cuff if we've made the maximal left rotation, because we should cross it by rotating to the right
+            if old.left > 0 && old.left >= rotationNumberForIndex((entrance + 1) % 6) {
+                return nil
+            }
             // This is the one other case where we can't go across the cuff, because we've gone across it by right rotation around an index 2 rotation point
             if old.left == 2 && (exit - entrance) %% 6 == 3 &&  rotationNumberForIndex((entrance + 1) % 6) == 2 {
                 return nil
