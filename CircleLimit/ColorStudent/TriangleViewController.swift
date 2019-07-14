@@ -75,7 +75,7 @@ class TriangleViewController: UIViewController {
         }
     }
     
-    func zoomTriangleView(_ gesture: UIPinchGestureRecognizer) {
+    @objc func zoomTriangleView(_ gesture: UIPinchGestureRecognizer) {
         if gesture.state == .changed {
             dynamicSizeMultiplier *= gesture.scale
             dynamicSizeMultiplier = dynamicSizeMultiplier.controlledToInterval(1, maximumSizeMultiplier)
@@ -84,7 +84,7 @@ class TriangleViewController: UIViewController {
         }
     }
     
-    func moveTriangleView(_ gesture: UIPanGestureRecognizer) {
+    @objc func moveTriangleView(_ gesture: UIPanGestureRecognizer) {
         if gesture.state == .changed   {
             var translation = gesture.translation(in: triangleView) / triangleView.size
             gesture.setTranslation(CGPoint.zero, in: triangleView)

@@ -164,7 +164,7 @@ class Tokenizer {
     
     func tokens(_ conway: String) throws -> [Feature]  {
         
-        for c in conway.characters {
+        for c in conway {
             switch c {
             case "o":
                 result.append(Feature.handle)

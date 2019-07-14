@@ -218,10 +218,12 @@ class Hexagon: Hashable {
         let priority: (ForwardState) -> Int
         if let mask = mask {
             priority = {(f: ForwardState) -> Int in
-                Int(mask.following(f.middleOfNewSide).approximateDistanceOfLineThroughVectorToOrigin) }
+                let points = f.endpointsOfNewSide
+                return Int(approximateDistanceFromOriginToSegmentThrough(mask.appliedTo(points.0), mask.appliedTo(points.1))) }
         } else {
             priority = {(f: ForwardState) -> Int in
-                Int(f.middleOfNewSide.approximateDistanceOfLineThroughVectorToOrigin) }
+                let points = f.endpointsOfNewSide
+                return Int(approximateDistanceFromOriginToSegmentThrough(points.0, points.1)) }
         }
         let twoThings = {(f: ForwardState) -> (EndState, HDrawable) in
             (project(f), f.lineToDraw) }
@@ -426,15 +428,16 @@ class Hexagon: Hashable {
             let line = HyperbolicPolyline([HPoint(), foot[i].appliedToOrigin])
             altitudeGuidelines.append(line)
         }
-        if let twoIndex = ([0, 1, 2].filter({rotationArray[$0] == 2})).first {
-            let opp = (2 * twoIndex + 3) % 6
-            centerpoint = downFromOrthocenter[opp].goForward(altitudeParts[opp]/2).appliedToOrigin
-        }
+//        if let twoIndex = ([0, 1, 2].filter({rotationArray[$0] == 2})).first {
+//            let opp = (2 * twoIndex + 3) % 6
+//            centerpoint = downFromOrthocenter[opp].goForward(altitudeParts[opp]/2).appliedToOrigin
+//        }
         let vertices = [0, 1, 2, 3, 4, 5, 0].map({start[$0].basePoint})
         let h = HyperbolicPolygon(vertices)
         h.useFillColorTable = false
         h.fillColor = color
         hexagonGuideline = h
+        centerpoint = h.centerPoint
     }
 }
 

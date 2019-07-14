@@ -123,6 +123,14 @@ struct ForwardState {
     var middleOfNewSide: HUVect {
         return newMotion.appliedTo(entry.hexagon!.middle[entry.entryIndex])
     }
+    
+    var endpointsOfNewSide: (HPoint, HPoint) {
+        let i = entry.entryIndex
+        let h = entry.hexagon!
+        let u = newMotion.appliedTo(h.start[i].appliedToOrigin)
+        let v = newMotion.appliedTo(h.end[i].appliedToOrigin)
+        return (u, v)
+    }
 }
 
 struct EndState {

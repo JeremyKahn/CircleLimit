@@ -808,5 +808,5 @@ class CircleViewController: UIViewController, PoincareViewDataSource, UIGestureR
     
     var trivial = false
     
-    var showComputationLines = true
+    var showComputationLines = false
 }

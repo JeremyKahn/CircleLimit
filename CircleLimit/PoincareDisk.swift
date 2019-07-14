@@ -50,6 +50,11 @@ class HPoint : Equatable, CustomStringConvertible {
         return absToDistance(z.abs)
     }
     
+    // Slightly faster to compute
+    var approximateDistanceToOrigin: Double {
+        return log(2/(1 - z.abs))
+    }
+    
     var cgPoint: CGPoint {
         return CGPoint(x: z.re, y: z.im)
     }
@@ -237,6 +242,18 @@ struct HeuristicGeodesic: Locatable, Matchable {
     var approximateDistanceToOrigin: Double {
         return 0.5 * log(16/(4 - sumOfEndpoints.abs2))
     }
+}
+
+func approximateDistanceFromOriginToSegmentThrough(_ a: HPoint, _ b: HPoint) -> Double {
+    var theta = abs(a.arg - b.arg)
+    if theta > Double.PI {
+        theta = 2 * Double.PI - theta
+    }
+    let minPointDistance = min(a.approximateDistanceToOrigin, b.approximateDistanceToOrigin)
+    if theta == 0 {
+        return minPointDistance
+    }
+    return min(minPointDistance, log(4/theta))
 }
 
 
