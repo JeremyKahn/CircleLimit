@@ -12,7 +12,6 @@ class EnterGroupViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -21,14 +20,25 @@ class EnterGroupViewController: UIViewController {
     }
     
     @IBOutlet weak var textView: UITextView!
+   
+    @IBOutlet weak var orbifold: UILabel!
     
     @IBAction func done(_ sender: UIButton) {
         print("Done")
-        delegate.enterGroupString = textView.text
+        delegate.enterGroupString = orbifold.text!
         dismiss(animated: true, completion: nil)
     }
 
     var delegate: EnterGroupDelegate!
+    
+    @IBAction func inputFromButton(_ sender: UIButton) {
+        orbifold.text! += sender.titleLabel!.text!
+    }
+    
+    @IBAction func backspace(_ sender: UIButton) {
+        orbifold.text!.removeLast()
+    }
+    
     
     /*
     // MARK: - Navigation
