@@ -131,6 +131,13 @@ extension Complex where T : NicelyPrinting {
 
 // MARK: Collection Extensions
 
+extension String {
+    func atNumericalIndex(n: Int) -> Character {
+        let nn = index(startIndex, offsetBy: n)
+        return self[nn]
+    }
+}
+
 extension Dictionary {
     
     func valuesForKeys(_ keys: [Key]) -> [Value] {

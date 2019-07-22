@@ -85,6 +85,15 @@ func==(lhs: CuffPlaceholder, rhs: CuffPlaceholder) -> Bool {
     return lhs === rhs
 }
 
+/* There are five kinds of "whole" cuffs: the oriented ones, namely normal, a cone point, or "folded" (22),
+ and the non-oriented ones, namely reflected and glide reflected.
+ The new notation for the "half" cuffs uses 'r' for preserving the hexagons, 'R' for interchaging them, 'pi' for 180 degree rotation, and '1' for reflection through the cuff.
+ Then we have <r>, <r, 1>, and <r, R1> for one type of half cuffs, and <R>, <R, 1>, and <R, r1> for the other.
+ The only ones we really need are <r>, <r, 1>, <R>, and <R, 1>, so perhaps those are the four that were defined?
+ It seems like "halfWhole" comes from the 03 pants and is hence R, and "bisected" from the 11 and is hence r,
+ and then "bisectedReflected" is <r, 1> and bisectedReflectedHalfWhole is <R, 1>?
+ */
+
 enum CuffType {
     case normal, folded, reflected, glideReflected, bisected, bisectedReflected, halfWhole, bisectedReflectedHalfWhole
     
@@ -114,6 +123,7 @@ enum CuffType {
 
     
 }
+
 
 
 /// A number or a cuff: the number is at least 2, and the cuff can find its match
@@ -202,7 +212,14 @@ enum PantsPlaceholderType {
     
     /// With a reflection line bisecting one cuff and interchanging the other two
     case oneOneHalf
+    
+    static let typeFromCode = ["30": PantsPlaceholderType.whole, "03": PantsPlaceholderType.oneOneHalf, "11":PantsPlaceholderType.oneOneHalf]
 }
+
+enum PantsCodeError: Error {
+    case badCharacter(Character)
+}
+
 
 // TODO: Check the the right type of Cuffs are being entered (bisected or not)
 class PantsPlaceholder {
@@ -210,6 +227,105 @@ class PantsPlaceholder {
     static let pantsColorList = [UIColor.green, UIColor.orange, UIColor.yellow, UIColor.purple, UIColor.cyan, UIColor.magenta, UIColor.brown]
     
     static var pantsColorIndex = 0
+    
+    static func cuffForCode(_ cuffCode: Character, cuffTable: inout [Character: CuffPlaceholder]) throws -> NumberCuff {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        var cuff: NumberCuff
+        switch cuffCode {
+        case "*", "|": cuff = CuffType.reflected.numberCuff
+        case "$": cuff = CuffType.glideReflected.numberCuff
+        case "^": cuff = CuffType.folded.numberCuff
+        default:
+            if letters.contains(cuffCode) {
+                if let cuffPlaceholder=cuffTable[cuffCode] {
+                    cuff = NumberCuff(c: cuffPlaceholder)
+                    cuffTable.removeValue(forKey: cuffCode)
+                } else {
+                    cuff = CuffType.normal.numberCuff
+                    cuffTable[cuffCode] = cuff.cuff!
+                }
+            } else {
+                throw PantsCodeError.badCharacter(cuffCode)
+            }
+        }
+        return cuff
+    }
+    
+    static func parsePantsCode(_ code:String) throws -> [PantsPlaceholder] {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        var placeholders: [PantsPlaceholder] = []
+        var cuffTable: [Character: CuffPlaceholder] = [:]
+        let pantsCodes = code.components(separatedBy: " ")
+        for pantsCode in pantsCodes {
+            var pantsType: PantsPlaceholderType
+            var pantsData: String
+            var cuffs: [NumberCuff] = []
+            if pantsCode.contains("-") {
+                let stuff = pantsCode.components(separatedBy: "-")
+                pantsType = PantsPlaceholderType.typeFromCode[stuff[0]]!
+                pantsData = stuff[1]
+            } else {
+                pantsType = PantsPlaceholderType.whole
+                pantsData = pantsCode
+            }
+            switch pantsType {
+            case .whole:
+                for cuffCode in pantsData {
+                    try cuffs.append(cuffForCode(cuffCode, cuffTable: &cuffTable))
+                }
+            case .oneOneHalf:
+            let whole = pantsData.atNumericalIndex(n: 0)
+            let half = pantsData.atNumericalIndex(n: 1)
+            try cuffs.append(cuffForCode(whole, cuffTable: &cuffTable))
+            let cuffCode = half
+            var cuff: NumberCuff
+            switch half {
+                // Not clear that these are correct
+                case "^": cuff = CuffType.bisectedReflected.numberCuff
+                case "?": cuff = CuffType.bisectedReflectedHalfWhole.numberCuff
+                default:
+                    if letters.contains(cuffCode) {
+                        if let cuffPlaceholder=cuffTable[cuffCode] {
+                            cuff = NumberCuff(c: cuffPlaceholder)
+                            cuffTable.removeValue(forKey: cuffCode)
+                        } else {
+                            cuff = CuffType.normal.numberCuff
+                            cuffTable[cuffCode] = cuff.cuff!
+                        }
+                    } else {
+                        throw PantsCodeError.badCharacter(cuffCode)
+                    }
+            }
+            cuffs.append(cuff)
+            case .threeZeroHalf:
+                for cuffCode in pantsData {
+                    var cuff: NumberCuff
+                    switch cuffCode {
+                    // No real chance at all that these are correct
+                    case "^": cuff = CuffType.bisectedReflectedHalfWhole.numberCuff
+                    case "?": cuff = CuffType.bisectedReflectedHalfWhole.numberCuff
+                    default:
+                    if letters.contains(cuffCode) {
+                        if let cuffPlaceholder=cuffTable[cuffCode] {
+                            cuff = NumberCuff(c: cuffPlaceholder)
+                            cuffTable.removeValue(forKey: cuffCode)
+                        } else {
+                            cuff = CuffType.normal.numberCuff
+                            cuffTable[cuffCode] = cuff.cuff!
+                        }
+                    } else {
+                        throw PantsCodeError.badCharacter(cuffCode)
+                    }
+                }
+                cuffs.append(cuff)
+                }
+            }
+            placeholders.append(PantsPlaceholder(cuffArray: cuffs, type: pantsType))
+        }
+        return placeholders
+    }
+
+
     
     var cuffArray: [NumberCuff]
     

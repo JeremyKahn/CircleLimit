@@ -19,8 +19,6 @@ class EnterGroupViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBOutlet weak var textView: UITextView!
-   
     @IBOutlet weak var orbifold: UILabel!
     
     @IBAction func done(_ sender: UIButton) {
@@ -31,6 +29,7 @@ class EnterGroupViewController: UIViewController {
 
     var delegate: EnterGroupDelegate!
     
+    // TODO: Grey out buttons when they're not permitted by the strict notation. 
     @IBAction func inputFromButton(_ sender: UIButton) {
         orbifold.text! += sender.titleLabel!.text!
     }
