@@ -46,6 +46,7 @@
 		1BDBD08F1B5C43590057B710 /* PoincareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDBD08E1B5C43590057B710 /* PoincareView.swift */; };
 		1BDD539F1B7162620054445B /* DynamicProgramming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDD539E1B7162620054445B /* DynamicProgramming.swift */; };
 		241EF0A81DA92EE400A6A95E /* EnterGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241EF0A71DA92EE400A6A95E /* EnterGroupViewController.swift */; };
+		90F0E20D22E680290064ABA0 /* NewPantsMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F0E20C22E680290064ABA0 /* NewPantsMaker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -110,6 +111,7 @@
 		1BE3B62B1D6DF2D700213F23 /* CircleLimitIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CircleLimitIOS.h; sourceTree = "<group>"; };
 		1BE3B62D1D6DF2D700213F23 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		241EF0A71DA92EE400A6A95E /* EnterGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnterGroupViewController.swift; sourceTree = "<group>"; };
+		90F0E20C22E680290064ABA0 /* NewPantsMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPantsMaker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				1B53DD291D70834200E04616 /* PantsMaker.swift */,
+				90F0E20C22E680290064ABA0 /* NewPantsMaker.swift */,
 				1B2F23531D899047004622F6 /* Surface.swift */,
 				1B4CA0A81CF4B1990022C41B /* Pants.swift */,
 				1B4CA0A61CF4A64D0022C41B /* Hexagon.swift */,
@@ -345,6 +348,7 @@
 			files = (
 				1BDBD05F1B5C21370057B710 /* AppDelegate.swift in Sources */,
 				1B5979F21CBB17A400CEAEA7 /* ColorProtocols.swift in Sources */,
+				90F0E20D22E680290064ABA0 /* NewPantsMaker.swift in Sources */,
 				1B6EB4731CAD724900B08F09 /* HyperbolicPolygon.swift in Sources */,
 				1BC1B2C41C3D71B400FF17C6 /* GroupGeneration.swift in Sources */,
 				1BC1B2C21C3D713300FF17C6 /* HyperbolicTransformation.swift in Sources */,
